@@ -5,331 +5,527 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>การใช้น้ำในนิคมอุตสาหกรรม</title>
 <meta name="description" content="Dashboard การใช้น้ำ น้ำ 3R น้ำสำรอง และระบบบำบัดน้ำเสีย ในพื้นที่นิคมอุตสาหกรรมและท่าเรือ">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c3.5 5 7 8.6 7 12.5a7 7 0 0 1-14 0C5 10.6 8.5 7 12 2z' fill='%232563eb'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3CradialGradient id='g' cx='.35' cy='.3' r='.8'%3E%3Cstop offset='0' stop-color='%237cc4ff'/%3E%3Cstop offset='.55' stop-color='%231677ff'/%3E%3Cstop offset='1' stop-color='%236a2cff'/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle cx='12' cy='12' r='11' fill='url(%23g)'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Noto+Serif+Thai:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>try{var t=localStorage.getItem('wd-theme');if(t)document.documentElement.dataset.theme=t;}catch(e){}</script>
 <style>
 :root {
   color-scheme: light;
-  --font-anthropic-sans: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-anthropic-serif: "Noto Serif Thai", Georgia, serif;
+  --font-anthropic-sans: "Inter", "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-anthropic-serif: "Inter", "IBM Plex Sans Thai", system-ui, sans-serif;
   --cds-font-size-caption: 12.5px;
   --cds-font-size-body: 14px;
-  --cds-font-size-heading: 16px;
-  --cds-font-size-title: 28px;
-  --cds-font-weight-medium: 600;
-  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 14px; --cds-gap-lg: 20px; --cds-gap-xl: 28px;
-  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px; --cds-pad-xl: 28px;
-  --cds-radius: 14px;
-  --cds-dur-slow: 240ms;
+  --cds-font-size-heading: 15.5px;
+  --cds-font-size-title: 40px;
+  --cds-font-weight-medium: 500;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 16px; --cds-gap-lg: 24px; --cds-gap-xl: 32px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 24px; --cds-pad-xl: 32px;
+  --cds-radius: 12px;
+  --cds-dur-slow: 220ms;
   --cds-ease-out: cubic-bezier(.2, .8, .2, 1);
-  --color-fg: #0f172a;
-  --color-fg-muted: #64748b;
-  --color-bg: #f3f5f9;
+  --color-fg: #111318;
+  --color-fg-muted: #6b7280;
+  --color-bg: #f6f7f9;
   --color-panel: #ffffff;
-  --color-border-line: #e5e8ee;
-  --color-ok: #15803d;
-  --color-warn: #c2410c;
+  --color-border-line: #ebedf0;
+  --color-ok: #16a34a;
+  --color-warn: #ea580c;
   --color-bad: #dc2626;
-  --cds-chart-grid: #eef1f5;
-  --cds-chart-axis: #cbd2dc;
-  --cds-chart-reference: #94a3b8;
-  --cds-chart-muted: #cfd8e3;
-  --cds-chart-status-critical: #dc2626;
+  --frame: #eef0f3;
+  --hover: #f4f5f7;
+  --tick: #c9cdd4;
+  --cds-chart-grid: #f0f2f5;
+  --cds-chart-axis: #dfe3e8;
+  --cds-chart-reference: #a3abb7;
+  --cds-chart-muted: #c3dbf4;
+  --cds-chart-status-critical: #e5484d;
   --cds-surface-popover: #ffffff;
-  --cds-border: #e2e8f0;
-  --cds-shadow-popover: 0 8px 28px rgba(15, 23, 42, .08), 0 1px 3px rgba(15, 23, 42, .06);
-  --cds-text-secondary: #64748b;
-  --c1: #2563eb; --c2: #0d9488; --c3: #16a34a; --c4: #d97706; --c5: #7c3aed; --c6: #db2777; --c7: #0891b2; --c8: #65a30d;
+  --cds-border: #eceef1;
+  --cds-shadow-popover: 0 10px 30px rgba(17, 19, 24, .08), 0 2px 6px rgba(17, 19, 24, .05);
+  --cds-text-secondary: #6b7280;
+  --c1: #1677ff; --c2: #38bdf8; --c3: #22b07d; --c4: #f59e0b; --c5: #8b5cf6; --c6: #ec4899; --c7: #14b8a6; --c8: #84cc16;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --color-fg: #e5e9f0; --color-fg-muted: #94a3b8; --color-bg: #0b1020; --color-panel: #121a2e; --color-border-line: #223050;
+    --color-fg: #eceef2; --color-fg-muted: #9aa1ad; --color-bg: #0c0e12; --color-panel: #14171c; --color-border-line: #23272f;
     --color-ok: #4ade80; --color-warn: #fb923c; --color-bad: #f87171;
-    --cds-chart-grid: #1c2742; --cds-chart-axis: #33415f; --cds-chart-reference: #64748b; --cds-chart-muted: #2f3d5c; --cds-chart-status-critical: #f87171;
-    --cds-surface-popover: #18223a; --cds-border: #2a3758; --cds-shadow-popover: 0 8px 28px rgba(0, 0, 0, .45); --cds-text-secondary: #94a3b8;
-    --c1: #60a5fa; --c2: #2dd4bf; --c3: #4ade80; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #22d3ee; --c8: #a3e635;
+    --frame: #090a0d; --hover: #1b1f26; --tick: #3a404b;
+    --cds-chart-grid: #1c2028; --cds-chart-axis: #2a303a; --cds-chart-reference: #5b6472; --cds-chart-muted: #213a5c; --cds-chart-status-critical: #f87171;
+    --cds-surface-popover: #1a1e25; --cds-border: #2a2f38; --cds-shadow-popover: 0 10px 30px rgba(0, 0, 0, .5); --cds-text-secondary: #9aa1ad;
+    --c1: #4c9aff; --c2: #7dd3fc; --c3: #34d399; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #2dd4bf; --c8: #a3e635;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --color-fg: #e5e9f0; --color-fg-muted: #94a3b8; --color-bg: #0b1020; --color-panel: #121a2e; --color-border-line: #223050;
+  --color-fg: #eceef2; --color-fg-muted: #9aa1ad; --color-bg: #0c0e12; --color-panel: #14171c; --color-border-line: #23272f;
   --color-ok: #4ade80; --color-warn: #fb923c; --color-bad: #f87171;
-  --cds-chart-grid: #1c2742; --cds-chart-axis: #33415f; --cds-chart-reference: #64748b; --cds-chart-muted: #2f3d5c; --cds-chart-status-critical: #f87171;
-  --cds-surface-popover: #18223a; --cds-border: #2a3758; --cds-shadow-popover: 0 8px 28px rgba(0, 0, 0, .45); --cds-text-secondary: #94a3b8;
-  --c1: #60a5fa; --c2: #2dd4bf; --c3: #4ade80; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #22d3ee; --c8: #a3e635;
+  --frame: #090a0d; --hover: #1b1f26; --tick: #3a404b;
+  --cds-chart-grid: #1c2028; --cds-chart-axis: #2a303a; --cds-chart-reference: #5b6472; --cds-chart-muted: #213a5c; --cds-chart-status-critical: #f87171;
+  --cds-surface-popover: #1a1e25; --cds-border: #2a2f38; --cds-shadow-popover: 0 10px 30px rgba(0, 0, 0, .5); --cds-text-secondary: #9aa1ad;
+  --c1: #4c9aff; --c2: #7dd3fc; --c3: #34d399; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #2dd4bf; --c8: #a3e635;
 }
+
+/* ---------- page frame ---------- */
 html { -webkit-text-size-adjust: 100%; }
-body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); line-height: 1.5; overflow-x: hidden; }
-#dash-root { max-width: 1440px; margin: 0 auto; padding: 24px clamp(16px, 3vw, 40px) 48px; box-sizing: border-box; }
+body { margin: 0; background: var(--frame); color: var(--color-fg); font-family: var(--font-anthropic-sans); line-height: 1.5; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+#dash-root { padding: clamp(0px, 1.6vw, 22px); box-sizing: border-box; }
 #dash-root *, #dash-root *::before, #dash-root *::after { box-sizing: border-box; }
 #dash-root b, #dash-root strong { font-weight: 600; }
-.dash-skeleton { color: transparent !important; border-radius: 8px; background: linear-gradient(90deg, var(--color-bg) 25%, var(--color-border-line) 50%, var(--color-bg) 75%); background-size: 200% 100%; animation: dashSk 1.3s linear infinite; }
-.dash-skeleton * { visibility: hidden; }
-@keyframes dashSk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
-@media (prefers-reduced-motion: reduce) { .dash-skeleton { animation: none; } }
-/* refresh control */
-.wd-src { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.wd-src .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-fg-muted); flex: none; }
-.wd-src .dot.live { background: var(--color-ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ok) 22%, transparent); }
-.wd-src .dot.snap { background: var(--c1); }
-.wd-src .dot.err { background: var(--color-bad); }
-.wd-refresh { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 500; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 12px; transition: border-color var(--cds-dur-slow), box-shadow var(--cds-dur-slow); }
-.wd-refresh:hover { border-color: var(--c1); box-shadow: var(--cds-shadow-popover); }
-.wd-refresh:disabled { opacity: .6; cursor: progress; }
-.wd-refresh svg { width: 14px; height: 14px; }
-.wd-refresh.spin svg { animation: wdSpin 0.9s linear infinite; }
+.app { display: grid; grid-template-columns: 76px minmax(0, 1fr); min-height: calc(100vh - 44px); max-width: 1500px; margin: 0 auto; background: var(--color-panel); border-radius: 22px; box-shadow: 0 1px 2px rgba(17, 19, 24, .04), 0 12px 40px rgba(17, 19, 24, .06); overflow: clip; }
+.wd-rail svg, .wd-top svg, .wd-filters svg, .cta svg, .watch .ibox svg, .search svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+
+/* side rail */
+.wd-rail { border-right: 1px solid var(--color-border-line); display: flex; flex-direction: column; align-items: center; padding: 18px 0; gap: 26px; }
+.orb { width: 38px; height: 38px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ffffff 0 8%, #7cc4ff 22%, #1677ff 52%, #6a2cff 80%); box-shadow: 0 6px 16px rgba(22, 119, 255, .35), inset 0 -3px 6px rgba(0, 0, 0, .15); }
+.rail-nav { display: flex; flex-direction: column; gap: 10px; }
+.rail-btn { all: unset; cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; border-radius: 10px; color: var(--color-fg-muted); transition: background var(--cds-dur-slow), color var(--cds-dur-slow); }
+.rail-btn:hover { background: var(--hover); color: var(--color-fg); }
+.rail-btn[aria-current="page"] { background: var(--hover); color: var(--color-fg); box-shadow: inset 0 0 0 1px var(--color-border-line); }
+.rail-foot { margin-top: auto; border: 1px solid var(--color-border-line); }
+
+/* top bar */
+.wd-main { min-width: 0; display: flex; flex-direction: column; }
+.wd-top { display: flex; align-items: stretch; justify-content: space-between; gap: 16px; padding: 0 28px; border-bottom: 1px solid var(--color-border-line); min-height: 64px; flex-wrap: wrap; }
+.wd-tabs { display: flex; gap: 30px; align-items: stretch; }
+.wd-tabs button { all: unset; cursor: pointer; display: flex; align-items: center; font-size: 14.5px; color: var(--color-fg-muted); position: relative; padding: 0 2px; transition: color var(--cds-dur-slow); }
+.wd-tabs button:hover { color: var(--color-fg); }
+.wd-tabs button[aria-selected=true] { color: var(--color-fg); font-weight: 500; }
+.wd-tabs button[aria-selected=true]::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--color-fg); border-radius: 2px; }
+.top-actions { display: flex; align-items: center; gap: 10px; }
+.brand { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-right: 6px; }
+.btn { font: inherit; font-size: 13.5px; font-weight: 500; display: inline-flex; align-items: center; gap: 8px; cursor: pointer; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 10px; padding: 8px 14px; box-shadow: 0 1px 2px rgba(17, 19, 24, .05); transition: background var(--cds-dur-slow), border-color var(--cds-dur-slow); }
+.btn:hover { background: var(--hover); }
+.btn.icon { padding: 8px; }
+.btn.dark { background: #1d1f24; color: #fff; border-color: #1d1f24; box-shadow: 0 6px 16px rgba(17, 19, 24, .18), inset 0 1px 0 rgba(255, 255, 255, .12); }
+.btn.dark:hover { background: #2b2e35; }
+:root[data-theme="dark"] .btn.dark { background: #eceef2; color: #111318; border-color: #eceef2; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.dark { background: #eceef2; color: #111318; border-color: #eceef2; } }
+.btn:disabled { opacity: .6; cursor: progress; }
+#btn-refresh.spin svg { animation: wdSpin .9s linear infinite; }
 @keyframes wdSpin { to { transform: rotate(360deg); } }
+
+/* page */
+.wd { font-family: var(--font-anthropic-sans); color: var(--color-fg); }
+.wd-page { display: grid; gap: 0; }
+.wd-page[hidden] { display: none; }
+.wd-pagehead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; padding: 30px 28px 26px 58px; border-bottom: 1px solid var(--color-border-line); }
+.wd-pagehead h1 { font-weight: 400; font-size: 40px; letter-spacing: -.02em; line-height: 1.1; margin: 0; }
+.wd-take { margin: 10px 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 60rem; line-height: 1.6; }
+.wd-take b { color: var(--color-fg); font-weight: 500; }
+.wd-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.wd-filters .sel { display: inline-flex; align-items: center; gap: 8px; height: 40px; padding: 0 6px 0 12px; border: 1px solid var(--color-border-line); border-radius: 10px; background: var(--color-panel); color: var(--color-fg-muted); box-shadow: 0 1px 2px rgba(17, 19, 24, .04); }
+.wd-filters .sel:has(select:focus-visible) { border-color: var(--c1); }
+.wd-filters select { font: inherit; font-size: 14px; color: var(--color-fg); background: transparent; border: 0; outline: none; padding: 0 4px; height: 100%; cursor: pointer; max-width: 15rem; }
+.wd-filters .sel.wide select { max-width: 22rem; }
+.dash-to { color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+
+/* split: KPIs + trend | watchlist */
+.wd-split { display: grid; grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr); border-bottom: 1px solid var(--color-border-line); }
+.wd-left { border-right: 1px solid var(--color-border-line); min-width: 0; }
+.wd-right { min-width: 0; display: flex; flex-direction: column; }
+
+/* corner ticks */
+.bracket { position: relative; }
+.bracket::before { content: ""; position: absolute; inset: -1px; pointer-events: none;
+  background:
+    linear-gradient(var(--tick), var(--tick)) top left / 9px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top left / 1px 9px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 9px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) top right / 1px 9px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 9px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom left / 1px 9px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 9px 1px no-repeat,
+    linear-gradient(var(--tick), var(--tick)) bottom right / 1px 9px no-repeat; }
+
+/* KPIs */
+.wd-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 0 58px; border-left: 1px solid var(--color-border-line); border-right: 1px solid var(--color-border-line); border-bottom: 1px solid var(--color-border-line); }
+.wd-kpis.four { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 28px 0 58px; }
+.wd-kpi { padding: 28px 24px 26px; min-width: 0; }
+.wd-kpi + .wd-kpi { border-left: 1px solid var(--color-border-line); }
+.wd-kpi .lbl { font-size: 14px; font-weight: 500; color: var(--color-fg); }
+.wd-kpi .row { display: flex; align-items: baseline; flex-wrap: wrap; gap: 4px 10px; margin-top: 12px; }
+.wd-kpi .val { font-family: var(--font-anthropic-serif); font-weight: 300; font-size: clamp(26px, 2.35vw, 38px); letter-spacing: -.025em; line-height: 1.05; font-variant-numeric: tabular-nums; min-height: 1.05em; min-width: 4ch; }
+.wd-kpi .unit { margin-top: 10px; font-size: 13px; color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.wd-kpi .vs { font-size: 12px; color: var(--color-fg-muted); margin-top: 2px; }
+.chip { display: inline-flex; align-items: center; gap: 2px; font-size: 12.5px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.chip:empty { display: none; }
+.chip.up { color: var(--color-warn); } .chip.down { color: var(--color-ok); } .chip.neu { color: var(--color-fg-muted); }
+.up { color: var(--color-warn); } .down { color: var(--color-ok); } .bad { color: var(--color-bad); } .warn { color: var(--color-warn); } .neu { color: var(--color-fg-muted); }
+
+/* blocks & cards */
+.wd-block { padding: 28px 28px 26px 58px; }
+.blk-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px 20px; margin-bottom: 8px; }
+.wd h2 { font-size: var(--cds-font-size-heading); font-weight: 500; margin: 0; letter-spacing: -.005em; }
+.wd .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 4px 0 14px; }
+.wd .note b { color: var(--color-fg); font-weight: 500; }
+.wd-sec { display: flex; align-items: center; gap: 12px; padding: 30px 28px 0 58px; font-size: 12px; font-weight: 500; color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: .06em; }
+.wd-sec::after { content: ""; flex: 1; height: 1px; background: var(--color-border-line); }
+.wd-grid, .wd-grid3 { display: grid; gap: 16px; padding: 16px 28px 0 58px; }
+.wd-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); }
+.wd-grid3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
+.wd-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 16px; padding: 22px 22px 18px; min-width: 0; }
+#overview > .wd-card, #estate > .wd-card, #quality > .wd-card { margin: 16px 28px 0 58px; }
+#estate > .wd-kpis + .wd-card { margin-top: 24px; }
+
+/* right column */
+.cta { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; padding: 34px 28px 30px; border-bottom: 1px solid var(--color-border-line); }
+.cta h3 { font-size: 19px; font-weight: 500; margin: 0; letter-spacing: -.01em; }
+.cta p { margin: 4px 0 0; font-size: 13px; color: var(--color-fg-muted); }
+.watch { margin: 0 0 0 0; border-bottom: 1px solid var(--color-border-line); }
+.watch .item { display: grid; grid-template-columns: 84px minmax(0, 1fr) auto; align-items: center; border-top: 1px solid var(--color-border-line); min-height: 84px; transition: background var(--cds-dur-slow); }
+.watch .item:first-child { border-top: 0; }
+.watch .item:hover { background: var(--hover); }
+.watch .ibox { height: 100%; display: grid; place-items: center; border-right: 1px solid var(--color-border-line); }
+.watch .ibox span { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 10px; border: 1px solid var(--color-border-line); background: var(--color-panel); color: var(--color-fg); box-shadow: 0 1px 2px rgba(17, 19, 24, .04); }
+.watch .ibox span.bad { color: var(--color-bad); } .watch .ibox span.warn { color: var(--color-warn); }
+.watch .txt { padding: 12px 18px; min-width: 0; }
+.watch .t1 { font-size: 14px; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.watch .t2 { font-size: 12.5px; color: var(--color-fg-muted); }
+.watch .act { padding-right: 18px; }
+.watch .act .btn { min-width: 92px; justify-content: center; }
+.watch .none { padding: 26px 28px; font-size: 13px; color: var(--color-fg-muted); }
+.meters { padding: 26px 28px 28px; display: grid; gap: 18px; margin-top: auto; }
+.meter .m-top { display: flex; justify-content: space-between; font-size: 13.5px; font-weight: 500; }
+.meter .m-val { font-variant-numeric: tabular-nums; }
+.meter .m-val small { color: var(--color-fg-muted); font-weight: 400; font-size: 12px; }
+.m-bar { height: 3px; border-radius: 3px; background: var(--color-border-line); margin-top: 8px; overflow: hidden; }
+.m-bar i { display: block; height: 100%; width: 0; border-radius: 3px; background: var(--c1); transition: width .6s var(--cds-ease-out); }
+.srcbox { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; padding: 12px 14px; border-radius: 12px; background: var(--hover); border: 1px solid var(--color-border-line); font-size: 12.5px; color: var(--color-fg-muted); }
+.srcbox .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-fg-muted); flex: none; }
+.srcbox .dot.live { background: var(--color-ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ok) 22%, transparent); }
+.srcbox .dot.snap { background: var(--c1); }
+.srcbox .dot.err { background: var(--color-bad); }
 .wd-msg { flex-basis: 100%; color: var(--color-bad); }
 .wd-msg:empty { display: none; }
 .wd-msg.ok { color: var(--color-ok); }
+
+/* charts */
+.wd-chart { position: relative; min-height: 260px; }
+.wd-chart.tall { min-height: 340px; }
+#trend { min-height: 340px; }
+.wd-chart svg { display: block; overflow: visible; }
+.wd-chart text { font-family: var(--font-anthropic-sans); font-size: 12px; fill: var(--color-fg-muted); stroke: none; }
+.wd-chart .end, .wd-chart .lab { fill: var(--color-fg); }
+.wd-chart .empty { display: flex; align-items: center; justify-content: center; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wd-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: 12px; box-shadow: var(--cds-shadow-popover); padding: 10px 14px 10px 22px; font-size: 12.5px; white-space: nowrap; z-index: 3; min-width: 150px; }
+.wd-tip::before { content: ""; position: absolute; left: 10px; top: 10px; bottom: 10px; width: 3px; border-radius: 3px; background: var(--c1); }
+.wd-tip .t { color: var(--cds-text-secondary); margin-bottom: 4px; }
+.wd-tip > div:nth-child(2) { font-size: 15px; font-weight: 500; color: var(--color-fg); }
+.wd-tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; }
+.wd-legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12.5px; color: var(--color-fg-muted); margin-bottom: 8px; }
+.wd-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.wd-legend i.ln { height: 2px; vertical-align: 3px; border-radius: 0; }
+
+/* tables */
+.wd-tablebar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.search { display: inline-flex; align-items: center; gap: 8px; height: 38px; padding: 0 12px; border: 1px solid var(--color-border-line); border-radius: 10px; color: var(--color-fg-muted); background: var(--color-panel); }
+.search input { font: inherit; font-size: 13.5px; border: 0; outline: none; background: transparent; color: var(--color-fg); width: min(16rem, 52vw); }
+.wd-tbox { max-height: 540px; overflow: auto; }
+.wd table { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; font-variant-numeric: tabular-nums; }
+.wd th { position: sticky; top: 0; background: var(--color-panel); text-align: right; font-weight: 500; border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
+.wd th.l { text-align: left; }
+.wd th button { all: unset; cursor: pointer; display: block; padding: 10px 12px; color: var(--color-fg-muted); font-size: 12.5px; }
+.wd th[aria-sort] button { color: var(--color-fg); }
+.wd td { padding: 11px 12px; border-bottom: 1px solid var(--color-border-line); text-align: right; white-space: nowrap; }
+.wd td.l { text-align: left; white-space: normal; }
+.wd td.name { min-width: 10rem; font-weight: 500; }
+.wd tbody tr { cursor: pointer; }
+.wd tbody tr:hover td { background: var(--hover); }
+.wd tbody tr:hover td:first-child { border-radius: 10px 0 0 10px; }
+.wd tbody tr:hover td:last-child { border-radius: 0 10px 10px 0; }
+.wd-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wd-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wd-foot { font-size: 12px; color: var(--color-fg-muted); }
+.page-foot { padding: 28px 28px 30px 58px; margin-top: 28px; border-top: 1px solid var(--color-border-line); }
+
+/* skeleton */
+.dash-skeleton { color: transparent !important; border-radius: 8px; background: linear-gradient(90deg, var(--hover) 25%, var(--color-border-line) 50%, var(--hover) 75%); background-size: 200% 100%; animation: dashSk 1.3s linear infinite; }
+.dash-skeleton * { visibility: hidden; }
+@keyframes dashSk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+
+@media (prefers-reduced-motion: no-preference) {
+  .wd-page:not([hidden]) { animation: wdIn .28s var(--cds-ease-out); }
+  @keyframes wdIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+}
+@media (prefers-reduced-motion: reduce) { .dash-skeleton { animation: none; } }
+
+/* responsive */
+@media (max-width: 1100px) {
+  .wd-split { grid-template-columns: 1fr; }
+  .wd-left { border-right: 0; border-bottom: 1px solid var(--color-border-line); }
+  .wd-kpis.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .wd-kpis.four .wd-kpi:nth-child(3) { border-left: 0; }
+  .wd-kpis.four .wd-kpi:nth-child(n+3) { border-top: 1px solid var(--color-border-line); }
+}
+@media (max-width: 760px) {
+  #dash-root { padding: 0; }
+  .app { grid-template-columns: 1fr; border-radius: 0; min-height: 100vh; }
+  .wd-rail { display: none; }
+  .wd-top { padding: 0 16px; }
+  .wd-tabs { gap: 22px; }
+  .brand { display: none; }
+  .wd-pagehead, .wd-block, .wd-sec, .page-foot { padding-left: 16px; padding-right: 16px; }
+  .wd-grid, .wd-grid3 { padding-left: 16px; padding-right: 16px; }
+  #overview > .wd-card, #estate > .wd-card, #quality > .wd-card { margin-left: 16px; margin-right: 16px; }
+  .wd-kpis, .wd-kpis.four { grid-template-columns: 1fr; margin: 0 16px; }
+  .wd-kpi + .wd-kpi, .wd-kpis.four .wd-kpi:nth-child(n) { border-left: 0; border-top: 1px solid var(--color-border-line); }
+  .wd-kpis .wd-kpi:first-child { border-top: 0; }
+  .wd-pagehead h1 { font-size: 32px; }
+  .cta, .meters { padding-left: 16px; padding-right: 16px; }
+  .watch .item { grid-template-columns: 64px minmax(0, 1fr) auto; }
+  .watch .act .btn { min-width: 0; }
+  .wd .hide-narrow { display: none; }
+}
 </style>
 </head>
 <body>
 <main id="dash-root">
-<style>
-.wd { font-family: var(--font-anthropic-sans); color: var(--color-fg); display: grid; gap: var(--cds-gap-lg); }
-.wd-hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--cds-gap-lg); padding: var(--cds-pad-xl) var(--cds-pad-xl) var(--cds-pad-lg); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line);
-  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-panel) 70%); }
-.wd-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
-.wd-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-ok); }
-.wd-hero h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.2; margin: var(--cds-gap-xs) 0 0; }
-.wd-take { margin: var(--cds-gap-sm) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 62rem; line-height: 1.55; }
-.wd-take b { color: var(--color-fg); font-weight: 500; }
-.wd-tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--color-bg); border: 1px solid var(--color-border-line); flex-wrap: wrap; }
-.wd-tabs button { all: unset; cursor: pointer; padding: 6px 16px; border-radius: 999px; font-size: var(--cds-font-size-body); color: var(--color-fg-muted); transition: background var(--cds-dur-slow), color var(--cds-dur-slow); }
-.wd-tabs button:hover { color: var(--color-fg); }
-.wd-tabs button[aria-selected=true] { background: var(--color-panel); color: var(--color-fg); font-weight: 500; box-shadow: var(--cds-shadow-popover); }
-.wd-page { display: grid; gap: var(--cds-gap-lg); }
-.wd-page[hidden] { display: none; }
-.wd-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
-.wd-filters label { display: inline-flex; align-items: center; gap: 8px; padding: 4px 4px 4px 14px; border-radius: 999px; background: var(--color-panel); border: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-.wd-filters select { border: 0 !important; background: var(--color-bg) !important; border-radius: 999px !important; padding: 4px 10px !important; }
-.wd select, .wd input[type=search] { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); max-width: 100%; }
-.wd input[type=search] { border-radius: 999px; padding-left: 14px; min-width: min(100%, 16rem); }
-.wd-sec { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .04em; margin-bottom: calc(-1 * var(--cds-gap-sm)); }
-.wd-sec::after { content: ""; flex: 1; height: 1px; background: var(--color-border-line); }
-.wd-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-md); }
-@media (min-width: 1000px) { .wd-kpis.five { grid-template-columns: 1.6fr repeat(4, 1fr); } }
-.wd-kpi, .wd-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
-.wd-card { transition: box-shadow var(--cds-dur-slow); }
-.wd-card:hover { box-shadow: var(--cds-shadow-popover); }
-.wd-kpi { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
-.wd-kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--k, var(--color-fg-muted)); }
-.wd-kpi .top { display: flex; align-items: center; gap: 10px; }
-.wd-kpi .ic { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--k); background: color-mix(in srgb, var(--k, #888) 14%, transparent); }
-.wd-kpi .ic svg { width: 18px; height: 18px; }
-.wd-kpi .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.3; }
-.wd-kpi .val { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; margin-top: var(--cds-gap-sm); min-height: 1.3em; overflow-wrap: anywhere; line-height: 1.15; }
-.wd-kpi.hero .val { font-size: calc(var(--cds-font-size-title) * 1.35); }
-.wd-kpi .unit { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
-.wd-kpi .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); min-height: 1.6em; }
-.wd-kpi .spark { margin-top: auto; padding-top: var(--cds-gap-sm); min-height: 36px; }
-.wd-kpi .spark svg { display: block; overflow: visible; }
-.chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px; border-radius: 999px; font-weight: 500; font-variant-numeric: tabular-nums; }
-.chip:empty { display: none; }
-.chip.up { color: var(--color-warn); background: color-mix(in srgb, var(--color-warn) 14%, transparent); }
-.chip.down { color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 14%, transparent); }
-.chip.neu { color: var(--color-fg-muted); background: var(--color-bg); }
-.up { color: var(--color-warn); } .down { color: var(--color-ok); } .bad { color: var(--color-bad); } .warn { color: var(--color-warn); } .neu { color: var(--color-fg-muted); }
-.wd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
-.wd-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--cds-gap-md); }
-.wd-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
-.wd-card .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
-.wd-card .note b { color: var(--color-fg); font-weight: 500; }
-.wd-chart { position: relative; min-height: 260px; }
-.wd-chart.tall { min-height: 340px; }
-.wd-chart svg { display: block; overflow: visible; }
-.wd-chart text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); fill: var(--color-fg-muted); }
-.wd-chart .end, .wd-chart .lab { fill: var(--color-fg); }
-.wd-chart .empty { display: flex; align-items: center; justify-content: center; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.wd-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
-.wd-tip .t { color: var(--cds-text-secondary); margin-bottom: 2px; }
-.wd-tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
-.wd-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
-.wd-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
-.wd-legend i.ln { height: 2px; vertical-align: 3px; border-radius: 0; }
-.wd-tablebar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; margin-bottom: var(--cds-gap-sm); }
-.wd-tbox { max-height: 520px; overflow: auto; }
-.wd table { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
-.wd th { position: sticky; top: 0; background: var(--color-panel); text-align: right; font-weight: 500; border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
-.wd th.l { text-align: left; }
-.wd th button { all: unset; cursor: pointer; display: block; padding: var(--cds-pad-sm); color: var(--color-fg-muted); }
-.wd th[aria-sort] button { color: var(--color-fg); }
-.wd td { padding: var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); text-align: right; white-space: nowrap; }
-.wd td.l { text-align: left; white-space: normal; }
-.wd td.name { min-width: 10rem; font-weight: 500; }
-.wd tbody tr { cursor: pointer; transition: background var(--cds-dur-slow); }
-.wd tbody tr:hover td { background: var(--color-bg); }
-@media (max-width: 640px) { .wd .hide-narrow { display: none; } .wd-hero { padding: var(--cds-pad-lg); } }
-.wd-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
-.wd-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
-.wd [data-dash-source-state=empty] { color: transparent; }
-.wd [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
-.wd-foot { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
-@media (prefers-reduced-motion: no-preference) { .wd-page:not([hidden]) { animation: wdIn var(--cds-dur-slow) var(--cds-ease-out); } @keyframes wdIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } } }
-</style>
-
-
-<div class="wd">
-  <header class="wd-hero" id="top">
-    <div>
-      <div class="wd-src"><span class="dot" id="src-dot"></span><span id="src-stamp">กำลังโหลดข้อมูล…</span><button type="button" class="wd-refresh" id="btn-refresh" title="ดึงข้อมูลล่าสุดจาก Google Sheets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>อัปเดตข้อมูล</button><span class="wd-msg" id="src-msg" role="status"></span></div>
-      <h1>การใช้น้ำในพื้นที่นิคมอุตสาหกรรม / ท่าเรือฯ</h1>
-      <p class="wd-take" id="takeaway"><span class="dash-skeleton">—</span></p>
-    </div>
-    <nav class="wd-tabs" role="tablist">
-      <button role="tab" id="tab-overview" data-page="overview" aria-selected="true">ภาพรวม</button>
-      <button role="tab" id="tab-estate" data-page="estate" aria-selected="false">รายนิคม</button>
-      <button role="tab" id="tab-quality" data-page="quality" aria-selected="false">ตรวจข้อมูล</button>
+<div class="wd app">
+  <!-- ===== side rail ===== -->
+  <aside class="wd-rail" aria-label="เมนู">
+    <div class="orb" aria-hidden="true"></div>
+    <nav class="rail-nav">
+      <button type="button" class="rail-btn" data-go="overview" title="ภาพรวม" aria-label="ภาพรวม"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 4v16M9 10h11"/></svg></button>
+      <button type="button" class="rail-btn" data-go="estate" title="รายนิคม" aria-label="รายนิคม"><svg viewBox="0 0 24 24"><path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18M14 11h2M14 15h2"/></svg></button>
+      <button type="button" class="rail-btn" data-go="quality" title="ตรวจข้อมูล" aria-label="ตรวจข้อมูล"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></button>
+      <button type="button" class="rail-btn" data-jump="table-card" title="ตารางรายนิคม" aria-label="ตารางรายนิคม"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M10 10v9"/></svg></button>
     </nav>
-  </header>
+    <a class="rail-btn rail-foot" href="https://docs.google.com/spreadsheets/d/1Sqr3gzvhHuTGQUqTeh3Bg3P4dwaeNFYhqQzlEsUfzgk/edit?gid=0" target="_blank" rel="noopener" title="เปิด Google Sheets ต้นทาง" aria-label="เปิด Google Sheets ต้นทาง"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></a>
+  </aside>
 
-  <!-- ================= OVERVIEW ================= -->
-  <section class="wd-page" id="overview">
-    <div class="wd-filters">
-      <label>ปี พ.ศ.<select class="wd-year" aria-label="ปี" data-source="overview"></select></label>
-      <label>เดือน<select class="wd-month" aria-label="เดือน" data-source="overview"></select></label>
-      <label>พื้นที่<select class="wd-region" aria-label="พื้นที่" data-source="overview"></select></label>
-    </div>
-
-    <div class="wd-kpis five" id="ov-kpis">
-      <div class="wd-kpi hero" data-k="0"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/></svg></span><span class="lbl">ปริมาณน้ำใช้</span></div><div class="val dash-skeleton" data-source="overview" data-field="use">—</div><div class="unit">ลบ.ม./เดือน · เฉลี่ย <span data-source="overview" data-field="per_day">—</span> ลบ.ม./วัน</div><div class="foot"><span class="chip" data-delta="use"></span><span class="vs" data-vs="use"></span></div><div class="spark" data-spark="use" data-source="overview"></div></div>
-      <div class="wd-kpi" data-k="2"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11a7.5 7.5 0 0 1 13-4.5L20 9"/><path d="M20 4.5V9h-4.5"/><path d="M19.5 13a7.5 7.5 0 0 1-13 4.5L4 15"/><path d="M4 19.5V15h4.5"/></svg></span><span class="lbl">น้ำ 3R (Reduce · Reuse · Recycle)</span></div><div class="val dash-skeleton" data-source="overview" data-field="r3">—</div><div class="unit">ลบ.ม./เดือน · <span data-source="overview" data-field="r3_share">—</span> ของน้ำใช้</div><div class="foot"><span class="chip" data-delta="r3"></span><span class="vs" data-vs="r3"></span></div><div class="spark" data-spark="r3" data-source="overview"></div></div>
-      <div class="wd-kpi" data-k="1"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 7c2 0 2-1.5 4.5-1.5S9.5 7 12 7s2.5-1.5 4.5-1.5S19 7 21 7"/><path d="M3 12c2 0 2-1.5 4.5-1.5S9.5 12 12 12s2.5-1.5 4.5-1.5S19 12 21 12"/><path d="M3 17c2 0 2-1.5 4.5-1.5S9.5 17 12 17s2.5-1.5 4.5-1.5S19 17 21 17"/></svg></span><span class="lbl">ปริมาณน้ำสำรอง</span></div><div class="val dash-skeleton" data-source="overview" data-field="reserve">—</div><div class="unit">ลบ.ม. · พอใช้ ~<span data-source="overview" data-field="reserve_days">—</span> วัน</div><div class="foot"><span class="chip" data-delta="reserve"></span><span class="vs" data-vs="reserve"></span></div><div class="spark" data-spark="reserve" data-source="overview"></div></div>
-      <div class="wd-kpi" data-k="3"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4.5-5.5"/><circle cx="12" cy="17" r="1"/></svg></span><span class="lbl">ภาระระบบบำบัดน้ำเสีย</span></div><div class="val dash-skeleton" data-source="overview" data-field="treat_util">—</div><div class="unit">น้ำเสียเข้าระบบ ÷ ความสามารถ</div><div class="foot"><span class="chip" data-delta="treat_util"></span><span class="vs" data-vs="treat_util"></span></div><div class="spark" data-spark="treat_util" data-source="overview"></div></div>
-      <div class="wd-kpi" data-k="4"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l6-3v14"/><path d="M10 21V4l10 4v13"/><path d="M3 21h18"/><path d="M14 11h2M14 15h2"/></svg></span><span class="lbl">นิคมฯ / ท่าเรือฯ ที่รายงาน</span></div><div class="val dash-skeleton" data-source="overview" data-field="n_estates">—</div><div class="unit">แห่ง</div><div class="foot"><span class="chip" data-delta="n_estates"></span><span class="vs" data-vs="n_estates"></span></div><div class="spark" data-spark="n_estates" data-source="overview"></div></div>
-    </div>
-
-    <div class="wd-sec">ผู้ใช้น้ำรายใหญ่</div>
-    <div class="wd-grid3">
-      <div class="wd-card" id="top-use-card">
-        <h2>10 อันดับที่ใช้น้ำมากที่สุด</h2>
-        <p class="note" id="top-use-note">ลบ.ม./เดือน</p>
-        <div class="wd-chart tall dash-skeleton" id="top-use" data-source="estate_table"></div>
+  <div class="wd-main">
+    <!-- ===== top bar ===== -->
+    <header class="wd-top">
+      <nav class="wd-tabs" role="tablist">
+        <button role="tab" id="tab-overview" data-page="overview" aria-selected="true">ภาพรวม</button>
+        <button role="tab" id="tab-estate" data-page="estate" aria-selected="false">รายนิคม</button>
+        <button role="tab" id="tab-quality" data-page="quality" aria-selected="false">ตรวจข้อมูล</button>
+      </nav>
+      <div class="top-actions">
+        <span class="brand">การใช้น้ำ · นิคมอุตสาหกรรม / ท่าเรือฯ</span>
+        <button type="button" class="btn" id="btn-refresh" title="ดึงข้อมูลล่าสุดจาก Google Sheets"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>อัปเดตข้อมูล</button>
+        <button type="button" class="btn icon" id="btn-theme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่าง/มืด"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
       </div>
-      <div class="wd-card" id="top-r3-card">
-        <h2>10 อันดับที่มีน้ำ 3R มากที่สุด</h2>
-        <p class="note" id="top-r3-note">ลบ.ม./เดือน</p>
-        <div class="wd-chart tall dash-skeleton" id="top-r3" data-source="estate_table"></div>
-      </div>
-      <div class="wd-card" id="top-inf-card">
-        <h2>10 อันดับน้ำเสียเข้าระบบบำบัดมากที่สุด</h2>
-        <p class="note" id="top-inf-note">ลบ.ม./วัน · เส้นจางคือความสามารถของระบบ</p>
-        <div class="wd-chart tall dash-skeleton" id="top-inf" data-source="estate_table"></div>
-      </div>
-    </div>
+    </header>
 
-    <div class="wd-sec">แนวโน้ม</div>
-    <div class="wd-grid">
-      <div class="wd-card" id="trend-card">
-        <h2>ปริมาณน้ำใช้รายเดือน</h2>
-        <p class="note" id="trend-note">คลิกแท่งเพื่อเลือกเดือน · แท่งเข้มคือเดือนที่เลือก</p>
-        <div class="wd-legend" id="trend-legend"></div>
-        <div class="wd-chart dash-skeleton" id="trend" data-source="overview"></div>
+    <!-- ================= OVERVIEW ================= -->
+    <section class="wd-page" id="overview">
+      <div class="wd-pagehead">
+        <div class="ph-text">
+          <h1>ภาพรวม</h1>
+          <p class="wd-take" id="takeaway"><span class="dash-skeleton">—</span></p>
+        </div>
+        <div class="wd-filters">
+          <label class="sel"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><select class="wd-year" aria-label="ปี" data-source="overview"></select></label>
+          <label class="sel"><select class="wd-month" aria-label="เดือน" data-source="overview"></select></label>
+          <label class="sel"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><select class="wd-region" aria-label="พื้นที่" data-source="overview"></select></label>
+        </div>
       </div>
-      <div class="wd-card" id="season-card">
-        <h2>ช่วงไหนใช้น้ำมาก–น้อย</h2>
-        <p class="note" id="season-note">น้ำใช้เฉลี่ยต่อวันของแต่ละเดือน (ปี 2565 เป็นต้นไป) เทียบค่าเฉลี่ยทั้งปี</p>
-        <div class="wd-chart dash-skeleton" id="season" data-source="seasonal"></div>
+
+      <div class="wd-split">
+        <div class="wd-left">
+          <div class="wd-kpis bracket" id="ov-kpis">
+            <div class="wd-kpi" data-k="0">
+              <div class="lbl">ปริมาณน้ำใช้</div>
+              <div class="row"><span class="val dash-skeleton" data-source="overview" data-field="use">—</span><span class="chip" data-delta="use"></span></div>
+              <div class="unit">ลบ.ม./เดือน · <span data-source="overview" data-field="per_day">—</span>/วัน</div>
+              <div class="vs" data-vs="use"></div>
+            </div>
+            <div class="wd-kpi" data-k="2">
+              <div class="lbl" title="Reduce · Reuse · Recycle">น้ำ 3R</div>
+              <div class="row"><span class="val dash-skeleton" data-source="overview" data-field="r3">—</span><span class="chip" data-delta="r3"></span></div>
+              <div class="unit">ลบ.ม./เดือน</div>
+              <div class="vs" data-vs="r3"></div>
+            </div>
+            <div class="wd-kpi" data-k="1">
+              <div class="lbl">ปริมาณน้ำสำรอง</div>
+              <div class="row"><span class="val dash-skeleton" data-source="overview" data-field="reserve">—</span><span class="chip" data-delta="reserve"></span></div>
+              <div class="unit">ลบ.ม. · พอใช้ ~<span data-source="overview" data-field="reserve_days">—</span> วัน</div>
+              <div class="vs" data-vs="reserve"></div>
+            </div>
+          </div>
+
+          <div class="wd-block" id="trend-card">
+            <div class="blk-head">
+              <div><h2>ปริมาณน้ำใช้รายเดือน</h2><p class="note" id="trend-note">คลิกแท่งเพื่อเลือกเดือน</p></div>
+              <div class="wd-legend" id="trend-legend"></div>
+            </div>
+            <div class="wd-chart dash-skeleton" id="trend" data-source="overview"></div>
+          </div>
+        </div>
+
+        <div class="wd-right">
+          <div class="cta">
+            <div><h3>นิคมที่ควรจับตา</h3><p id="watch-sub">นิคมที่เข้าเกณฑ์ในเดือนที่เลือก</p></div>
+            <button type="button" class="btn dark" id="btn-all"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>ดูทั้งหมด</button>
+          </div>
+          <div class="watch bracket" id="watch"></div>
+          <div class="meters" id="meters">
+            <div class="meter"><div class="m-top"><span>นิคมที่รายงานข้อมูล</span><span class="m-val" id="m-est">—</span></div><div class="m-bar"><i id="m-est-bar"></i></div></div>
+            <div class="meter"><div class="m-top"><span>น้ำ 3R ต่อน้ำใช้</span><span class="m-val" id="m-r3">—</span></div><div class="m-bar"><i id="m-r3-bar"></i></div></div>
+            <div class="meter"><div class="m-top"><span>ภาระระบบบำบัดน้ำเสียรวม</span><span class="m-val" id="m-tu">—</span></div><div class="m-bar"><i id="m-tu-bar"></i></div></div>
+            <div class="srcbox">
+              <span class="dot" id="src-dot"></span><span id="src-stamp">กำลังโหลดข้อมูล…</span>
+              <span class="wd-msg" id="src-msg" role="status"></span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <div class="wd-card" id="region-card">
-      <h2>น้ำใช้แยกตามพื้นที่</h2>
-      <p class="note">EEC = ชลบุรี ระยอง ฉะเชิงเทรา · การจัดพื้นที่ทำจากชื่อนิคม ไม่ได้มาจากชีต</p>
-      <div class="wd-chart dash-skeleton" id="region" data-source="overview"></div>
-    </div>
-
-    <div class="wd-sec">รายนิคม</div>
-    <div class="wd-card" id="table-card">
-      <h2>รายนิคม — <span id="table-month">—</span></h2>
-      <p class="note">คลิกแถวเพื่อดูรายละเอียดนิคม · วันสำรอง = น้ำสำรอง ÷ น้ำใช้ต่อวัน (แดง &lt; 7 วัน) · ภาระระบบบำบัด = น้ำเสียเข้าระบบ ÷ ความสามารถ (ส้ม &gt; 90%)</p>
-      <div class="wd-tablebar">
-        <input type="search" class="wd-search" placeholder="ค้นหานิคม จังหวัด หรือพื้นที่" aria-label="ค้นหานิคม">
-        <span class="wd-foot" id="table-count"></span>
+      <div class="wd-sec">ผู้ใช้น้ำรายใหญ่</div>
+      <div class="wd-grid3">
+        <div class="wd-card" id="top-use-card">
+          <h2>10 อันดับที่ใช้น้ำมากที่สุด</h2>
+          <p class="note" id="top-use-note">ลบ.ม./เดือน</p>
+          <div class="wd-chart tall dash-skeleton" id="top-use" data-source="estate_table"></div>
+        </div>
+        <div class="wd-card" id="top-r3-card">
+          <h2>10 อันดับที่มีน้ำ 3R มากที่สุด</h2>
+          <p class="note" id="top-r3-note">ลบ.ม./เดือน</p>
+          <div class="wd-chart tall dash-skeleton" id="top-r3" data-source="estate_table"></div>
+        </div>
+        <div class="wd-card" id="top-inf-card">
+          <h2>10 อันดับน้ำเสียเข้าระบบบำบัดมากที่สุด</h2>
+          <p class="note" id="top-inf-note">ลบ.ม./วัน · แถบจางคือความสามารถของระบบ</p>
+          <div class="wd-chart tall dash-skeleton" id="top-inf" data-source="estate_table"></div>
+        </div>
       </div>
-      <div class="wd-tbox">
-        <table id="estate-table" data-source="estate_table" data-row-key="period,estate">
-          <thead><tr>
-            <th data-field="estate" class="l"><button>นิคม</button></th>
-            <th data-field="province" class="l hide-narrow"><button>จังหวัด</button></th>
-            <th data-field="use"><button>น้ำใช้ (ลบ.ม.)</button></th>
-            <th data-field="yoy"><button>เทียบปีก่อน</button></th>
-            <th data-field="r3" class="hide-narrow"><button>3R (ลบ.ม.)</button></th>
-            <th data-field="reserve_days"><button>วันสำรอง</button></th>
-            <th data-field="treat_util" class="hide-narrow"><button>ภาระระบบบำบัด</button></th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
+
+      <div class="wd-sec">แนวโน้ม</div>
+      <div class="wd-grid">
+        <div class="wd-card" id="season-card">
+          <h2>ช่วงไหนใช้น้ำมาก–น้อย</h2>
+          <p class="note" id="season-note">น้ำใช้เฉลี่ยต่อวันของแต่ละเดือน (ปี 2565 เป็นต้นไป) เทียบค่าเฉลี่ยทั้งปี</p>
+          <div class="wd-chart dash-skeleton" id="season" data-source="seasonal"></div>
+        </div>
+        <div class="wd-card" id="region-card">
+          <h2>น้ำใช้แยกตามพื้นที่</h2>
+          <p class="note">EEC = ชลบุรี ระยอง ฉะเชิงเทรา · การจัดพื้นที่ทำจากชื่อนิคม ไม่ได้มาจากชีต</p>
+          <div class="wd-chart dash-skeleton" id="region" data-source="overview"></div>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <!-- ================= ESTATE ================= -->
-  <section class="wd-page" id="estate" hidden>
-    <div class="wd-filters">
-      <label>นิคมอุตสาหกรรม / ท่าเรือฯ<select class="wd-estate" aria-label="นิคม" data-source="estate_table"></select></label>
-      <label>ตั้งแต่ปี<select class="wd-y0" aria-label="ตั้งแต่ปี" data-source="estate_table"></select></label>
-      <label>ถึงปี<select class="wd-y1" aria-label="ถึงปี" data-source="estate_table"></select></label>
-    </div>
-    <p class="wd-take" id="es-take"></p>
-
-    <div class="wd-kpis" id="es-kpis">
-      <div class="wd-kpi" data-k="0"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/></svg></span><span class="lbl">ปริมาณน้ำใช้</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="use">—</div><div class="unit">ลบ.ม./เดือน · <span class="es-when"></span></div><div class="foot"><span class="chip" data-delta="use"></span><span class="vs" data-vs="use"></span></div><div class="spark" data-spark="use" data-source="estate_table"></div></div>
-      <div class="wd-kpi" data-k="2"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11a7.5 7.5 0 0 1 13-4.5L20 9"/><path d="M20 4.5V9h-4.5"/><path d="M19.5 13a7.5 7.5 0 0 1-13 4.5L4 15"/><path d="M4 19.5V15h4.5"/></svg></span><span class="lbl">น้ำ 3R</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="r3">—</div><div class="unit">ลบ.ม./เดือน · <span data-source="estate_table" data-field="r3_share">—</span> ของน้ำใช้</div><div class="foot"></div><div class="spark" data-spark="r3" data-source="estate_table"></div></div>
-      <div class="wd-kpi" data-k="3"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4.5-5.5"/><circle cx="12" cy="17" r="1"/></svg></span><span class="lbl">ระบบบำบัดน้ำเสีย</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="capacity_day">—</div><div class="unit">ลบ.ม./วัน · ใช้ไป <span data-source="estate_table" data-field="treat_util">—</span></div><div class="foot"></div><div class="spark" data-spark="capacity_day" data-source="estate_table"></div></div>
-      <div class="wd-kpi" data-k="1"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 7c2 0 2-1.5 4.5-1.5S9.5 7 12 7s2.5-1.5 4.5-1.5S19 7 21 7"/><path d="M3 12c2 0 2-1.5 4.5-1.5S9.5 12 12 12s2.5-1.5 4.5-1.5S19 12 21 12"/><path d="M3 17c2 0 2-1.5 4.5-1.5S9.5 17 12 17s2.5-1.5 4.5-1.5S19 17 21 17"/></svg></span><span class="lbl">ปริมาณน้ำสำรอง</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="reserve">—</div><div class="unit">ลบ.ม. · พอใช้ ~<span data-source="estate_table" data-field="reserve_days">—</span> วัน</div><div class="foot"></div><div class="spark" data-spark="reserve" data-source="estate_table"></div></div>
-    </div>
-
-    <div class="wd-card" id="es-use-card">
-      <h2>ปริมาณน้ำใช้และน้ำ 3R รายเดือน</h2>
-      <p class="note">ลบ.ม./เดือน</p>
-      <div class="wd-legend" id="es-use-legend"></div>
-      <div class="wd-chart dash-skeleton" id="es-use" data-source="estate_table"></div>
-    </div>
-    <div class="wd-grid">
-      <div class="wd-card" id="es-ww-card">
-        <h2>น้ำเสียเทียบความสามารถระบบบำบัด</h2>
-        <p class="note">ลบ.ม./วัน</p>
-        <div class="wd-legend" id="es-ww-legend"></div>
-        <div class="wd-chart dash-skeleton" id="es-ww" data-source="estate_table"></div>
+      <div class="wd-sec">รายนิคม</div>
+      <div class="wd-card" id="table-card">
+        <div class="blk-head">
+          <div><h2>รายนิคม — <span id="table-month">—</span></h2>
+          <p class="note">คลิกแถวเพื่อดูรายละเอียดนิคม · วันสำรอง = น้ำสำรอง ÷ น้ำใช้ต่อวัน (แดง &lt; 7 วัน) · ภาระระบบบำบัด = น้ำเสียเข้าระบบ ÷ ความสามารถ (ส้ม &gt; 90%)</p></div>
+          <div class="wd-tablebar">
+            <label class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M20 20l-4.2-4.2"/></svg><input type="search" class="wd-search" placeholder="ค้นหานิคม จังหวัด หรือพื้นที่" aria-label="ค้นหานิคม"></label>
+            <span class="wd-foot" id="table-count"></span>
+          </div>
+        </div>
+        <div class="wd-tbox">
+          <table id="estate-table" data-source="estate_table" data-row-key="period,estate">
+            <thead><tr>
+              <th data-field="estate" class="l"><button>นิคม</button></th>
+              <th data-field="province" class="l hide-narrow"><button>จังหวัด</button></th>
+              <th data-field="use"><button>น้ำใช้ (ลบ.ม.)</button></th>
+              <th data-field="yoy"><button>เทียบปีก่อน</button></th>
+              <th data-field="r3" class="hide-narrow"><button>3R (ลบ.ม.)</button></th>
+              <th data-field="reserve_days"><button>วันสำรอง</button></th>
+              <th data-field="treat_util" class="hide-narrow"><button>ภาระระบบบำบัด</button></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
-      <div class="wd-card" id="es-res-card">
-        <h2>ปริมาณน้ำสำรอง</h2>
-        <p class="note">ลบ.ม. (แกนเริ่มที่ศูนย์) · ตัวเลขในทูลทิปคือจำนวนวันที่พอใช้</p>
-        <div class="wd-chart dash-skeleton" id="es-res" data-source="estate_table"></div>
-      </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- ================= QUALITY ================= -->
-  <section class="wd-page" id="quality" hidden>
-    <div class="wd-card" id="quality-card">
-      <h2>ค่าที่ควรตรวจสอบในชีต</h2>
-      <p class="note">น้ำใช้ที่ต่ำกว่า 25% หรือสูงกว่า 4 เท่า และน้ำสำรองที่ต่ำกว่า 10% หรือสูงกว่า 10 เท่า ของค่ากลางของนิคมนั้นเอง อาจเป็นการพิมพ์ผิดหรือหน่วยผิด · คลิกแถวเพื่อดูกราฟของนิคม</p>
-      <div class="wd-tbox">
-        <table id="quality-table" data-source="outliers" data-row-key="id">
-          <thead><tr>
-            <th data-field="estate" class="l"><button>นิคม</button></th>
-            <th data-field="period" class="l"><button>เดือน</button></th>
-            <th data-field="field" class="l"><button>รายการ</button></th>
-            <th data-field="value"><button>ค่าที่กรอก</button></th>
-            <th data-field="median"><button>ค่ากลางของนิคม</button></th>
-            <th data-field="ratio"><button>เท่าของค่ากลาง</button></th>
-          </tr></thead>
-          <tbody></tbody>
-        </table>
+    <!-- ================= ESTATE ================= -->
+    <section class="wd-page" id="estate" hidden>
+      <div class="wd-pagehead">
+        <div class="ph-text">
+          <h1>รายนิคม</h1>
+          <p class="wd-take" id="es-take"></p>
+        </div>
+        <div class="wd-filters">
+          <label class="sel wide"><svg viewBox="0 0 24 24"><path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18"/></svg><select class="wd-estate" aria-label="นิคม" data-source="estate_table"></select></label>
+          <label class="sel"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><select class="wd-y0" aria-label="ตั้งแต่ปี" data-source="estate_table"></select></label>
+          <span class="dash-to">ถึง</span>
+          <label class="sel"><select class="wd-y1" aria-label="ถึงปี" data-source="estate_table"></select></label>
+        </div>
       </div>
-    </div>
-  </section>
 
-  <p class="wd-foot">ที่มา: Google Sheets “0 ไฟล์รวมน้ำ 64-ปจบ” ชีต1 แถว 1–74 (อ่านอย่างเดียว) · ตัวเลขรวมคำนวณจากข้อมูลรายนิคม อาจต่างจากคอลัมน์ยอดรวมในชีตเล็กน้อยในเดือนที่มีนิคมใหม่</p>
+      <div class="wd-kpis bracket four" id="es-kpis">
+        <div class="wd-kpi" data-k="0">
+          <div class="lbl">ปริมาณน้ำใช้</div>
+          <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="use">—</span><span class="chip" data-delta="use"></span></div>
+          <div class="unit">ลบ.ม./เดือน · <span class="es-when"></span></div>
+          <div class="vs" data-vs="use"></div>
+        </div>
+        <div class="wd-kpi" data-k="2">
+          <div class="lbl">น้ำ 3R</div>
+          <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="r3">—</span></div>
+          <div class="unit">ลบ.ม./เดือน · <span data-source="estate_table" data-field="r3_share">—</span> ของน้ำใช้</div>
+        </div>
+        <div class="wd-kpi" data-k="3">
+          <div class="lbl">ความสามารถระบบบำบัด</div>
+          <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="capacity_day">—</span></div>
+          <div class="unit">ลบ.ม./วัน · ใช้ไป <span data-source="estate_table" data-field="treat_util">—</span></div>
+        </div>
+        <div class="wd-kpi" data-k="1">
+          <div class="lbl">ปริมาณน้ำสำรอง</div>
+          <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="reserve">—</span></div>
+          <div class="unit">ลบ.ม. · พอใช้ ~<span data-source="estate_table" data-field="reserve_days">—</span> วัน</div>
+        </div>
+      </div>
+
+      <div class="wd-card" id="es-use-card">
+        <div class="blk-head">
+          <div><h2>ปริมาณน้ำใช้และน้ำ 3R รายเดือน</h2><p class="note">ลบ.ม./เดือน</p></div>
+          <div class="wd-legend" id="es-use-legend"></div>
+        </div>
+        <div class="wd-chart dash-skeleton" id="es-use" data-source="estate_table"></div>
+      </div>
+      <div class="wd-grid">
+        <div class="wd-card" id="es-ww-card">
+          <h2>น้ำเสียเทียบความสามารถระบบบำบัด</h2>
+          <p class="note">ลบ.ม./วัน</p>
+          <div class="wd-legend" id="es-ww-legend"></div>
+          <div class="wd-chart dash-skeleton" id="es-ww" data-source="estate_table"></div>
+        </div>
+        <div class="wd-card" id="es-res-card">
+          <h2>ปริมาณน้ำสำรอง</h2>
+          <p class="note">ลบ.ม. (แกนเริ่มที่ศูนย์) · ชี้ที่เส้นเพื่อดูจำนวนวันที่พอใช้</p>
+          <div class="wd-chart dash-skeleton" id="es-res" data-source="estate_table"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= QUALITY ================= -->
+    <section class="wd-page" id="quality" hidden>
+      <div class="wd-pagehead">
+        <div class="ph-text">
+          <h1>ตรวจข้อมูล</h1>
+          <p class="wd-take">ค่าในชีตที่ห่างจากค่าปกติของนิคมนั้นมาก อาจเป็นการพิมพ์ผิดหรือหน่วยผิด · หน้านี้แค่แสดงให้เห็น ไม่ได้แก้ชีต</p>
+        </div>
+      </div>
+      <div class="wd-card" id="quality-card">
+        <p class="note">น้ำใช้ที่ต่ำกว่า 25% หรือสูงกว่า 4 เท่า และน้ำสำรองที่ต่ำกว่า 10% หรือสูงกว่า 10 เท่า ของค่ากลางของนิคมนั้นเอง · คลิกแถวเพื่อดูกราฟของนิคม</p>
+        <div class="wd-tbox">
+          <table id="quality-table" data-source="outliers" data-row-key="id">
+            <thead><tr>
+              <th data-field="estate" class="l"><button>นิคม</button></th>
+              <th data-field="period" class="l"><button>เดือน</button></th>
+              <th data-field="field" class="l"><button>รายการ</button></th>
+              <th data-field="value"><button>ค่าที่กรอก</button></th>
+              <th data-field="median"><button>ค่ากลางของนิคม</button></th>
+              <th data-field="ratio"><button>เท่าของค่ากลาง</button></th>
+            </tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <footer class="wd-foot page-foot">ที่มา: Google Sheets “0 ไฟล์รวมน้ำ 64-ปจบ” ชีต1 แถว 1–74 (อ่านอย่างเดียว) · ตัวเลขรวมคำนวณจากข้อมูลรายนิคม อาจต่างจากคอลัมน์ยอดรวมในชีตเล็กน้อยในเดือนที่มีนิคมใหม่</footer>
+  </div>
 </div>
-
 </main>
 <script>
 // Minimal stand-in for the dashboard runtime: loaders turn sheet values into rows, calcs derive tables, onData redraws.
@@ -628,15 +824,13 @@ dash.calc('outliers', {
     return Math.ceil(mw) + 10;
   }
   function yearTicks(svg, periods, xf, h) {
-    let lastX = -Infinity;
-    const meas = svg.append('text').text('2569');
-    const tw = meas.node().getComputedTextLength() + 8; meas.remove();
+    let lastEnd = -Infinity;
     for (const p of periods) {
       if (!p.endsWith('-01') && p !== periods[0]) continue;
       const x = xf(p);
-      if (x - lastX < tw) continue;
-      svg.append('text').attr('x', x).attr('y', h - 6).text(p.endsWith('-01') ? p.slice(0, 4) : lab(p));
-      lastX = x;
+      if (x < lastEnd + 10) continue;
+      const t = svg.append('text').attr('x', x).attr('y', h - 6).text(p.endsWith('-01') ? p.slice(0, 4) : lab(p));
+      lastEnd = x + t.node().getComputedTextLength();
     }
   }
 
@@ -661,9 +855,9 @@ dash.calc('outliers', {
     svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', m.t).attr('y2', h - m.b).attr('stroke', 'var(--cds-chart-grid)');
     svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', h - 6).attr('text-anchor', 'middle').text(fAxis);
     if (opts.ref) svg.append('g').selectAll('rect').data(rows.filter((r) => r[opts.ref] > 0)).join('rect')
-      .attr('x', x0).attr('y', (r) => y(r.estate)).attr('height', y.bandwidth()).attr('width', (r) => x(r[opts.ref]) - x0).attr('rx', 4).attr('fill', muted).attr('opacity', 0.45);
+      .attr('x', x0).attr('y', (r) => y(r.estate)).attr('height', y.bandwidth()).attr('width', (r) => x(r[opts.ref]) - x0).attr('rx', 6).attr('fill', muted).attr('opacity', 0.7);
     svg.append('g').selectAll('rect').data(rows).join('rect')
-      .attr('x', x0).attr('y', (r) => y(r.estate)).attr('height', y.bandwidth()).attr('width', (r) => Math.max(1, x(r[key]) - x0)).attr('rx', 4).attr('fill', color);
+      .attr('x', x0).attr('y', (r) => y(r.estate)).attr('height', y.bandwidth()).attr('width', (r) => Math.max(1, x(r[key]) - x0)).attr('rx', 6).attr('fill', color);
     svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lab').attr('x', lw).attr('text-anchor', 'end')
       .attr('y', (r) => y(r.estate) + y.bandwidth() / 2 + 4).text((r) => { const s = short(r.estate); return s; })
       .each(function () { const n = this; let s = n.textContent; while (n.getComputedTextLength() > lw && s.length > 3) { s = s.slice(0, -2); n.textContent = s + '…'; } });
@@ -680,13 +874,13 @@ dash.calc('outliers', {
   function vbars(box, rows, opts) {
     fresh(box);
     if (!rows.length) { emptyLine(box, 'ไม่มีข้อมูล'); return; }
-    const w = Math.max(280, box.clientWidth), h = 260, m = { t: 16, r: 4, b: 24, l: 4 };
+    const w = Math.max(280, box.clientWidth), h = opts.h || 260, m = { t: 16, r: 4, b: 24, l: 4 };
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
     const y = d3.scaleLinear([0, d3.max(rows, (r) => r[opts.key]) * 1.08 || 1], [h - m.b, m.t]).nice();
     m.l = axisW(svg, y);
     const x = d3.scaleBand(rows.map((r) => r.period), [m.l, w - m.r]).paddingInner(0.25);
     yGrid(svg, y, m.l, w - m.r);
-    const rx = Math.min(4, x.bandwidth() / 2);
+    const rx = Math.min(8, x.bandwidth() / 2);
     svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.period)).attr('width', x.bandwidth())
       .attr('y', (r) => y(r[opts.key])).attr('height', (r) => y(0) - y(r[opts.key])).attr('rx', rx)
       .attr('fill', (r) => (opts.sel ? (r.period === opts.sel ? dash.colors[0] : muted) : dash.colors[0]));
@@ -926,7 +1120,7 @@ dash.calc('outliers', {
       });
       document.querySelectorAll('#ov-kpis [data-delta]').forEach((el) => {
         const f = el.dataset.delta;
-        chip(el, el.parentNode.querySelector(`[data-vs="${f}"]`), cur ? cur[f] : null, cur ? cur[f + '_prev'] : null,
+        chip(el, el.closest('.wd-kpi').querySelector(`[data-vs="${f}"]`), cur ? cur[f] : null, cur ? cur[f + '_prev'] : null,
           f === 'use' ? 'use' : f === 'r3' || f === 'reserve' ? 'good' : f === 'treat_util' ? 'pt' : 'count', prevLabel);
       });
       const hist = all.filter((r) => r.region === region && r.period <= sel).slice(-12);
@@ -949,7 +1143,7 @@ dash.calc('outliers', {
         const rr = all.filter((r) => r.region === region);
         document.getElementById('trend-note').textContent = (region === 'ทั้งหมด' ? 'ทุกพื้นที่' : region) + ' · คลิกแท่งเพื่อเลือกเดือน · แท่งเข้มคือ ' + labLong(sel);
         legend(document.getElementById('trend-legend'), [[dash.colors[0], 'เดือนที่เลือก'], [muted, 'เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
-        vbars(document.getElementById('trend'), rr, { key: 'use', key2: 'r3', sel, click: (r) => dash.setParams({ month: r.period }),
+        vbars(document.getElementById('trend'), rr, { key: 'use', key2: 'r3', sel, h: 340, click: (r) => dash.setParams({ month: r.period }),
           tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fInt(r.r3)], [null, 'นิคมที่รายงาน', fInt(r.n_estates)]] });
         // regions
         const regs = regions.filter((g) => g !== 'ทั้งหมด');
@@ -1012,7 +1206,7 @@ dash.calc('outliers', {
         const ec = document.querySelector('#es-kpis [data-delta="use"]');
         if (last) {
           const pl = MON[Number(last.period.slice(5)) - 1] + ' ' + (Number(last.period.slice(0, 4)) - 1);
-          chip(ec, ec.parentNode.querySelector('[data-vs="use"]'), last.use, last.use_prev, 'use', pl);
+          chip(ec, ec.closest('.wd-kpi').querySelector('[data-vs="use"]'), last.use, last.use_prev, 'use', pl);
           document.querySelector('#es-kpis .es-when').textContent = labLong(last.period);
         }
         const recent = rng.slice(-12);
@@ -1026,8 +1220,8 @@ dash.calc('outliers', {
           et.append(document.createTextNode(short(picked) + ' (' + (rng[0].province || '—') + ') ช่วง ' + y0 + '–' + y1 + ' ใช้น้ำเฉลี่ย ' + fInt(avg) + ' ลบ.ม./เดือน · สูงสุด ' + labLong(hi.period) + ' ' + fInt(hi.use) + ' · ต่ำสุด ' + labLong(lo.period) + ' ' + fInt(lo.use)
             + (util.length ? ' · ภาระระบบบำบัดเฉลี่ย ' + fPct(d3.mean(util, (r) => r.treat_util)) : '')));
         }
-        legend(document.getElementById('es-use-legend'), [[dash.colors[0], 'ปริมาณน้ำใช้'], [dash.colors[2], 'ปริมาณน้ำ 3R']]);
-        vbars(document.getElementById('es-use'), rng, { key: 'use', key2: 'r3',
+        legend(document.getElementById('es-use-legend'), [[dash.colors[0], 'เดือนล่าสุด'], [muted, 'น้ำใช้เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
+        vbars(document.getElementById('es-use'), rng, { key: 'use', key2: 'r3', sel: rng.length ? rng[rng.length - 1].period : null,
           tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fNum(r.r3)], [null, 'เทียบปีก่อน', fSigned(r.yoy)]] });
         const per = rng.map((r) => r.period);
         legend(document.getElementById('es-ww-legend'), [[dash.colors[3], 'น้ำเสียเข้าระบบ (Influent)', true], [dash.colors[1], 'น้ำเสียผ่านการบำบัด (Effluent)', true], ['var(--cds-chart-status-critical)', 'ความสามารถของระบบ', true]]);
@@ -1065,6 +1259,105 @@ dash.calc('outliers', {
 })();
 </script>
 
+<script>
+// Theme extras: side rail, light/dark switch, "นิคมที่ควรจับตา" list and the meters beside it.
+(function () {
+  const MONL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const labLong = (p) => { const [y, m] = String(p).split('-'); return MONL[Number(m) - 1] + ' ' + y; };
+  const short = (n) => String(n).replace(/^\s*\d+\.\s*/, '');
+  const fInt = d3.format(',.0f');
+  const fPct = (v) => (v == null ? '—' : d3.format('.1%')(v));
+  const ICON = {
+    reserve: '<svg viewBox="0 0 24 24"><path d="M3 8c2 0 2-1.5 4.5-1.5S9.5 8 12 8s2.5-1.5 4.5-1.5S19 8 21 8"/><path d="M3 13c2 0 2-1.5 4.5-1.5S9.5 13 12 13s2.5-1.5 4.5-1.5S19 13 21 13"/><path d="M3 18c2 0 2-1.5 4.5-1.5S9.5 18 12 18s2.5-1.5 4.5-1.5S19 18 21 18"/></svg>',
+    treat: '<svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4.5-5.5"/><circle cx="12" cy="17" r="1"/></svg>',
+    rise: '<svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7"/><path d="M15 8h5v5"/></svg>',
+  };
+
+  // ----- rail: mirrors the tabs -----
+  const tabs = [...document.querySelectorAll('.wd-tabs button')];
+  const rail = [...document.querySelectorAll('.rail-btn[data-go]')];
+  const syncRail = () => {
+    const cur = (tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]).dataset.page;
+    rail.forEach((b) => (b.dataset.go === cur ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
+  };
+  rail.forEach((b) => b.addEventListener('click', () => { document.getElementById('tab-' + b.dataset.go).click(); window.scrollTo({ top: 0 }); }));
+  new MutationObserver(syncRail).observe(document.querySelector('.wd-tabs'), { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
+  syncRail();
+  const jumpTable = () => {
+    document.getElementById('tab-overview').click();
+    requestAnimationFrame(() => document.getElementById('table-card').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  };
+  document.querySelector('.rail-btn[data-jump]').addEventListener('click', jumpTable);
+  document.getElementById('btn-all').addEventListener('click', jumpTable);
+
+  // ----- light / dark -----
+  const root = document.documentElement;
+  const sysDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
+  try { const saved = localStorage.getItem('wd-theme'); if (saved) root.dataset.theme = saved; } catch (e) { /* storage off */ }
+  document.getElementById('btn-theme').addEventListener('click', () => {
+    const dark = root.dataset.theme ? root.dataset.theme === 'dark' : sysDark();
+    root.dataset.theme = dark ? 'light' : 'dark';
+    try { localStorage.setItem('wd-theme', root.dataset.theme); } catch (e) { /* storage off */ }
+  });
+
+  // ----- watch list + meters -----
+  const watch = document.getElementById('watch');
+  const openEstate = (name) => { dash.setParams({ estate: name }); document.getElementById('tab-estate').click(); window.scrollTo({ top: 0 }); };
+  const setMeter = (id, text, frac) => {
+    const v = document.getElementById(id); v.replaceChildren();
+    if (Array.isArray(text)) { v.append(text[0]); const s = document.createElement('small'); s.textContent = text[1]; v.append(s); } else v.textContent = text;
+    document.getElementById(id + '-bar').style.width = Math.max(0, Math.min(1, frac || 0)) * 100 + '%';
+  };
+
+  dash.onData(() => {
+    const O = dash.data('overview'), E = dash.data('estate_table'), R = dash.data('regions');
+    if (O.status !== 'ok' || E.status !== 'ok' || !O.data.length) return;
+    const P = dash.params();
+    const periods = [...new Set(O.data.map((r) => r.period))].sort();
+    const sel = periods.includes(P.month) ? P.month : periods[periods.length - 1];
+    const region = P.region || 'ทั้งหมด';
+    const cur = O.data.find((r) => r.period === sel && r.region === region);
+    const rows = E.data.filter((r) => r.period === sel && (region === 'ทั้งหมด' || r.region === region));
+
+    // what to watch: reserve under 7 days, treatment over 90 %, use up over 20 % on a year ago
+    const items = [];
+    for (const r of rows) {
+      if (r.reserve_days != null && r.reserve_days < 7) items.push({ r, kind: 'reserve', sev: 3 + (7 - r.reserve_days) / 7, cls: 'bad', sub: r.reserve_days < 1 ? 'น้ำสำรองพอใช้ไม่ถึง 1 วัน (' + fInt(r.reserve) + ' ลบ.ม.)' : 'น้ำสำรองพอใช้ ~' + fInt(r.reserve_days) + ' วัน' });
+      if (r.treat_util != null && r.treat_util > 0.9) items.push({ r, kind: 'treat', sev: 2 + r.treat_util, cls: 'warn', sub: 'ระบบบำบัดใช้ไป ' + fPct(r.treat_util) + ' ของความสามารถ' });
+      if (r.yoy != null && r.yoy > 0.2 && r.use >= 50000) items.push({ r, kind: 'rise', sev: 1 + Math.min(r.yoy, 1), cls: 'warn', sub: 'ใช้น้ำเพิ่ม ' + d3.format('.0%')(r.yoy) + ' จากปีก่อน' });
+    }
+    items.sort((a, b) => b.sev - a.sev);
+    const shown = items.slice(0, 5);
+    document.getElementById('watch-sub').textContent = labLong(sel) + (region === 'ทั้งหมด' ? '' : ' · ' + region) + ' · ' + (items.length ? 'เข้าเกณฑ์ ' + items.length + ' รายการ' : 'ไม่มีรายการที่เข้าเกณฑ์');
+    watch.replaceChildren();
+    if (!shown.length) {
+      const d = document.createElement('div'); d.className = 'none'; d.textContent = 'ไม่มีนิคมที่น้ำสำรองต่ำกว่า 7 วัน ระบบบำบัดเกิน 90% หรือใช้น้ำเพิ่มเกิน 20% ในเดือนนี้'; watch.append(d);
+    }
+    for (const it of shown) {
+      const row = document.createElement('div'); row.className = 'item';
+      const ib = document.createElement('div'); ib.className = 'ibox';
+      const ic = document.createElement('span'); ic.className = it.cls; ic.innerHTML = ICON[it.kind]; ib.append(ic);
+      const tx = document.createElement('div'); tx.className = 'txt';
+      const t1 = document.createElement('div'); t1.className = 't1'; t1.textContent = short(it.r.estate);
+      const t2 = document.createElement('div'); t2.className = 't2'; t2.textContent = it.sub;
+      tx.append(t1, t2);
+      const ac = document.createElement('div'); ac.className = 'act';
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'ดูนิคม';
+      b.addEventListener('click', () => openEstate(it.r.estate));
+      ac.append(b);
+      row.append(ib, tx, ac);
+      watch.append(row);
+    }
+
+    const total = R.status === 'ok' ? (region === 'ทั้งหมด' ? R.data.length : R.data.filter((x) => x.region === region).length) : null;
+    if (cur) {
+      setMeter('m-est', [fInt(cur.n_estates), total ? '/' + total : ''], total ? cur.n_estates / total : 0);
+      setMeter('m-r3', fPct(cur.r3_share), cur.r3_share);
+      setMeter('m-tu', fPct(cur.treat_util), cur.treat_util);
+    }
+  });
+})();
+</script>
 <script>
 // Loads data.json on open; the "อัปเดตข้อมูล" button pulls the latest values straight from the Google Sheet.
 (function () {
