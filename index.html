@@ -644,6 +644,7 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
 }
 .wd-head2 h1 .nw { white-space: nowrap; }
 @media (max-width: 420px) { .wd-head2 h1 { font-size: 23px; } }
+.watch .t2 .tag { display: inline-block; margin-left: 4px; padding: 0 8px; border-radius: 999px; font-size: 12.5px; font-weight: 500; color: var(--color-fg-muted); background: var(--hover); border: 1px dashed var(--tick); cursor: help; white-space: nowrap; }
 </style>
 </head>
 <body>
@@ -706,6 +707,7 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
             <span class="to">–</span>
             <select class="wd-y1" aria-label="ถึงปี" data-source="estate_table"></select>
           </div>
+          <label class="sel"><span class="cap">การ์ดแสดงเดือน</span><select class="wd-es-month" aria-label="เดือนที่การ์ดแสดง" data-source="estate_table"></select></label>
         </div>
         <button type="button" class="icon-btn" id="btn-theme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่าง/มืด"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
       </div>
@@ -851,17 +853,17 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
         <div class="wd-kpi" data-k="2">
           <div class="lbl">น้ำ 3R</div><div class="when"></div>
           <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="r3">—</span></div>
-          <div class="unit">ลบ.ม./เดือน · <span data-source="estate_table" data-field="r3_share">—</span> ของน้ำใช้</div>
+          <div class="unit">ลบ.ม./เดือน<span class="rd"> · <span data-source="estate_table" data-field="r3_share">—</span> ของน้ำใช้</span></div>
         </div>
         <div class="wd-kpi" data-k="3">
           <div class="lbl">ความสามารถระบบบำบัด</div><div class="when"></div>
           <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="capacity_day">—</span></div>
-          <div class="unit">ลบ.ม./วัน · ใช้ไป <span data-source="estate_table" data-field="treat_util">—</span></div>
+          <div class="unit">ลบ.ม./วัน<span class="rd"> · ใช้ไป <span data-source="estate_table" data-field="treat_util">—</span></span></div>
         </div>
         <div class="wd-kpi" data-k="1">
           <div class="lbl">ปริมาณน้ำสำรอง</div><div class="when"></div>
           <div class="row"><span class="val dash-skeleton" data-source="estate_table" data-field="reserve">—</span></div>
-          <div class="unit">ลบ.ม. · พอใช้ ~<span data-source="estate_table" data-field="reserve_days">—</span> วัน</div>
+          <div class="unit">ลบ.ม.<span class="rd"> · พอใช้ ~<span data-source="estate_table" data-field="reserve_days">—</span> วัน</span></div>
         </div>
       </div>
 
@@ -920,7 +922,7 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
           <span class="wd-foot" id="watch-filter"></span>
         </div>
         <div class="watch" id="watch-list"></div>
-        <p class="note watch-rule">เกณฑ์: น้ำสำรองพอใช้น้อยกว่า 7 วัน · ระบบบำบัดใช้ไปเกิน 90% ของความสามารถ · ใช้น้ำเพิ่มเกิน 20% จากเดือนเดียวกันปีก่อน (เฉพาะนิคมที่ใช้น้ำตั้งแต่ 50,000 ลบ.ม./เดือน) · คลิกการ์ดด้านบนเพื่อกรองตามประเภท</p>
+        <p class="note watch-rule">เกณฑ์: น้ำสำรองพอใช้น้อยกว่า 7 วัน · ระบบบำบัดใช้ไปเกิน 90% ของความสามารถ · ใช้น้ำเพิ่มเกิน 20% จากเดือนเดียวกันปีก่อน (เฉพาะนิคมที่ใช้น้ำตั้งแต่ 50,000 ลบ.ม./เดือน) · คลิกการ์ดด้านบนเพื่อกรองตามประเภท · ป้าย “ค่าเดิม N เดือนติด” (น้ำใช้ / น้ำเสีย) คือค่าที่ซ้ำเดิมตั้งแต่ 6 เดือนขึ้นไป อาจเป็นค่ายกยอดมา ไม่ได้วัดใหม่ ควรตรวจกับผู้กรอก</p>
       </div>
     </section>
 
@@ -931,12 +933,12 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
         <div><dt>น้ำ 3R</dt><dd>น้ำที่ลดการใช้ ใช้ซ้ำ หรือนำกลับมาใช้ใหม่ (Reduce · Reuse · Recycle) ต่อเดือน · สัดส่วน = น้ำ 3R ÷ น้ำใช้</dd></div>
         <div><dt>วันสำรอง</dt><dd>น้ำสำรอง ÷ น้ำใช้ต่อวัน บอกว่าน้ำสำรองพอใช้ได้ประมาณกี่วันหากไม่มีน้ำเข้า (แดงเมื่อน้อยกว่า 7 วัน)</dd></div>
         <div><dt>ภาระระบบบำบัด</dt><dd>น้ำเสียเข้าระบบ (Influent) ÷ ความสามารถของระบบบำบัด ต่อวัน · ภาพรวมคิดเฉพาะนิคมที่มีทั้งสองค่า (ส้มเมื่อเกิน 90%)</dd></div>
-        <div><dt>เทียบปีก่อน</dt><dd>เทียบกับเดือนเดียวกันของปีก่อนหน้า ▲ สีส้ม = ใช้น้ำเพิ่ม · ▼ สีเขียว = ใช้น้ำลด (สำหรับ 3R และน้ำสำรอง เพิ่มขึ้นเป็นสีเขียว)</dd></div>
+        <div><dt>เทียบปีก่อน</dt><dd>เทียบกับเดือนเดียวกันของปีก่อนหน้า โดยนับเฉพาะนิคมที่มีข้อมูลทั้งสองเดือน (นิคมที่เพิ่งเริ่มรายงานจะไม่ทำให้ตัวเลขดูเพิ่มขึ้น) ▲ สีส้ม = ใช้น้ำเพิ่ม · ▼ สีเขียว = ใช้น้ำลด (สำหรับ 3R และน้ำสำรอง เพิ่มขึ้นเป็นสีเขียว)</dd></div>
         <div><dt>พื้นที่</dt><dd>EEC = ชลบุรี ระยอง ฉะเชิงเทรา · กลุ่มพื้นที่จัดจากชื่อนิคม ไม่ได้มาจากชีต</dd></div>
       </dl>
     </section>
     <footer class="wd-foot page-foot">
-      <p>ที่มา: Google Sheets “0 ไฟล์รวมน้ำ 64-ปจบ” ชีต1 แถว 1–74 (อ่านอย่างเดียว) · ตัวเลขรวมคำนวณจากข้อมูลรายนิคม อาจต่างจากคอลัมน์ยอดรวมในชีตเล็กน้อยในเดือนที่มีนิคมใหม่</p>
+      <p>ที่มา: Google Sheets “0 ไฟล์รวมน้ำ 64-ปจบ” ชีต1 แถว 1–74 (อ่านอย่างเดียว) · ยอดรวมทุกตัวคำนวณจากข้อมูลรายนิคมในชีต ไม่ได้ใช้คอลัมน์ยอดรวมของชีต · การเทียบปีก่อนเทียบเฉพาะนิคมที่มีข้อมูลทั้งสองปี</p>
       <p class="fn">* ค่าในชีตที่ห่างจากค่าปกติของนิคมนั้นมาก อาจเป็นการพิมพ์ผิดหรือหน่วยผิด · หน้า “ตรวจข้อมูล” แค่แสดงให้เห็น ไม่ได้แก้ชีต</p>
     </footer>
   </div>
@@ -948,7 +950,7 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
   const loaders = {};
   const calcs = [];
   const cbs = [];
-  const defaults = { month: null, region: null, estate: null, y0: null, y1: null };
+  const defaults = { month: null, region: null, estate: null, y0: null, y1: null, es_month: null };
   let params = { ...defaults };
   const store = {};
   const fire = () => { for (const f of cbs) { try { f(); } catch (e) { console.error(e); } } };
@@ -1042,7 +1044,7 @@ dash.loader('estates', {
 dash.calc('overview', {
   inputs: ['estates', 'regions', 'totals'],
   title: 'สรุปรายเดือนตามพื้นที่',
-  description: 'For each reported month (the sheet’s total above zero) and each area plus "ทั้งหมด": estates reporting water use, sums of water used, 3R and reserve over those estates, use per day, 3R share, reserve in days of use, treatment load (influent ÷ capacity over estates reporting both), and the same figures a year earlier.',
+  description: 'For each reported month (the sheet’s total above zero) and each area plus "ทั้งหมด": estates reporting water use, sums of water used, 3R and reserve over those estates, use per day, 3R share, reserve in days of use, treatment load (influent ÷ capacity over estates reporting both), and the same figures a year earlier; *_lc / *_lp / *_ln compare only the estates that reported in both months (this year, last year, how many).',
   fn: (estates, regions, totals) => {
     const months = new Set(totals.filter((t) => t.total > 0).map((t) => t.period));
     const reg = new Map(regions.map((r) => [String(r.estate).trim(), r.region]));
@@ -1072,6 +1074,30 @@ dash.calc('overview', {
     for (const r of rows) {
       const p = by.get((r.year_be - 1) + '-' + String(r.month).padStart(2, '0') + '|' + r.region);
       for (const x of ['n_estates', 'use', 'r3', 'reserve', 'treat_util']) r[x + '_prev'] = p ? p[x] : null;
+    }
+    // like-for-like: compare only estates that reported in both this month and the same month a year earlier
+    const idx = new Map();
+    for (const r of estates) if (months.has(r.period) && r.use > 0) idx.set(r.period + '|' + r.estate, r);
+    const lfl = new Map();
+    const add = (k, f, c, p) => { const a = lfl.get(k) || {}; a[f + '_lc'] = (a[f + '_lc'] || 0) + c; a[f + '_lp'] = (a[f + '_lp'] || 0) + p; a[f + '_ln'] = (a[f + '_ln'] || 0) + 1; lfl.set(k, a); };
+    for (const [key, r] of idx) {
+      const [y, m] = r.period.split('-');
+      const p = idx.get((Number(y) - 1) + '-' + m + '|' + r.estate);
+      if (!p) continue;
+      for (const g of ['ทั้งหมด', reg.get(r.estate) || 'ไม่ระบุ']) {
+        const k = r.period + '|' + g;
+        add(k, 'use', r.use, p.use);
+        if (r.r3 != null && p.r3 != null) add(k, 'r3', r.r3, p.r3);
+        if (r.reserve != null && p.reserve != null) add(k, 'reserve', r.reserve, p.reserve);
+        if (r.influent_day != null && r.capacity_day > 0 && p.influent_day != null && p.capacity_day > 0) { add(k, 'inf', r.influent_day, p.influent_day); add(k, 'cap', r.capacity_day, p.capacity_day); }
+      }
+    }
+    for (const r of rows) {
+      const a = lfl.get(r.period + '|' + r.region) || {};
+      for (const f of ['use', 'r3', 'reserve']) { r[f + '_lc'] = a[f + '_lc'] ?? null; r[f + '_lp'] = a[f + '_lp'] ?? null; r[f + '_ln'] = a[f + '_ln'] ?? 0; }
+      r.treat_util_lc = a.cap_lc > 0 ? a.inf_lc / a.cap_lc : null;
+      r.treat_util_lp = a.cap_lp > 0 ? a.inf_lp / a.cap_lp : null;
+      r.treat_util_ln = a.inf_ln ?? 0;
     }
     return rows.sort((a, b) => (a.period < b.period ? -1 : a.period > b.period ? 1 : 0));
   },
@@ -1196,6 +1222,8 @@ dash.calc('outliers', {
   estateSel.addEventListener('change', () => dash.setParams({ estate: estateSel.value || null }));
   y0Sel.addEventListener('change', () => dash.setParams({ y0: Number(y0Sel.value) }));
   y1Sel.addEventListener('change', () => dash.setParams({ y1: Number(y1Sel.value) }));
+  const esMonthSel = document.querySelector('.wd-es-month');
+  if (esMonthSel) esMonthSel.addEventListener('change', () => dash.setParams({ es_month: esMonthSel.value || null }));
   const openEstate = (name) => { dash.setParams({ estate: name }); show('estate'); window.scrollTo({ top: 0 }); };
 
   const failLine = (el) => { el.classList.remove('dash-skeleton'); el.replaceChildren(); const d = document.createElement('div'); d.className = 'wd-fail'; d.textContent = 'Failed to load'; el.append(d); };
@@ -1344,7 +1372,7 @@ dash.calc('outliers', {
     svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.period) - x.step() * x.paddingInner() / 2).attr('width', x.step()).attr('y', m.t).attr('height', h - m.t - m.b)
       .attr('fill', 'transparent').style('cursor', 'pointer')
       .on('mousemove', (ev, r) => showTip(box, tip, x(r.period) + x.bandwidth() / 2, y(r.use), labLong(r.period),
-        [['var(--bar-use-bot)', 'น้ำใช้', fInt(r.use) + ' ลบ.ม.'], ['var(--bar-pale)', 'น้ำ 3R', r.r3 == null ? '—' : fInt(r.r3) + ' ลบ.ม.'], [null, 'เทียบปีก่อน', fSigned(r.use_prev ? r.use / r.use_prev - 1 : null)]]))
+        [['var(--bar-use-bot)', 'น้ำใช้', fInt(r.use) + ' ลบ.ม.'], ['var(--bar-pale)', 'น้ำ 3R', r.r3 == null ? '—' : fInt(r.r3) + ' ลบ.ม.'], [null, 'เทียบปีก่อน (นิคมเดียวกัน)', fSigned(r.use_lp ? r.use_lc / r.use_lp - 1 : null)]]))
       .on('mouseleave', () => { tip.hidden = true; })
       .on('click', (ev, r) => dash.setParams({ month: r.period }));
     const lg = document.getElementById('trend-legend');
@@ -1672,8 +1700,10 @@ dash.calc('outliers', {
       });
       document.querySelectorAll('#ov-kpis [data-delta]').forEach((el) => {
         const f = el.dataset.delta;
-        chip(el, el.closest('.wd-kpi').querySelector(`[data-vs="${f}"]`), cur ? cur[f] : null, cur ? cur[f + '_prev'] : null,
-          f === 'use' ? 'use' : f === 'r3' || f === 'reserve' ? 'good' : f === 'treat_util' ? 'pt' : 'count', prevLabel);
+        const like = f !== 'n_estates';
+        chip(el, el.closest('.wd-kpi').querySelector(`[data-vs="${f}"]`), cur ? cur[like ? f + '_lc' : f] : null, cur ? cur[f + (like ? '_lp' : '_prev')] : null,
+          f === 'use' ? 'use' : f === 'r3' || f === 'reserve' ? 'good' : f === 'treat_util' ? 'pt' : 'count',
+          prevLabel + (like && cur && cur[f + '_ln'] ? ' · นิคมเดียวกัน ' + cur[f + '_ln'] + ' แห่ง' : ''));
       });
       const hist = all.filter((r) => r.region === region && r.period <= sel).slice(-12);
       document.querySelectorAll('#ov-kpis [data-spark]').forEach((el) => {
@@ -1753,12 +1783,20 @@ dash.calc('outliers', {
       y0Sel.replaceChildren(...yrs.map((y) => new Option(String(y), String(y)))); y0Sel.value = String(y0);
       y1Sel.replaceChildren(...yrs.map((y) => new Option(String(y), String(y)))); y1Sel.value = String(y1);
       const rng = er.filter((r) => { const y = Number(r.period.slice(0, 4)); return y >= y0 && y <= y1; });
+      const rngPeriods = rng.map((r) => r.period);
+      const chosen = rngPeriods.includes(P.es_month) ? P.es_month : rngPeriods[rngPeriods.length - 1];
+      if (esMonthSel) { esMonthSel.replaceChildren(...rngPeriods.slice().reverse().map((p) => new Option(labLong(p), p))); esMonthSel.value = chosen || ''; }
+      const upto = rng.filter((r) => r.period <= chosen);
       if (page === 'estate') {
-        const last = rng[rng.length - 1];
-        const lastWith = (k) => rng.filter((r) => r[k] != null).pop();
+        const last = upto[upto.length - 1];
+        const lastWith = (k) => upto.filter((r) => r[k] != null).pop();
         document.querySelectorAll('#es-kpis [data-source="estate_table"][data-field]').forEach((el) => {
           const f = el.dataset.field;
-          const r = lastWith(f);
+          // a figure under a card's main number comes from the same month as that number
+          const PARENT = { reserve_days: 'reserve', r3_share: 'r3', treat_util: 'capacity_day' };
+          const r = PARENT[f] ? lastWith(PARENT[f]) : lastWith(f);
+          const wrap = el.closest('.rd'); if (wrap) wrap.hidden = !r || r[f] == null;
+          if (r && r[f] == null) { el.classList.remove('dash-skeleton'); el.removeAttribute('data-where'); el.textContent = '—'; return; }
           const pill = el.classList.contains('val') ? el.closest('.wd-kpi').querySelector('.when') : null;
           if (pill) {
             pill.className = 'when';
@@ -1784,8 +1822,8 @@ dash.calc('outliers', {
           chipRow(et, [['bldg', 'นิคม', short(picked)], ['pin', 'จังหวัด', (rng[0].province || '—') + ' · ' + rng[0].region], ['cal', 'ช่วง', y0 + '–' + y1 + ' (' + rng.length + ' เดือน)'],
             ['avg', 'เฉลี่ย', fInt(d3.mean(rng, (r) => r.use)) + ' ลบ.ม./เดือน'], ['peak', 'สูงสุด', lab(hi.period) + ' · ต่ำสุด ' + lab(lo.period)]]);
         } else et.replaceChildren();
-        legend(document.getElementById('es-use-legend'), [[dash.colors[0], 'เดือนล่าสุด'], [muted, 'น้ำใช้เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
-        vbars(document.getElementById('es-use'), rng, { key: 'use', key2: 'r3', sel: rng.length ? rng[rng.length - 1].period : null,
+        legend(document.getElementById('es-use-legend'), [[dash.colors[0], 'เดือนที่เลือก'], [muted, 'น้ำใช้เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
+        vbars(document.getElementById('es-use'), rng, { key: 'use', key2: 'r3', sel: chosen || null, click: (r) => dash.setParams({ es_month: r.period }),
           tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fNum(r.r3)], [null, 'เทียบปีก่อน', fSigned(r.yoy)]] });
         const per = rng.map((r) => r.period);
         legend(document.getElementById('es-ww-legend'), [[dash.colors[3], 'น้ำเสียเข้าระบบ (Influent)', true], [dash.colors[1], 'น้ำเสียผ่านการบำบัด (Effluent)', true], ['var(--cds-chart-status-critical)', 'ความสามารถของระบบ', true]]);
@@ -1968,6 +2006,19 @@ dash.calc('outliers', {
       if (r.treat_util != null && r.treat_util > 0.9) items.push({ r, kind: 'treat', sev: 2 + r.treat_util, cls: 'warn', sub: 'ระบบบำบัดใช้ไป ' + fPct(r.treat_util) + ' ของความสามารถ' });
       if (r.yoy != null && r.yoy > 0.2 && r.use >= 50000) items.push({ r, kind: 'rise', sev: 1 + Math.min(r.yoy, 1), cls: 'warn', sub: 'ใช้น้ำเพิ่ม ' + d3.format('.0%')(r.yoy) + ' จากปีก่อน' });
     }
+    // flag figures that repeat unchanged month after month (likely carried forward, not re-measured)
+    const hist = new Map();
+    for (const r of E.data) { if (!hist.has(r.estate)) hist.set(r.estate, []); hist.get(r.estate).push(r); }
+    for (const h of hist.values()) h.sort((a, b) => (a.period < b.period ? -1 : 1));
+    const FIELD = { treat: 'influent_day', rise: 'use' }; // reserve is a pond size, so a steady value is normal
+    for (const it of items) {
+      const h = hist.get(it.r.estate) || [], f = FIELD[it.kind];
+      if (!f) { it.same = 0; continue; }
+      let i = h.findIndex((x) => x.period === it.r.period), n = 0;
+      const v = it.r[f];
+      while (i >= 0 && h[i][f] === v && v != null) { n += 1; i -= 1; }
+      it.same = n;
+    }
     items.sort((a, b) => b.sev - a.sev);
     lastWatch = items;
     const counts = { reserve: 0, treat: 0, rise: 0 };
@@ -1994,6 +2045,7 @@ dash.calc('outliers', {
       const tx = document.createElement('div'); tx.className = 'txt';
       const t1 = document.createElement('div'); t1.className = 't1'; t1.textContent = short(it.r.estate);
       const t2 = document.createElement('div'); t2.className = 't2'; t2.textContent = it.sub;
+      if (it.same >= 6) { const tg = document.createElement('span'); tg.className = 'tag'; tg.textContent = 'ค่าเดิม ' + it.same + ' เดือนติด'; tg.title = 'ค่านี้ซ้ำเดิมทุกเดือน อาจเป็นค่ายกยอดมา ไม่ได้วัดใหม่ ควรตรวจกับผู้กรอก'; t2.append(' ', tg); }
       tx.append(t1, t2);
       const ac = document.createElement('div'); ac.className = 'act';
       const b = document.createElement('button'); b.type = 'button'; b.className = 'btn'; b.textContent = 'ดูนิคม';
