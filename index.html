@@ -533,6 +533,22 @@ html.printing .rbar { margin-top: 4px; height: 5px; }
 html.printing .rs { margin-top: 2px; font-size: 12px; }
 html.printing .rn, html.printing .rv { font-size: 13.5px; }
 html.printing .rk { width: 22px; height: 22px; font-size: 11.5px; }
+
+/* ================= monthly trend: paired bars ================= */
+:root { --bar-use-top: #5b93ff; --bar-use-bot: #1f63ff; --bar-pale: #bcd7ff; --bar-stripe: rgba(255, 255, 255, .6); --bar-sel-bg: #f1f4f9; }
+:root[data-theme="dark"] { --bar-use-top: #6ea2ff; --bar-use-bot: #2f6bff; --bar-pale: #29466f; --bar-stripe: rgba(255, 255, 255, .12); --bar-sel-bg: #1b2029; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bar-use-top: #6ea2ff; --bar-use-bot: #2f6bff; --bar-pale: #29466f; --bar-stripe: rgba(255, 255, 255, .12); --bar-sel-bg: #1b2029; } }
+:root.printing:not(.x) { --bar-use-top: #5b93ff; --bar-use-bot: #1f63ff; --bar-pale: #bcd7ff; --bar-stripe: rgba(255, 255, 255, .6); --bar-sel-bg: #f1f4f9; }
+.seg { display: inline-flex; padding: 3px; gap: 2px; border-radius: 10px; background: var(--hover); border: 1px solid var(--color-border-line); }
+.seg button { all: unset; cursor: pointer; padding: 5px 12px; border-radius: 8px; font-size: 14px; color: var(--color-fg-muted); transition: background var(--cds-dur-slow), color var(--cds-dur-slow); }
+.seg button:hover { color: var(--color-fg); }
+.seg button[aria-pressed="true"] { background: var(--color-panel); color: var(--color-fg); font-weight: 600; box-shadow: 0 1px 2px rgba(17, 19, 24, .08); }
+.wd-legend.center { justify-content: center; margin: 10px 0 0; gap: 22px; }
+.wd-legend i.hatch { background: repeating-linear-gradient(45deg, var(--bar-pale) 0 3px, var(--bar-stripe) 3px 5px), var(--bar-pale) !important; background-blend-mode: normal; }
+#trend { min-height: 320px; }
+#trend .xl { fill: var(--color-fg-muted); }
+#trend .xl.sel { fill: var(--color-fg); font-weight: 600; }
+html.printing .seg { display: none; }
 </style>
 </head>
 <body>
@@ -640,9 +656,12 @@ html.printing .rk { width: 22px; height: 22px; font-size: 11.5px; }
           <div class="wd-block" id="trend-card">
             <div class="blk-head">
               <div><h2>ปริมาณน้ำใช้รายเดือน</h2><p class="note" id="trend-note">คลิกแท่งเพื่อเลือกเดือน</p></div>
-              <div class="wd-legend" id="trend-legend"></div>
+              <div class="seg" role="group" aria-label="ช่วงเวลาของกราฟ">
+                <button type="button" data-range="12">12 เดือน</button><button type="button" data-range="24">24 เดือน</button><button type="button" data-range="all">ทั้งหมด</button>
+              </div>
             </div>
             <div class="wd-chart dash-skeleton" id="trend" data-source="overview"></div>
+            <div class="wd-legend center" id="trend-legend"></div>
           </div>
         </div>
 
@@ -1118,6 +1137,91 @@ dash.calc('outliers', {
     }
   }
 
+  // ---------- monthly trend: paired bars (water used + 3R) ----------
+  let trendRange = '12';
+  try { trendRange = localStorage.getItem('wd-trend') || '12'; } catch (e) { /* storage off */ }
+  const segBtns = [...document.querySelectorAll('.seg [data-range]')];
+  const syncSeg = () => segBtns.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.range === trendRange)));
+  segBtns.forEach((b) => b.addEventListener('click', () => {
+    trendRange = b.dataset.range; syncSeg();
+    try { localStorage.setItem('wd-trend', trendRange); } catch (e) { /* storage off */ }
+    if (window.__dashRedraw) window.__dashRedraw();
+  }));
+  syncSeg();
+  const topRound = (x, y, w, h, r) => {
+    if (h <= 0 || w <= 0) return '';
+    r = Math.min(r, w / 2, h);
+    return `M${x},${y + h}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h}Z`;
+  };
+  function trendBars(box, all, sel) {
+    fresh(box);
+    if (!all.length) { emptyLine(box, 'ไม่มีข้อมูล'); return; }
+    const printing = document.documentElement.classList.contains('printing');
+    let rows = all;
+    if (trendRange !== 'all') {
+      const n = Number(trendRange), endIdx = Math.max(0, all.findIndex((r) => r.period === sel));
+      const start = Math.max(0, Math.min(endIdx, all.length - n));
+      rows = all.slice(start, start + n);
+    }
+    const w = Math.max(280, box.clientWidth), h = printing ? 230 : 320, m = { t: 14, r: 4, b: 30, l: 4 };
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r.use) * 1.08 || 1], [h - m.b, m.t]).nice();
+    m.l = axisW(svg, y);
+    const x = d3.scaleBand(rows.map((r) => r.period), [m.l, w - m.r]).paddingInner(rows.length > 30 ? 0.25 : 0.32).paddingOuter(0.1);
+    const xi = d3.scaleBand(['use', 'r3'], [0, x.bandwidth()]).paddingInner(rows.length > 30 ? 0.12 : 0.18);
+    const uid = 'tb' + Math.random().toString(36).slice(2, 8);
+    const defs = svg.append('defs');
+    const g1 = defs.append('linearGradient').attr('id', uid + 'g').attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+    g1.append('stop').attr('offset', 0).attr('style', 'stop-color: var(--bar-use-top)');
+    g1.append('stop').attr('offset', 1).attr('style', 'stop-color: var(--bar-use-bot)');
+    const pat = defs.append('pattern').attr('id', uid + 'h').attr('patternUnits', 'userSpaceOnUse').attr('width', 6).attr('height', 6).attr('patternTransform', 'rotate(45)');
+    pat.append('rect').attr('width', 6).attr('height', 6).attr('style', 'fill: var(--bar-pale)');
+    pat.append('rect').attr('width', 2).attr('height', 6).attr('style', 'fill: var(--bar-stripe)');
+    // selected month column
+    if (rows.some((r) => r.period === sel)) {
+      const pad = Math.min(8, x.step() * x.paddingInner() / 2);
+      svg.append('rect').attr('x', x(sel) - pad).attr('y', m.t - 6).attr('width', x.bandwidth() + pad * 2).attr('height', h - m.b - m.t + 6 + 22)
+        .attr('rx', Math.min(10, x.bandwidth() / 2)).attr('style', 'fill: var(--bar-sel-bg)');
+    }
+    yGrid(svg, y, m.l, w - m.r);
+    const rad = Math.min(8, xi.bandwidth() / 2);
+    const gb = svg.append('g');
+    for (const r of rows) {
+      gb.append('path').attr('d', topRound(x(r.period) + xi('use'), y(r.use), xi.bandwidth(), y(0) - y(r.use), rad)).attr('fill', `url(#${uid}g)`);
+      if (r.r3 > 0) gb.append('path').attr('d', topRound(x(r.period) + xi('r3'), y(r.r3), xi.bandwidth(), y(0) - y(r.r3), rad)).attr('fill', `url(#${uid}h)`);
+    }
+    // x labels
+    if (trendRange === 'all') yearTicks(svg, rows.map((r) => r.period), (p) => x(p), h);
+    else {
+      let lastEnd = -Infinity;
+      const order = rows.map((r) => r.period);
+      const selIdx = order.indexOf(sel);
+      const draw = (p, force) => {
+        const cx = x(p) + x.bandwidth() / 2;
+        const t = svg.append('text').attr('class', 'xl' + (p === sel ? ' sel' : '')).attr('x', cx).attr('y', h - 8).attr('text-anchor', 'middle').text(lab(p));
+        const tw = t.node().getComputedTextLength();
+        if (!force && cx - tw / 2 < lastEnd + 8) { t.remove(); return false; }
+        lastEnd = cx + tw / 2; return true;
+      };
+      const step = Math.max(1, Math.ceil(order.length / Math.max(1, Math.floor((w - m.l) / 62))));
+      order.forEach((p, i) => { if ((i - (selIdx < 0 ? 0 : selIdx)) % step === 0) draw(p); });
+    }
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.period) - x.step() * x.paddingInner() / 2).attr('width', x.step()).attr('y', m.t).attr('height', h - m.t - m.b)
+      .attr('fill', 'transparent').style('cursor', 'pointer')
+      .on('mousemove', (ev, r) => showTip(box, tip, x(r.period) + x.bandwidth() / 2, y(r.use), labLong(r.period),
+        [['var(--bar-use-bot)', 'น้ำใช้', fInt(r.use) + ' ลบ.ม.'], ['var(--bar-pale)', 'น้ำ 3R', r.r3 == null ? '—' : fInt(r.r3) + ' ลบ.ม.'], [null, 'เทียบปีก่อน', fSigned(r.use_prev ? r.use / r.use_prev - 1 : null)]]))
+      .on('mouseleave', () => { tip.hidden = true; })
+      .on('click', (ev, r) => dash.setParams({ month: r.period }));
+    const lg = document.getElementById('trend-legend');
+    lg.replaceChildren();
+    for (const [cls, name] of [['', 'น้ำใช้'], ['hatch', 'น้ำ 3R']]) {
+      const s = document.createElement('span'); const i = document.createElement('i'); i.className = cls;
+      if (!cls) i.style.background = 'linear-gradient(var(--bar-use-top), var(--bar-use-bot))';
+      s.append(i, document.createTextNode(name)); lg.append(s);
+    }
+  }
+
   // ---------- ranked list (top 10) ----------
   function rankList(box, rows, o) {
     box.classList.remove('dash-skeleton');
@@ -1455,10 +1559,8 @@ dash.calc('outliers', {
       if (page === 'overview') {
         // trend
         const rr = all.filter((r) => r.region === region);
-        document.getElementById('trend-note').textContent = (region === 'ทั้งหมด' ? 'ทุกพื้นที่' : region) + ' · คลิกแท่งเพื่อเลือกเดือน · แท่งเข้มคือ ' + labLong(sel);
-        legend(document.getElementById('trend-legend'), [[dash.colors[0], 'เดือนที่เลือก'], [muted, 'เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
-        vbars(document.getElementById('trend'), rr, { key: 'use', key2: 'r3', sel, h: document.documentElement.classList.contains('printing') ? 230 : 340, click: (r) => dash.setParams({ month: r.period }),
-          tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fInt(r.r3)], [null, 'นิคมที่รายงาน', fInt(r.n_estates)]] });
+        document.getElementById('trend-note').textContent = (region === 'ทั้งหมด' ? 'ทุกพื้นที่' : region) + ' · ลบ.ม./เดือน · คลิกแท่งเพื่อเลือกเดือน';
+        trendBars(document.getElementById('trend'), rr, sel);
         // regions
         const regs = regions.filter((g) => g !== 'ทั้งหมด');
         lines(document.getElementById('region'), periodsAll, regs.map((g, i) => ({ name: g, color: dash.colors[i % dash.colors.length],
