@@ -1,0 +1,1150 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>การใช้น้ำในนิคมอุตสาหกรรม</title>
+<meta name="description" content="Dashboard การใช้น้ำ น้ำ 3R น้ำสำรอง และระบบบำบัดน้ำเสีย ในพื้นที่นิคมอุตสาหกรรมและท่าเรือ">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c3.5 5 7 8.6 7 12.5a7 7 0 0 1-14 0C5 10.6 8.5 7 12 2z' fill='%232563eb'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&family=Noto+Serif+Thai:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<style>
+:root {
+  color-scheme: light;
+  --font-anthropic-sans: "IBM Plex Sans Thai", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-anthropic-serif: "Noto Serif Thai", Georgia, serif;
+  --cds-font-size-caption: 12.5px;
+  --cds-font-size-body: 14px;
+  --cds-font-size-heading: 16px;
+  --cds-font-size-title: 28px;
+  --cds-font-weight-medium: 600;
+  --cds-gap-xs: 4px; --cds-gap-sm: 8px; --cds-gap-md: 14px; --cds-gap-lg: 20px; --cds-gap-xl: 28px;
+  --cds-pad-xs: 4px; --cds-pad-sm: 8px; --cds-pad-md: 12px; --cds-pad-lg: 18px; --cds-pad-xl: 28px;
+  --cds-radius: 14px;
+  --cds-dur-slow: 240ms;
+  --cds-ease-out: cubic-bezier(.2, .8, .2, 1);
+  --color-fg: #0f172a;
+  --color-fg-muted: #64748b;
+  --color-bg: #f3f5f9;
+  --color-panel: #ffffff;
+  --color-border-line: #e5e8ee;
+  --color-ok: #15803d;
+  --color-warn: #c2410c;
+  --color-bad: #dc2626;
+  --cds-chart-grid: #eef1f5;
+  --cds-chart-axis: #cbd2dc;
+  --cds-chart-reference: #94a3b8;
+  --cds-chart-muted: #cfd8e3;
+  --cds-chart-status-critical: #dc2626;
+  --cds-surface-popover: #ffffff;
+  --cds-border: #e2e8f0;
+  --cds-shadow-popover: 0 8px 28px rgba(15, 23, 42, .08), 0 1px 3px rgba(15, 23, 42, .06);
+  --cds-text-secondary: #64748b;
+  --c1: #2563eb; --c2: #0d9488; --c3: #16a34a; --c4: #d97706; --c5: #7c3aed; --c6: #db2777; --c7: #0891b2; --c8: #65a30d;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-fg: #e5e9f0; --color-fg-muted: #94a3b8; --color-bg: #0b1020; --color-panel: #121a2e; --color-border-line: #223050;
+    --color-ok: #4ade80; --color-warn: #fb923c; --color-bad: #f87171;
+    --cds-chart-grid: #1c2742; --cds-chart-axis: #33415f; --cds-chart-reference: #64748b; --cds-chart-muted: #2f3d5c; --cds-chart-status-critical: #f87171;
+    --cds-surface-popover: #18223a; --cds-border: #2a3758; --cds-shadow-popover: 0 8px 28px rgba(0, 0, 0, .45); --cds-text-secondary: #94a3b8;
+    --c1: #60a5fa; --c2: #2dd4bf; --c3: #4ade80; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #22d3ee; --c8: #a3e635;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-fg: #e5e9f0; --color-fg-muted: #94a3b8; --color-bg: #0b1020; --color-panel: #121a2e; --color-border-line: #223050;
+  --color-ok: #4ade80; --color-warn: #fb923c; --color-bad: #f87171;
+  --cds-chart-grid: #1c2742; --cds-chart-axis: #33415f; --cds-chart-reference: #64748b; --cds-chart-muted: #2f3d5c; --cds-chart-status-critical: #f87171;
+  --cds-surface-popover: #18223a; --cds-border: #2a3758; --cds-shadow-popover: 0 8px 28px rgba(0, 0, 0, .45); --cds-text-secondary: #94a3b8;
+  --c1: #60a5fa; --c2: #2dd4bf; --c3: #4ade80; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #22d3ee; --c8: #a3e635;
+}
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--color-bg); color: var(--color-fg); font-family: var(--font-anthropic-sans); line-height: 1.5; overflow-x: hidden; }
+#dash-root { max-width: 1440px; margin: 0 auto; padding: 24px clamp(16px, 3vw, 40px) 48px; box-sizing: border-box; }
+#dash-root *, #dash-root *::before, #dash-root *::after { box-sizing: border-box; }
+#dash-root b, #dash-root strong { font-weight: 600; }
+.dash-skeleton { color: transparent !important; border-radius: 8px; background: linear-gradient(90deg, var(--color-bg) 25%, var(--color-border-line) 50%, var(--color-bg) 75%); background-size: 200% 100%; animation: dashSk 1.3s linear infinite; }
+.dash-skeleton * { visibility: hidden; }
+@keyframes dashSk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .dash-skeleton { animation: none; } }
+/* refresh control */
+.wd-src { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wd-src .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--color-fg-muted); flex: none; }
+.wd-src .dot.live { background: var(--color-ok); box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-ok) 22%, transparent); }
+.wd-src .dot.snap { background: var(--c1); }
+.wd-src .dot.err { background: var(--color-bad); }
+.wd-refresh { font: inherit; font-size: var(--cds-font-size-caption); font-weight: 500; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 999px; padding: 5px 12px; transition: border-color var(--cds-dur-slow), box-shadow var(--cds-dur-slow); }
+.wd-refresh:hover { border-color: var(--c1); box-shadow: var(--cds-shadow-popover); }
+.wd-refresh:disabled { opacity: .6; cursor: progress; }
+.wd-refresh svg { width: 14px; height: 14px; }
+.wd-refresh.spin svg { animation: wdSpin 0.9s linear infinite; }
+@keyframes wdSpin { to { transform: rotate(360deg); } }
+.wd-msg { flex-basis: 100%; color: var(--color-bad); }
+.wd-msg:empty { display: none; }
+.wd-msg.ok { color: var(--color-ok); }
+</style>
+</head>
+<body>
+<main id="dash-root">
+<style>
+.wd { font-family: var(--font-anthropic-sans); color: var(--color-fg); display: grid; gap: var(--cds-gap-lg); }
+.wd-hero { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: var(--cds-gap-lg); padding: var(--cds-pad-xl) var(--cds-pad-xl) var(--cds-pad-lg); border-radius: var(--cds-radius); border: 1px solid var(--color-border-line);
+  background: linear-gradient(135deg, var(--color-bg) 0%, var(--color-panel) 70%); }
+.wd-eyebrow { display: inline-flex; align-items: center; gap: 6px; font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .02em; }
+.wd-eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--color-ok); }
+.wd-hero h1 { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); line-height: 1.2; margin: var(--cds-gap-xs) 0 0; }
+.wd-take { margin: var(--cds-gap-sm) 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 62rem; line-height: 1.55; }
+.wd-take b { color: var(--color-fg); font-weight: 500; }
+.wd-tabs { display: inline-flex; gap: 2px; padding: 3px; border-radius: 999px; background: var(--color-bg); border: 1px solid var(--color-border-line); flex-wrap: wrap; }
+.wd-tabs button { all: unset; cursor: pointer; padding: 6px 16px; border-radius: 999px; font-size: var(--cds-font-size-body); color: var(--color-fg-muted); transition: background var(--cds-dur-slow), color var(--cds-dur-slow); }
+.wd-tabs button:hover { color: var(--color-fg); }
+.wd-tabs button[aria-selected=true] { background: var(--color-panel); color: var(--color-fg); font-weight: 500; box-shadow: var(--cds-shadow-popover); }
+.wd-page { display: grid; gap: var(--cds-gap-lg); }
+.wd-page[hidden] { display: none; }
+.wd-filters { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; }
+.wd-filters label { display: inline-flex; align-items: center; gap: 8px; padding: 4px 4px 4px 14px; border-radius: 999px; background: var(--color-panel); border: 1px solid var(--color-border-line); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+.wd-filters select { border: 0 !important; background: var(--color-bg) !important; border-radius: 999px !important; padding: 4px 10px !important; }
+.wd select, .wd input[type=search] { font: inherit; font-size: var(--cds-font-size-body); color: var(--color-fg); background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-xs) var(--cds-pad-sm); max-width: 100%; }
+.wd input[type=search] { border-radius: 999px; padding-left: 14px; min-width: min(100%, 16rem); }
+.wd-sec { display: flex; align-items: center; gap: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); letter-spacing: .04em; margin-bottom: calc(-1 * var(--cds-gap-sm)); }
+.wd-sec::after { content: ""; flex: 1; height: 1px; background: var(--color-border-line); }
+.wd-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr)); gap: var(--cds-gap-md); }
+@media (min-width: 1000px) { .wd-kpis.five { grid-template-columns: 1.6fr repeat(4, 1fr); } }
+.wd-kpi, .wd-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: var(--cds-radius); padding: var(--cds-pad-lg); min-width: 0; }
+.wd-card { transition: box-shadow var(--cds-dur-slow); }
+.wd-card:hover { box-shadow: var(--cds-shadow-popover); }
+.wd-kpi { position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 2px; }
+.wd-kpi::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 3px; background: var(--k, var(--color-fg-muted)); }
+.wd-kpi .top { display: flex; align-items: center; gap: 10px; }
+.wd-kpi .ic { flex: none; width: 32px; height: 32px; border-radius: 10px; display: grid; place-items: center; color: var(--k); background: color-mix(in srgb, var(--k, #888) 14%, transparent); }
+.wd-kpi .ic svg { width: 18px; height: 18px; }
+.wd-kpi .lbl { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); line-height: 1.3; }
+.wd-kpi .val { font-family: var(--font-anthropic-serif); font-weight: 400; font-size: var(--cds-font-size-title); font-variant-numeric: tabular-nums; margin-top: var(--cds-gap-sm); min-height: 1.3em; overflow-wrap: anywhere; line-height: 1.15; }
+.wd-kpi.hero .val { font-size: calc(var(--cds-font-size-title) * 1.35); }
+.wd-kpi .unit { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); font-variant-numeric: tabular-nums; }
+.wd-kpi .foot { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin-top: var(--cds-gap-sm); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); min-height: 1.6em; }
+.wd-kpi .spark { margin-top: auto; padding-top: var(--cds-gap-sm); min-height: 36px; }
+.wd-kpi .spark svg { display: block; overflow: visible; }
+.chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 8px; border-radius: 999px; font-weight: 500; font-variant-numeric: tabular-nums; }
+.chip:empty { display: none; }
+.chip.up { color: var(--color-warn); background: color-mix(in srgb, var(--color-warn) 14%, transparent); }
+.chip.down { color: var(--color-ok); background: color-mix(in srgb, var(--color-ok) 14%, transparent); }
+.chip.neu { color: var(--color-fg-muted); background: var(--color-bg); }
+.up { color: var(--color-warn); } .down { color: var(--color-ok); } .bad { color: var(--color-bad); } .warn { color: var(--color-warn); } .neu { color: var(--color-fg-muted); }
+.wd-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); gap: var(--cds-gap-md); }
+.wd-grid3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 19rem), 1fr)); gap: var(--cds-gap-md); }
+.wd-card h2 { font-size: var(--cds-font-size-heading); font-weight: var(--cds-font-weight-medium); margin: 0; }
+.wd-card .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: var(--cds-gap-xs) 0 var(--cds-gap-md); }
+.wd-card .note b { color: var(--color-fg); font-weight: 500; }
+.wd-chart { position: relative; min-height: 260px; }
+.wd-chart.tall { min-height: 340px; }
+.wd-chart svg { display: block; overflow: visible; }
+.wd-chart text { font-family: var(--font-anthropic-sans); font-size: var(--cds-font-size-caption); fill: var(--color-fg-muted); }
+.wd-chart .end, .wd-chart .lab { fill: var(--color-fg); }
+.wd-chart .empty { display: flex; align-items: center; justify-content: center; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wd-tip { position: absolute; pointer-events: none; background: var(--cds-surface-popover); border: 1px solid var(--cds-border); border-radius: var(--cds-radius); box-shadow: var(--cds-shadow-popover); padding: var(--cds-pad-xs) var(--cds-pad-sm); font-size: var(--cds-font-size-caption); white-space: nowrap; z-index: 2; }
+.wd-tip .t { color: var(--cds-text-secondary); margin-bottom: 2px; }
+.wd-tip .sw { display: inline-block; width: 8px; height: 8px; border-radius: 2px; margin-right: 6px; }
+.wd-legend { display: flex; flex-wrap: wrap; gap: var(--cds-gap-md); font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin-bottom: var(--cds-gap-sm); }
+.wd-legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.wd-legend i.ln { height: 2px; vertical-align: 3px; border-radius: 0; }
+.wd-tablebar { display: flex; flex-wrap: wrap; gap: var(--cds-gap-sm); align-items: center; justify-content: space-between; margin-bottom: var(--cds-gap-sm); }
+.wd-tbox { max-height: 520px; overflow: auto; }
+.wd table { border-collapse: collapse; width: 100%; font-size: var(--cds-font-size-caption); font-variant-numeric: tabular-nums; }
+.wd th { position: sticky; top: 0; background: var(--color-panel); text-align: right; font-weight: 500; border-bottom: 1px solid var(--color-border-line); padding: 0; z-index: 1; }
+.wd th.l { text-align: left; }
+.wd th button { all: unset; cursor: pointer; display: block; padding: var(--cds-pad-sm); color: var(--color-fg-muted); }
+.wd th[aria-sort] button { color: var(--color-fg); }
+.wd td { padding: var(--cds-pad-sm); border-bottom: 1px solid var(--color-border-line); text-align: right; white-space: nowrap; }
+.wd td.l { text-align: left; white-space: normal; }
+.wd td.name { min-width: 10rem; font-weight: 500; }
+.wd tbody tr { cursor: pointer; transition: background var(--cds-dur-slow); }
+.wd tbody tr:hover td { background: var(--color-bg); }
+@media (max-width: 640px) { .wd .hide-narrow { display: none; } .wd-hero { padding: var(--cds-pad-lg); } }
+.wd-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
+.wd-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
+.wd [data-dash-source-state=empty] { color: transparent; }
+.wd [data-dash-source-state=refreshing] { opacity: .5; transition: opacity var(--cds-dur-slow); }
+.wd-foot { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); }
+@media (prefers-reduced-motion: no-preference) { .wd-page:not([hidden]) { animation: wdIn var(--cds-dur-slow) var(--cds-ease-out); } @keyframes wdIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } } }
+</style>
+
+
+<div class="wd">
+  <header class="wd-hero" id="top">
+    <div>
+      <div class="wd-src"><span class="dot" id="src-dot"></span><span id="src-stamp">กำลังโหลดข้อมูล…</span><button type="button" class="wd-refresh" id="btn-refresh" title="ดึงข้อมูลล่าสุดจาก Google Sheets"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>อัปเดตข้อมูล</button><span class="wd-msg" id="src-msg" role="status"></span></div>
+      <h1>การใช้น้ำในพื้นที่นิคมอุตสาหกรรม / ท่าเรือฯ</h1>
+      <p class="wd-take" id="takeaway"><span class="dash-skeleton">—</span></p>
+    </div>
+    <nav class="wd-tabs" role="tablist">
+      <button role="tab" id="tab-overview" data-page="overview" aria-selected="true">ภาพรวม</button>
+      <button role="tab" id="tab-estate" data-page="estate" aria-selected="false">รายนิคม</button>
+      <button role="tab" id="tab-quality" data-page="quality" aria-selected="false">ตรวจข้อมูล</button>
+    </nav>
+  </header>
+
+  <!-- ================= OVERVIEW ================= -->
+  <section class="wd-page" id="overview">
+    <div class="wd-filters">
+      <label>ปี พ.ศ.<select class="wd-year" aria-label="ปี" data-source="overview"></select></label>
+      <label>เดือน<select class="wd-month" aria-label="เดือน" data-source="overview"></select></label>
+      <label>พื้นที่<select class="wd-region" aria-label="พื้นที่" data-source="overview"></select></label>
+    </div>
+
+    <div class="wd-kpis five" id="ov-kpis">
+      <div class="wd-kpi hero" data-k="0"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/></svg></span><span class="lbl">ปริมาณน้ำใช้</span></div><div class="val dash-skeleton" data-source="overview" data-field="use">—</div><div class="unit">ลบ.ม./เดือน · เฉลี่ย <span data-source="overview" data-field="per_day">—</span> ลบ.ม./วัน</div><div class="foot"><span class="chip" data-delta="use"></span><span class="vs" data-vs="use"></span></div><div class="spark" data-spark="use" data-source="overview"></div></div>
+      <div class="wd-kpi" data-k="2"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11a7.5 7.5 0 0 1 13-4.5L20 9"/><path d="M20 4.5V9h-4.5"/><path d="M19.5 13a7.5 7.5 0 0 1-13 4.5L4 15"/><path d="M4 19.5V15h4.5"/></svg></span><span class="lbl">น้ำ 3R (Reduce · Reuse · Recycle)</span></div><div class="val dash-skeleton" data-source="overview" data-field="r3">—</div><div class="unit">ลบ.ม./เดือน · <span data-source="overview" data-field="r3_share">—</span> ของน้ำใช้</div><div class="foot"><span class="chip" data-delta="r3"></span><span class="vs" data-vs="r3"></span></div><div class="spark" data-spark="r3" data-source="overview"></div></div>
+      <div class="wd-kpi" data-k="1"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 7c2 0 2-1.5 4.5-1.5S9.5 7 12 7s2.5-1.5 4.5-1.5S19 7 21 7"/><path d="M3 12c2 0 2-1.5 4.5-1.5S9.5 12 12 12s2.5-1.5 4.5-1.5S19 12 21 12"/><path d="M3 17c2 0 2-1.5 4.5-1.5S9.5 17 12 17s2.5-1.5 4.5-1.5S19 17 21 17"/></svg></span><span class="lbl">ปริมาณน้ำสำรอง</span></div><div class="val dash-skeleton" data-source="overview" data-field="reserve">—</div><div class="unit">ลบ.ม. · พอใช้ ~<span data-source="overview" data-field="reserve_days">—</span> วัน</div><div class="foot"><span class="chip" data-delta="reserve"></span><span class="vs" data-vs="reserve"></span></div><div class="spark" data-spark="reserve" data-source="overview"></div></div>
+      <div class="wd-kpi" data-k="3"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4.5-5.5"/><circle cx="12" cy="17" r="1"/></svg></span><span class="lbl">ภาระระบบบำบัดน้ำเสีย</span></div><div class="val dash-skeleton" data-source="overview" data-field="treat_util">—</div><div class="unit">น้ำเสียเข้าระบบ ÷ ความสามารถ</div><div class="foot"><span class="chip" data-delta="treat_util"></span><span class="vs" data-vs="treat_util"></span></div><div class="spark" data-spark="treat_util" data-source="overview"></div></div>
+      <div class="wd-kpi" data-k="4"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 21V10l6-3v14"/><path d="M10 21V4l10 4v13"/><path d="M3 21h18"/><path d="M14 11h2M14 15h2"/></svg></span><span class="lbl">นิคมฯ / ท่าเรือฯ ที่รายงาน</span></div><div class="val dash-skeleton" data-source="overview" data-field="n_estates">—</div><div class="unit">แห่ง</div><div class="foot"><span class="chip" data-delta="n_estates"></span><span class="vs" data-vs="n_estates"></span></div><div class="spark" data-spark="n_estates" data-source="overview"></div></div>
+    </div>
+
+    <div class="wd-sec">ผู้ใช้น้ำรายใหญ่</div>
+    <div class="wd-grid3">
+      <div class="wd-card" id="top-use-card">
+        <h2>10 อันดับที่ใช้น้ำมากที่สุด</h2>
+        <p class="note" id="top-use-note">ลบ.ม./เดือน</p>
+        <div class="wd-chart tall dash-skeleton" id="top-use" data-source="estate_table"></div>
+      </div>
+      <div class="wd-card" id="top-r3-card">
+        <h2>10 อันดับที่มีน้ำ 3R มากที่สุด</h2>
+        <p class="note" id="top-r3-note">ลบ.ม./เดือน</p>
+        <div class="wd-chart tall dash-skeleton" id="top-r3" data-source="estate_table"></div>
+      </div>
+      <div class="wd-card" id="top-inf-card">
+        <h2>10 อันดับน้ำเสียเข้าระบบบำบัดมากที่สุด</h2>
+        <p class="note" id="top-inf-note">ลบ.ม./วัน · เส้นจางคือความสามารถของระบบ</p>
+        <div class="wd-chart tall dash-skeleton" id="top-inf" data-source="estate_table"></div>
+      </div>
+    </div>
+
+    <div class="wd-sec">แนวโน้ม</div>
+    <div class="wd-grid">
+      <div class="wd-card" id="trend-card">
+        <h2>ปริมาณน้ำใช้รายเดือน</h2>
+        <p class="note" id="trend-note">คลิกแท่งเพื่อเลือกเดือน · แท่งเข้มคือเดือนที่เลือก</p>
+        <div class="wd-legend" id="trend-legend"></div>
+        <div class="wd-chart dash-skeleton" id="trend" data-source="overview"></div>
+      </div>
+      <div class="wd-card" id="season-card">
+        <h2>ช่วงไหนใช้น้ำมาก–น้อย</h2>
+        <p class="note" id="season-note">น้ำใช้เฉลี่ยต่อวันของแต่ละเดือน (ปี 2565 เป็นต้นไป) เทียบค่าเฉลี่ยทั้งปี</p>
+        <div class="wd-chart dash-skeleton" id="season" data-source="seasonal"></div>
+      </div>
+    </div>
+
+    <div class="wd-card" id="region-card">
+      <h2>น้ำใช้แยกตามพื้นที่</h2>
+      <p class="note">EEC = ชลบุรี ระยอง ฉะเชิงเทรา · การจัดพื้นที่ทำจากชื่อนิคม ไม่ได้มาจากชีต</p>
+      <div class="wd-chart dash-skeleton" id="region" data-source="overview"></div>
+    </div>
+
+    <div class="wd-sec">รายนิคม</div>
+    <div class="wd-card" id="table-card">
+      <h2>รายนิคม — <span id="table-month">—</span></h2>
+      <p class="note">คลิกแถวเพื่อดูรายละเอียดนิคม · วันสำรอง = น้ำสำรอง ÷ น้ำใช้ต่อวัน (แดง &lt; 7 วัน) · ภาระระบบบำบัด = น้ำเสียเข้าระบบ ÷ ความสามารถ (ส้ม &gt; 90%)</p>
+      <div class="wd-tablebar">
+        <input type="search" class="wd-search" placeholder="ค้นหานิคม จังหวัด หรือพื้นที่" aria-label="ค้นหานิคม">
+        <span class="wd-foot" id="table-count"></span>
+      </div>
+      <div class="wd-tbox">
+        <table id="estate-table" data-source="estate_table" data-row-key="period,estate">
+          <thead><tr>
+            <th data-field="estate" class="l"><button>นิคม</button></th>
+            <th data-field="province" class="l hide-narrow"><button>จังหวัด</button></th>
+            <th data-field="use"><button>น้ำใช้ (ลบ.ม.)</button></th>
+            <th data-field="yoy"><button>เทียบปีก่อน</button></th>
+            <th data-field="r3" class="hide-narrow"><button>3R (ลบ.ม.)</button></th>
+            <th data-field="reserve_days"><button>วันสำรอง</button></th>
+            <th data-field="treat_util" class="hide-narrow"><button>ภาระระบบบำบัด</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ESTATE ================= -->
+  <section class="wd-page" id="estate" hidden>
+    <div class="wd-filters">
+      <label>นิคมอุตสาหกรรม / ท่าเรือฯ<select class="wd-estate" aria-label="นิคม" data-source="estate_table"></select></label>
+      <label>ตั้งแต่ปี<select class="wd-y0" aria-label="ตั้งแต่ปี" data-source="estate_table"></select></label>
+      <label>ถึงปี<select class="wd-y1" aria-label="ถึงปี" data-source="estate_table"></select></label>
+    </div>
+    <p class="wd-take" id="es-take"></p>
+
+    <div class="wd-kpis" id="es-kpis">
+      <div class="wd-kpi" data-k="0"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 4.5 6 7.6 6 11a6 6 0 0 1-12 0c0-3.4 3-6.5 6-11z"/></svg></span><span class="lbl">ปริมาณน้ำใช้</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="use">—</div><div class="unit">ลบ.ม./เดือน · <span class="es-when"></span></div><div class="foot"><span class="chip" data-delta="use"></span><span class="vs" data-vs="use"></span></div><div class="spark" data-spark="use" data-source="estate_table"></div></div>
+      <div class="wd-kpi" data-k="2"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4.5 11a7.5 7.5 0 0 1 13-4.5L20 9"/><path d="M20 4.5V9h-4.5"/><path d="M19.5 13a7.5 7.5 0 0 1-13 4.5L4 15"/><path d="M4 19.5V15h4.5"/></svg></span><span class="lbl">น้ำ 3R</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="r3">—</div><div class="unit">ลบ.ม./เดือน · <span data-source="estate_table" data-field="r3_share">—</span> ของน้ำใช้</div><div class="foot"></div><div class="spark" data-spark="r3" data-source="estate_table"></div></div>
+      <div class="wd-kpi" data-k="3"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 17a8 8 0 1 1 16 0"/><path d="M12 17l4.5-5.5"/><circle cx="12" cy="17" r="1"/></svg></span><span class="lbl">ระบบบำบัดน้ำเสีย</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="capacity_day">—</div><div class="unit">ลบ.ม./วัน · ใช้ไป <span data-source="estate_table" data-field="treat_util">—</span></div><div class="foot"></div><div class="spark" data-spark="capacity_day" data-source="estate_table"></div></div>
+      <div class="wd-kpi" data-k="1"><div class="top"><span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M3 7c2 0 2-1.5 4.5-1.5S9.5 7 12 7s2.5-1.5 4.5-1.5S19 7 21 7"/><path d="M3 12c2 0 2-1.5 4.5-1.5S9.5 12 12 12s2.5-1.5 4.5-1.5S19 12 21 12"/><path d="M3 17c2 0 2-1.5 4.5-1.5S9.5 17 12 17s2.5-1.5 4.5-1.5S19 17 21 17"/></svg></span><span class="lbl">ปริมาณน้ำสำรอง</span></div><div class="val dash-skeleton" data-source="estate_table" data-field="reserve">—</div><div class="unit">ลบ.ม. · พอใช้ ~<span data-source="estate_table" data-field="reserve_days">—</span> วัน</div><div class="foot"></div><div class="spark" data-spark="reserve" data-source="estate_table"></div></div>
+    </div>
+
+    <div class="wd-card" id="es-use-card">
+      <h2>ปริมาณน้ำใช้และน้ำ 3R รายเดือน</h2>
+      <p class="note">ลบ.ม./เดือน</p>
+      <div class="wd-legend" id="es-use-legend"></div>
+      <div class="wd-chart dash-skeleton" id="es-use" data-source="estate_table"></div>
+    </div>
+    <div class="wd-grid">
+      <div class="wd-card" id="es-ww-card">
+        <h2>น้ำเสียเทียบความสามารถระบบบำบัด</h2>
+        <p class="note">ลบ.ม./วัน</p>
+        <div class="wd-legend" id="es-ww-legend"></div>
+        <div class="wd-chart dash-skeleton" id="es-ww" data-source="estate_table"></div>
+      </div>
+      <div class="wd-card" id="es-res-card">
+        <h2>ปริมาณน้ำสำรอง</h2>
+        <p class="note">ลบ.ม. (แกนเริ่มที่ศูนย์) · ตัวเลขในทูลทิปคือจำนวนวันที่พอใช้</p>
+        <div class="wd-chart dash-skeleton" id="es-res" data-source="estate_table"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= QUALITY ================= -->
+  <section class="wd-page" id="quality" hidden>
+    <div class="wd-card" id="quality-card">
+      <h2>ค่าที่ควรตรวจสอบในชีต</h2>
+      <p class="note">น้ำใช้ที่ต่ำกว่า 25% หรือสูงกว่า 4 เท่า และน้ำสำรองที่ต่ำกว่า 10% หรือสูงกว่า 10 เท่า ของค่ากลางของนิคมนั้นเอง อาจเป็นการพิมพ์ผิดหรือหน่วยผิด · คลิกแถวเพื่อดูกราฟของนิคม</p>
+      <div class="wd-tbox">
+        <table id="quality-table" data-source="outliers" data-row-key="id">
+          <thead><tr>
+            <th data-field="estate" class="l"><button>นิคม</button></th>
+            <th data-field="period" class="l"><button>เดือน</button></th>
+            <th data-field="field" class="l"><button>รายการ</button></th>
+            <th data-field="value"><button>ค่าที่กรอก</button></th>
+            <th data-field="median"><button>ค่ากลางของนิคม</button></th>
+            <th data-field="ratio"><button>เท่าของค่ากลาง</button></th>
+          </tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <p class="wd-foot">ที่มา: Google Sheets “0 ไฟล์รวมน้ำ 64-ปจบ” ชีต1 แถว 1–74 (อ่านอย่างเดียว) · ตัวเลขรวมคำนวณจากข้อมูลรายนิคม อาจต่างจากคอลัมน์ยอดรวมในชีตเล็กน้อยในเดือนที่มีนิคมใหม่</p>
+</div>
+
+</main>
+<script>
+// Minimal stand-in for the dashboard runtime: loaders turn sheet values into rows, calcs derive tables, onData redraws.
+(function () {
+  const loaders = {};
+  const calcs = [];
+  const cbs = [];
+  const defaults = { month: null, region: null, estate: null, y0: null, y1: null };
+  let params = { ...defaults };
+  const store = {};
+  const fire = () => { for (const f of cbs) { try { f(); } catch (e) { console.error(e); } } };
+
+  window.dash = {
+    loader(id, o) { loaders[id] = o; },
+    calc(id, o) { calcs.push([id, o]); },
+    data(id) { return store[id] || { status: 'loading', data: [], columns: [], meta: [] }; },
+    onData(fn) { cbs.push(fn); try { fn(); } catch (e) { console.error(e); } },
+    params() { return { ...params }; },
+    setParams(p) { params = { ...params, ...p }; fire(); },
+    resetParams() { params = { ...defaults }; fire(); },
+    setLink(name) { try { history.replaceState(null, '', '#' + name); } catch (e) { /* ignore */ } },
+    refresh() {},
+    colors: ['var(--c1)', 'var(--c2)', 'var(--c3)', 'var(--c4)', 'var(--c5)', 'var(--c6)', 'var(--c7)', 'var(--c8)'],
+  };
+
+  // values: the sheet's rows A1:TX74 as text, exactly as Google Sheets shows them
+  window.__dashLoad = function (values, regions) {
+    const t = loaders.totals.fn({ answer: { values: values.slice(2).map((r) => r.slice(0, 8)) } });
+    const e = loaders.estates.fn({ answer: { values } });
+    store.totals = { status: 'ok', data: t.rows, columns: t.columns, meta: [] };
+    store.estates = { status: 'ok', data: e.rows, columns: e.columns, meta: [] };
+    store.regions = { status: 'ok', data: regions, columns: Object.keys(regions[0] || {}), meta: [] };
+    for (const [id, o] of calcs) {
+      try {
+        const out = o.fn(...o.inputs.map((i) => store[i].data));
+        store[id] = { status: 'ok', data: out, columns: out[0] ? Object.keys(out[0]) : [], meta: [] };
+      } catch (err) {
+        console.error(id, err);
+        store[id] = { status: 'error', data: [], columns: [], meta: [], message: String(err) };
+      }
+    }
+    fire();
+  };
+  window.__dashFail = function (message) {
+    for (const id of ['totals', 'estates', 'regions', ...calcs.map((c) => c[0])]) store[id] = { status: 'error', data: [], columns: [], meta: [], message };
+    fire();
+  };
+
+  let rt;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fire, 150); });
+})();
+</script>
+<script>
+const MON_TH = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const toNum = (s) => { const t = String(s ?? '').replace(/,/g, '').trim(); if (t === '' || t === '-') return null; const n = Number(t); return Number.isFinite(n) ? n : null; };
+const asValues = (answer) => {
+  const a = typeof answer === 'string' ? JSON.parse(answer) : answer;
+  if (!a || !Array.isArray(a.values)) throw new Error((a && a.error && (a.error.message || a.error)) || 'The answer has no values');
+  return a.values;
+};
+
+dash.loader('totals', {
+  description: 'Google Sheets values as one row per month: the year carried down from the first row of each year, Thai month names as numbers, comma numbers as numbers and "-" as empty',
+  fn: ({ answer }) => {
+    const v = asValues(answer); const rows = []; let year = null;
+    for (const r of v) {
+      if (String(r[0] ?? '').trim()) year = Number(String(r[0]).trim());
+      const m = MON_TH.indexOf(String(r[1] ?? '').trim());
+      if (m < 0 || !year) continue;
+      rows.push({ period: year + '-' + String(m + 1).padStart(2, '0'), year_be: year, month: m + 1,
+        total: toNum(r[2]), ieat: toNum(r[3]), joint: toNum(r[4]), reserve: toNum(r[5]), r3: toNum(r[6]), effluent_day: toNum(r[7]) });
+    }
+    return { columns: ['period', 'year_be', 'month', 'total', 'ieat', 'joint', 'reserve', 'r3', 'effluent_day'], rows };
+  },
+});
+
+dash.loader('estates', {
+  description: 'Google Sheets values as one row per estate and month: each estate is the 8-column block under its name in row 1 (area, factories, water used, reserve, treatment capacity, influent, effluent, 3R); comma numbers as numbers, "-" and text such as "ไม่มีระบบ" as empty',
+  fn: ({ answer }) => {
+    const v = asValues(answer); const head = v[0] || []; const blocks = [];
+    for (let c = 8; c < head.length; c++) { const n = String(head[c] ?? '').trim(); if (n) blocks.push([c, n]); }
+    const rows = []; let year = null;
+    for (let i = 2; i < v.length; i++) {
+      const r = v[i];
+      if (String(r[0] ?? '').trim()) year = Number(String(r[0]).trim());
+      const m = MON_TH.indexOf(String(r[1] ?? '').trim());
+      if (m < 0 || !year) continue;
+      const period = year + '-' + String(m + 1).padStart(2, '0');
+      for (const [c, name] of blocks) {
+        rows.push({ period, estate: name, area_rai: toNum(r[c]), factories: toNum(r[c + 1]), use: toNum(r[c + 2]), reserve: toNum(r[c + 3]),
+          capacity_day: toNum(r[c + 4]), influent_day: toNum(r[c + 5]), effluent_day: toNum(r[c + 6]), r3: toNum(r[c + 7]) });
+      }
+    }
+    return { columns: ['period', 'estate', 'area_rai', 'factories', 'use', 'reserve', 'capacity_day', 'influent_day', 'effluent_day', 'r3'], rows };
+  },
+});
+
+dash.calc('overview', {
+  inputs: ['estates', 'regions', 'totals'],
+  title: 'สรุปรายเดือนตามพื้นที่',
+  description: 'For each reported month (the sheet’s total above zero) and each area plus "ทั้งหมด": estates reporting water use, sums of water used, 3R and reserve over those estates, use per day, 3R share, reserve in days of use, treatment load (influent ÷ capacity over estates reporting both), and the same figures a year earlier.',
+  fn: (estates, regions, totals) => {
+    const months = new Set(totals.filter((t) => t.total > 0).map((t) => t.period));
+    const reg = new Map(regions.map((r) => [String(r.estate).trim(), r.region]));
+    const acc = new Map();
+    const keys = ['use', 'r3', 'reserve', 'inf_both', 'cap_both'];
+    for (const r of estates) {
+      if (!months.has(r.period) || !(r.use > 0)) continue;
+      for (const g of ['ทั้งหมด', reg.get(r.estate) || 'ไม่ระบุ']) {
+        const k = r.period + '|' + g;
+        if (!acc.has(k)) acc.set(k, { period: r.period, region: g, n_estates: 0, ...Object.fromEntries(keys.map((x) => [x, null])) });
+        const a = acc.get(k); a.n_estates += 1;
+        for (const x of ['use', 'r3', 'reserve']) if (r[x] != null) a[x] = (a[x] || 0) + r[x];
+        if (r.influent_day != null && r.capacity_day > 0) { a.inf_both = (a.inf_both || 0) + r.influent_day; a.cap_both = (a.cap_both || 0) + r.capacity_day; }
+      }
+    }
+    const rows = [...acc.values()];
+    const by = new Map(rows.map((r) => [r.period + '|' + r.region, r]));
+    for (const r of rows) {
+      const [y, m] = r.period.split('-').map(Number);
+      r.year_be = y; r.month = m;
+      r.days = new Date(Date.UTC(y - 543, m, 0)).getUTCDate();
+      r.per_day = r.use / r.days;
+      r.r3_share = r.r3 != null ? r.r3 / r.use : null;
+      r.reserve_days = r.reserve != null ? r.reserve / r.per_day : null;
+      r.treat_util = r.cap_both > 0 ? r.inf_both / r.cap_both : null;
+    }
+    for (const r of rows) {
+      const p = by.get((r.year_be - 1) + '-' + String(r.month).padStart(2, '0') + '|' + r.region);
+      for (const x of ['n_estates', 'use', 'r3', 'reserve', 'treat_util']) r[x + '_prev'] = p ? p[x] : null;
+    }
+    return rows.sort((a, b) => (a.period < b.period ? -1 : a.period > b.period ? 1 : 0));
+  },
+});
+
+dash.calc('seasonal', {
+  inputs: ['overview'],
+  title: 'น้ำใช้ต่อวันตามเดือน',
+  description: 'Average water used per day for each calendar month from 2565 on (all estates), and how far it sits from the average of all those months.',
+  fn: (overview) => {
+    const f = overview.filter((r) => r.region === 'ทั้งหมด' && r.year_be >= 2565);
+    const all = f.reduce((s, r) => s + r.per_day, 0) / f.length;
+    const out = [];
+    for (let m = 1; m <= 12; m++) {
+      const s = f.filter((r) => r.month === m);
+      if (!s.length) continue;
+      const avg = s.reduce((a, r) => a + r.per_day, 0) / s.length;
+      out.push({ month: m, avg_per_day: avg, years: s.length, overall_per_day: all, dev: avg / all - 1 });
+    }
+    return out;
+  },
+});
+
+dash.calc('estate_table', {
+  inputs: ['estates', 'regions', 'totals'],
+  title: 'รายนิคมรายเดือน',
+  description: 'Each estate and reported month with water used above zero: area and province, change from the same month a year earlier, reserve in days of use, and treatment load (influent ÷ capacity).',
+  fn: (estates, regions, totals) => {
+    const months = new Set(totals.filter((t) => t.total > 0).map((t) => t.period));
+    const reg = new Map(regions.map((r) => [String(r.estate).trim(), r]));
+    const idx = new Map(estates.map((r) => [r.period + '|' + r.estate, r]));
+    return estates.filter((r) => months.has(r.period) && r.use > 0).map((r) => {
+      const [y, m] = r.period.split('-').map(Number);
+      const days = new Date(Date.UTC(y - 543, m, 0)).getUTCDate();
+      const p = idx.get((y - 1) + '-' + String(m).padStart(2, '0') + '|' + r.estate);
+      const info = reg.get(r.estate) || {};
+      const perDay = r.use / days;
+      return { period: r.period, estate: r.estate, no: info.no ?? null, region: info.region ?? 'ไม่ระบุ', province: info.province ?? '',
+        use: r.use, use_per_day: perDay, use_prev: p ? p.use : null, yoy: p && p.use > 0 ? r.use / p.use - 1 : null,
+        reserve: r.reserve, reserve_days: r.reserve > 0 ? r.reserve / perDay : null,
+        capacity_day: r.capacity_day, influent_day: r.influent_day, effluent_day: r.effluent_day,
+        treat_util: r.capacity_day > 0 && r.influent_day != null ? r.influent_day / r.capacity_day : null,
+        r3: r.r3, r3_share: r.r3 != null ? r.r3 / r.use : null };
+    });
+  },
+});
+
+dash.calc('outliers', {
+  inputs: ['estates'],
+  title: 'ค่าที่ควรตรวจสอบ',
+  description: 'Water used below 25% or above 4× of that estate’s own median (reserve: below 10% or above 10×), over months with a value; estates with fewer than 6 values are skipped.',
+  fn: (estates) => {
+    const by = new Map();
+    for (const r of estates) { if (!by.has(r.estate)) by.set(r.estate, []); by.get(r.estate).push(r); }
+    const med = (a) => { const s = a.slice().sort((x, y) => x - y); const n = s.length; return n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2; };
+    const out = [];
+    for (const [estate, rs] of by) {
+      for (const f of ['use', 'reserve']) {
+        const vals = rs.map((r) => r[f]).filter((v) => v > 0);
+        if (vals.length < 6) continue;
+        const md = med(vals);
+        const hi = f === 'reserve' ? 10 : 4, lo = f === 'reserve' ? 0.1 : 0.25;
+        for (const r of rs) {
+          const v = r[f];
+          if (!(v > 0)) continue;
+          const ratio = v / md;
+          if (ratio < lo || ratio > hi) out.push({ id: r.period + '|' + estate + '|' + f, period: r.period, estate, field: f === 'use' ? 'น้ำใช้' : 'น้ำสำรอง', value: v, median: md, ratio });
+        }
+      }
+    }
+    return out.sort((a, b) => Math.abs(Math.log(b.ratio)) - Math.abs(Math.log(a.ratio)));
+  },
+});
+</script>
+
+<script>
+(() => {
+  const MON = ['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+  const MONL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  const REG_ORDER = ['ทั้งหมด', 'EEC', 'กรุงเทพฯ–ปริมณฑล', 'ภาคกลาง', 'ภูมิภาคอื่น', 'ไม่ระบุ'];
+  const lab = (p) => { const [y, m] = String(p).split('-'); return MON[Number(m) - 1] + ' ' + y.slice(2); };
+  const labLong = (p) => { const [y, m] = String(p).split('-'); return MONL[Number(m) - 1] + ' ' + y; };
+  const short = (n) => String(n).replace(/^\s*\d+\.\s*/, '');
+  const fInt = d3.format(',.0f');
+  const fNum = (v) => (v == null ? '—' : Math.abs(v) < 100 && v % 1 ? d3.format(',.1f')(v) : fInt(v));
+  const fAxis = (v) => (v >= 1e6 ? (v / 1e6).toLocaleString('th-TH', { maximumFractionDigits: 1 }) + 'M' : v >= 1e3 ? (v / 1e3).toLocaleString('th-TH', { maximumFractionDigits: 0 }) + 'k' : String(v));
+  const fPct = (v) => (v == null ? '—' : d3.format('.1%')(v));
+  const fSigned = (v) => (v == null ? '—' : (v > 0 ? '+' : '') + d3.format('.1%')(v));
+  const encKey = (...parts) => parts.map((p) => encodeURIComponent(p)).join(',');
+  const encW = (v) => String(v).replace(/%/g, '%25').replace(/&/g, '%26').replace(/=/g, '%3D');
+  const muted = 'var(--cds-chart-muted)';
+
+  // ---------- tabs ----------
+  let page = 'overview';
+  const tabs = [...document.querySelectorAll('.wd-tabs button')];
+  function show(p, link = true) {
+    if (!['overview', 'estate', 'quality'].includes(p)) return;
+    page = p;
+    tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.page === p)));
+    document.querySelectorAll('.wd-page').forEach((s) => { s.hidden = s.id !== p; });
+    if (link) dash.setLink(p);
+    redraw();
+  }
+  tabs.forEach((b) => b.addEventListener('click', () => show(b.dataset.page)));
+
+  // ---------- controls ----------
+  const yearSel = document.querySelector('.wd-year');
+  const monthSel = document.querySelector('.wd-month');
+  const regionSel = document.querySelector('.wd-region');
+  const estateSel = document.querySelector('.wd-estate');
+  const y0Sel = document.querySelector('.wd-y0');
+  const y1Sel = document.querySelector('.wd-y1');
+  let periodsAll = [];
+  yearSel.addEventListener('change', () => {
+    const y = yearSel.value, cur = dash.params().month;
+    const m = cur ? cur.split('-')[1] : null;
+    const inYear = periodsAll.filter((p) => p.startsWith(y + '-'));
+    dash.setParams({ month: inYear.includes(y + '-' + m) ? y + '-' + m : inYear[inYear.length - 1] });
+  });
+  monthSel.addEventListener('change', () => dash.setParams({ month: monthSel.value || null }));
+  regionSel.addEventListener('change', () => dash.setParams({ region: regionSel.value === 'ทั้งหมด' ? null : regionSel.value }));
+  estateSel.addEventListener('change', () => dash.setParams({ estate: estateSel.value || null }));
+  y0Sel.addEventListener('change', () => dash.setParams({ y0: Number(y0Sel.value) }));
+  y1Sel.addEventListener('change', () => dash.setParams({ y1: Number(y1Sel.value) }));
+  const openEstate = (name) => { dash.setParams({ estate: name }); show('estate'); window.scrollTo({ top: 0 }); };
+
+  const failLine = (el) => { el.classList.remove('dash-skeleton'); el.replaceChildren(); const d = document.createElement('div'); d.className = 'wd-fail'; d.textContent = 'Failed to load'; el.append(d); };
+  const emptyLine = (el, txt) => { el.classList.remove('dash-skeleton'); el.replaceChildren(); const d = document.createElement('div'); d.className = 'empty'; d.textContent = txt; el.append(d); };
+  const fresh = (box) => { box.classList.remove('dash-skeleton'); box.querySelectorAll('svg, .empty, .wd-fail').forEach((s) => s.remove()); };
+
+  function tipFor(box) {
+    let t = box.querySelector('.wd-tip');
+    if (!t) { t = document.createElement('div'); t.className = 'wd-tip'; t.hidden = true; box.append(t); }
+    return t;
+  }
+  function showTip(box, t, x, y, title, lines) {
+    t.replaceChildren();
+    const h = document.createElement('div'); h.className = 't'; h.textContent = title; t.append(h);
+    for (const [color, name, val] of lines) {
+      const r = document.createElement('div');
+      if (color) { const s = document.createElement('span'); s.className = 'sw'; s.style.background = color; r.append(s); }
+      r.append(document.createTextNode((name ? name + ' ' : '') + val)); t.append(r);
+    }
+    t.hidden = false;
+    const bw = box.clientWidth, tw = t.offsetWidth;
+    t.style.left = Math.max(0, Math.min(bw - tw, x - tw / 2)) + 'px';
+    t.style.top = Math.max(0, y - t.offsetHeight - 10) + 'px';
+  }
+  function legend(el, items) {
+    el.replaceChildren();
+    for (const [c, n, line] of items) {
+      const s = document.createElement('span'); const i = document.createElement('i'); if (line) i.className = 'ln'; i.style.background = c; s.append(i, document.createTextNode(n)); el.append(s);
+    }
+  }
+  function yGrid(svg, y, x0, x1) {
+    const ticks = y.ticks(5);
+    const g = svg.append('g');
+    g.selectAll('line').data(ticks).join('line').attr('x1', x0).attr('x2', x1).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+    g.selectAll('text').data(ticks).join('text').attr('x', x0 - 6).attr('y', (d) => y(d) + 4).attr('text-anchor', 'end').text(fAxis);
+  }
+  function axisW(svg, y) {
+    const t = svg.append('text');
+    let mw = 0;
+    for (const d of y.ticks(5)) { t.text(fAxis(d)); mw = Math.max(mw, t.node().getComputedTextLength()); }
+    t.remove();
+    return Math.ceil(mw) + 10;
+  }
+  function yearTicks(svg, periods, xf, h) {
+    let lastX = -Infinity;
+    const meas = svg.append('text').text('2569');
+    const tw = meas.node().getComputedTextLength() + 8; meas.remove();
+    for (const p of periods) {
+      if (!p.endsWith('-01') && p !== periods[0]) continue;
+      const x = xf(p);
+      if (x - lastX < tw) continue;
+      svg.append('text').attr('x', x).attr('y', h - 6).text(p.endsWith('-01') ? p.slice(0, 4) : lab(p));
+      lastX = x;
+    }
+  }
+
+  // ---------- horizontal top-10 ----------
+  function hbar(box, rows, key, color, opts = {}) {
+    fresh(box);
+    if (!rows.length) { emptyLine(box, 'ไม่มีข้อมูลในเดือนนี้'); return; }
+    const w = Math.max(260, box.clientWidth);
+    const rowH = 30, m = { t: 4, b: 22 };
+    const h = m.t + m.b + rows.length * rowH;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+    let lw = 0, vw = 0;
+    const meas = svg.append('text').attr('class', 'lab');
+    for (const r of rows) { meas.text(short(r.estate)); lw = Math.max(lw, meas.node().getComputedTextLength()); meas.text(fNum(r[key])); vw = Math.max(vw, meas.node().getComputedTextLength()); }
+    meas.remove();
+    lw = Math.min(lw, w * 0.42);
+    const x0 = lw + 8, x1 = w - vw - 8;
+    const maxV = d3.max(rows, (r) => Math.max(r[key] || 0, opts.ref ? (r[opts.ref] || 0) : 0));
+    const x = d3.scaleLinear([0, maxV], [x0, x1]).nice();
+    const y = d3.scaleBand(rows.map((r) => r.estate), [m.t, h - m.b]).paddingInner(0.28);
+    const ticks = x.ticks(Math.max(2, Math.floor((x1 - x0) / 80)));
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', m.t).attr('y2', h - m.b).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', x).attr('y', h - 6).attr('text-anchor', 'middle').text(fAxis);
+    if (opts.ref) svg.append('g').selectAll('rect').data(rows.filter((r) => r[opts.ref] > 0)).join('rect')
+      .attr('x', x0).attr('y', (r) => y(r.estate)).attr('height', y.bandwidth()).attr('width', (r) => x(r[opts.ref]) - x0).attr('rx', 4).attr('fill', muted).attr('opacity', 0.45);
+    svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', x0).attr('y', (r) => y(r.estate)).attr('height', y.bandwidth()).attr('width', (r) => Math.max(1, x(r[key]) - x0)).attr('rx', 4).attr('fill', color);
+    svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lab').attr('x', lw).attr('text-anchor', 'end')
+      .attr('y', (r) => y(r.estate) + y.bandwidth() / 2 + 4).text((r) => { const s = short(r.estate); return s; })
+      .each(function () { const n = this; let s = n.textContent; while (n.getComputedTextLength() > lw && s.length > 3) { s = s.slice(0, -2); n.textContent = s + '…'; } });
+    svg.append('g').selectAll('text').data(rows).join('text').attr('class', 'lab').attr('x', (r) => Math.max(x(r[key]), opts.ref && r[opts.ref] ? x(r[opts.ref]) : 0) + 4)
+      .attr('y', (r) => y(r.estate) + y.bandwidth() / 2 + 4).text((r) => fNum(r[key]));
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', 0).attr('width', w).attr('y', (r) => y(r.estate) - 3).attr('height', y.step()).attr('fill', 'transparent').style('cursor', 'pointer')
+      .on('mousemove', (ev, r) => showTip(box, tip, x(r[key]), y(r.estate), short(r.estate), opts.tip(r)))
+      .on('mouseleave', () => { tip.hidden = true; })
+      .on('click', (ev, r) => openEstate(r.estate));
+  }
+
+  // ---------- vertical monthly bars ----------
+  function vbars(box, rows, opts) {
+    fresh(box);
+    if (!rows.length) { emptyLine(box, 'ไม่มีข้อมูล'); return; }
+    const w = Math.max(280, box.clientWidth), h = 260, m = { t: 16, r: 4, b: 24, l: 4 };
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+    const y = d3.scaleLinear([0, d3.max(rows, (r) => r[opts.key]) * 1.08 || 1], [h - m.b, m.t]).nice();
+    m.l = axisW(svg, y);
+    const x = d3.scaleBand(rows.map((r) => r.period), [m.l, w - m.r]).paddingInner(0.25);
+    yGrid(svg, y, m.l, w - m.r);
+    const rx = Math.min(4, x.bandwidth() / 2);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.period)).attr('width', x.bandwidth())
+      .attr('y', (r) => y(r[opts.key])).attr('height', (r) => y(0) - y(r[opts.key])).attr('rx', rx)
+      .attr('fill', (r) => (opts.sel ? (r.period === opts.sel ? dash.colors[0] : muted) : dash.colors[0]));
+    if (opts.key2) {
+      const bw = Math.max(1, x.bandwidth() * 0.5);
+      svg.append('g').selectAll('rect').data(rows.filter((r) => r[opts.key2] > 0)).join('rect').attr('x', (r) => x(r.period) + (x.bandwidth() - bw) / 2).attr('width', bw)
+        .attr('y', (r) => y(r[opts.key2])).attr('height', (r) => y(0) - y(r[opts.key2])).attr('rx', Math.min(3, bw / 2)).attr('fill', dash.colors[2]);
+    }
+    svg.append('line').attr('x1', m.l).attr('x2', w - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--cds-chart-axis)');
+    yearTicks(svg, rows.map((r) => r.period), (p) => x(p), h);
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.period) - x.step() * 0.125).attr('width', x.step()).attr('y', m.t).attr('height', h - m.t - m.b).attr('fill', 'transparent')
+      .style('cursor', opts.click ? 'pointer' : null)
+      .on('mousemove', (ev, r) => showTip(box, tip, x(r.period) + x.bandwidth() / 2, y(r[opts.key]), labLong(r.period), opts.tip(r)))
+      .on('mouseleave', () => { tip.hidden = true; })
+      .on('click', (ev, r) => opts.click && opts.click(r));
+  }
+
+  // ---------- multi-line ----------
+  function lines(box, periods, series, opts = {}) {
+    fresh(box);
+    if (!periods.length) { emptyLine(box, 'ไม่มีข้อมูล'); return; }
+    const w = Math.max(280, box.clientWidth), h = 260;
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+    let endW = 0;
+    if (opts.endLabels) {
+      const meas = svg.append('text').attr('class', 'end');
+      for (const s of series) { const last = s.rows.filter((r) => r.v != null).pop(); if (last) { meas.text(s.name + ' ' + fAxis(last.v)); endW = Math.max(endW, meas.node().getComputedTextLength()); } }
+      meas.remove();
+    }
+    const m = { t: 16, r: opts.endLabels ? Math.min(endW + 10, w * 0.45) : 6, b: 24, l: 4 };
+    const maxV = d3.max(series, (s) => d3.max(s.rows, (r) => r.v)) || 1;
+    const y = d3.scaleLinear([0, maxV * 1.1], [h - m.b, m.t]).nice();
+    m.l = axisW(svg, y);
+    const x = d3.scalePoint(periods, [m.l + 4, w - m.r]);
+    yGrid(svg, y, m.l, w - m.r);
+    yearTicks(svg, periods, (p) => x(p), h);
+    const ends = [];
+    series.forEach((s) => {
+      const line = d3.line().defined((r) => r.v != null).x((r) => x(r.period)).y((r) => y(r.v));
+      if (s.area) {
+        const id = 'g' + Math.random().toString(36).slice(2);
+        const grad = svg.append('defs').append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+        [[0, .26], [.25, .16], [.5, .08], [.75, .03], [1, 0]].forEach(([o, a]) => grad.append('stop').attr('offset', o).attr('style', `stop-color: ${s.color}; stop-opacity: ${a}`));
+        svg.append('path').datum(s.rows).attr('d', d3.area().defined((r) => r.v != null).x((r) => x(r.period)).y0(y(0)).y1((r) => y(r.v))).attr('fill', `url(#${id})`);
+      }
+      svg.append('path').datum(s.rows).attr('d', line).attr('fill', 'none').attr('stroke', s.color).attr('stroke-width', 2)
+        .attr('stroke-linecap', s.dash ? 'butt' : 'round').attr('stroke-linejoin', 'round').attr('stroke-dasharray', s.dash ? '6 4' : null);
+      const last = s.rows.filter((r) => r.v != null).pop();
+      if (last) ends.push({ s, last, y: y(last.v) });
+    });
+    if (opts.endLabels) {
+      ends.sort((a, b) => a.y - b.y);
+      for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14;
+      for (const e of ends) svg.append('text').attr('class', 'end').attr('x', w - m.r + 6).attr('y', e.y + 4).attr('fill', e.s.color).text(e.s.name + ' ' + fAxis(e.last.v));
+    }
+    const tip = tipFor(box);
+    const hover = svg.append('line').attr('y1', m.t).attr('y2', h - m.b).attr('stroke', 'var(--cds-chart-reference)').attr('opacity', 0);
+    svg.append('rect').attr('x', m.l).attr('width', w - m.r - m.l).attr('y', m.t).attr('height', h - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', (ev) => {
+        const [px] = d3.pointer(ev);
+        const step = periods.length > 1 ? x.step() : 1;
+        const p = periods[Math.max(0, Math.min(periods.length - 1, Math.round((px - m.l - 4) / step)))];
+        hover.attr('x1', x(p)).attr('x2', x(p)).attr('opacity', 1);
+        const ls = series.map((s) => { const r = s.rows.find((q) => q.period === p); return [s.color, s.name, r && r.v != null ? (s.fmt || fNum)(r.v, r) : '—']; });
+        showTip(box, tip, x(p), m.t + 30, labLong(p), ls);
+      })
+      .on('mouseleave', () => { tip.hidden = true; hover.attr('opacity', 0); });
+  }
+
+  // ---------- seasonality ----------
+  function drawSeason(rows) {
+    const box = document.getElementById('season');
+    fresh(box);
+    const w = Math.max(280, box.clientWidth), h = 260, m = { t: 20, r: 4, b: 24, l: 4 };
+    const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+    const x = d3.scaleBand(rows.map((r) => r.month), [m.l, w - m.r]).paddingInner(0.3);
+    const ext = d3.max(rows, (r) => Math.abs(r.dev)) * 1.25 || 0.01;
+    const y = d3.scaleLinear([-ext, ext], [h - m.b, m.t]);
+    const ticks = y.ticks(4);
+    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', 0).attr('x2', w).attr('y1', y).attr('y2', y).attr('stroke', 'var(--cds-chart-grid)');
+    svg.append('g').selectAll('text').data(ticks).join('text').attr('x', 0).attr('y', (d) => y(d) - 4).text((d) => (d > 0 ? '+' : '') + d3.format('.0%')(d));
+    const maxM = d3.greatest(rows, (r) => r.dev), minM = d3.least(rows, (r) => r.dev);
+    svg.append('g').selectAll('rect').data(rows).join('rect')
+      .attr('x', (r) => x(r.month)).attr('width', x.bandwidth())
+      .attr('y', (r) => Math.min(y(0), y(r.dev))).attr('height', (r) => Math.max(1, Math.abs(y(r.dev) - y(0))))
+      .attr('rx', Math.min(4, x.bandwidth() / 2))
+      .attr('fill', (r) => (r === maxM ? dash.colors[0] : r === minM ? dash.colors[2] : muted));
+    svg.append('line').attr('x1', m.l).attr('x2', w - m.r).attr('y1', y(0)).attr('y2', y(0)).attr('stroke', 'var(--cds-chart-reference)');
+    const meas = svg.append('text').text('มี.ค.'); const lw = meas.node().getComputedTextLength(); meas.remove();
+    const every = x.step() < lw + 4 ? 2 : 1;
+    svg.append('g').selectAll('text').data(rows.filter((r, i) => i % every === 0)).join('text').attr('x', (r) => x(r.month) + x.bandwidth() / 2).attr('y', h - 6).attr('text-anchor', 'middle').text((r) => MON[r.month - 1]);
+    const tip = tipFor(box);
+    svg.append('g').selectAll('rect').data(rows).join('rect').attr('x', (r) => x(r.month) - x.step() * 0.15).attr('width', x.step()).attr('y', m.t).attr('height', h - m.t - m.b).attr('fill', 'transparent')
+      .on('mousemove', (ev, r) => showTip(box, tip, x(r.month) + x.bandwidth() / 2, Math.min(y(0), y(r.dev)), MONL[r.month - 1] + ` (เฉลี่ย ${r.years} ปี)`, [[null, 'ต่อวัน', fInt(r.avg_per_day) + ' ลบ.ม.'], [null, 'เทียบค่าเฉลี่ย', fSigned(r.dev)]]))
+      .on('mouseleave', () => { tip.hidden = true; });
+    const note = document.getElementById('season-note');
+    note.replaceChildren(document.createTextNode('น้ำใช้เฉลี่ยต่อวันของแต่ละเดือน (ปี 2565 เป็นต้นไป) เทียบค่าเฉลี่ยทั้งปี · สูงสุด '));
+    const mk = (r) => { const b = document.createElement('b'); b.textContent = MONL[r.month - 1] + ' ' + fSigned(r.dev); b.dataset.source = 'seasonal'; b.dataset.field = 'dev'; b.dataset.where = 'month=' + r.month; return b; };
+    note.append(mk(maxM), document.createTextNode(' · ต่ำสุด '), mk(minM));
+  }
+
+  // ---------- tables ----------
+  const td = (txt, cls) => { const c = document.createElement('td'); c.textContent = txt; if (cls) c.className = cls; return c; };
+  const cmp = (key, dir) => (a, b) => {
+    const va = a[key], vb = b[key];
+    if (va == null && vb == null) return 0; if (va == null) return 1; if (vb == null) return -1;
+    if (key === 'estate') return dir * ((a.no ?? 999) - (b.no ?? 999));
+    return typeof va === 'number' ? dir * (va - vb) : dir * String(va).localeCompare(String(vb), 'th');
+  };
+  function wireSort(tableId, st, redrawT) {
+    document.querySelectorAll(`#${tableId} th`).forEach((th) => {
+      th.querySelector('button').addEventListener('click', () => {
+        const f = th.dataset.field;
+        if (st.key === f) st.dir = -st.dir; else { st.key = f; st.dir = ['estate', 'province', 'period', 'field'].includes(f) ? 1 : -1; }
+        redrawT();
+      });
+    });
+  }
+  function setSortMarks(tableId, st) {
+    document.querySelectorAll(`#${tableId} th`).forEach((th) => {
+      if (th.dataset.field === st.key) th.setAttribute('aria-sort', st.dir > 0 ? 'ascending' : 'descending'); else th.removeAttribute('aria-sort');
+    });
+  }
+  const tState = { estate: { key: 'use', dir: -1, q: '' }, quality: { key: 'ratio', dir: -1 } };
+  let tableRows = [];
+  function drawEstateTable() {
+    const st = tState.estate, q = st.q.trim().toLowerCase();
+    const rows = tableRows.filter((r) => !q || (r.estate + ' ' + r.region + ' ' + r.province).toLowerCase().includes(q)).sort(cmp(st.key, st.dir));
+    document.querySelector('#estate-table tbody').replaceChildren(...rows.map((r) => {
+      const tr = document.createElement('tr');
+      tr.dataset.key = encKey(r.period, r.estate);
+      tr.dataset.estate = r.estate;
+      tr.append(
+        td(short(r.estate), 'l name'),
+        td(r.province, 'l hide-narrow'),
+        td(fInt(r.use)),
+        td(fSigned(r.yoy), r.yoy == null ? '' : r.yoy > 0 ? 'up' : 'down'),
+        td(r.r3 == null ? '—' : fNum(r.r3), 'hide-narrow'),
+        td(r.reserve_days == null ? '—' : fInt(r.reserve_days), r.reserve_days != null && r.reserve_days < 7 ? 'bad' : ''),
+        td(fPct(r.treat_util), 'hide-narrow' + (r.treat_util != null && r.treat_util > 0.9 ? ' warn' : '')),
+      );
+      return tr;
+    }));
+    document.getElementById('table-count').textContent = rows.length + ' แห่ง';
+    setSortMarks('estate-table', st);
+  }
+  wireSort('estate-table', tState.estate, drawEstateTable);
+  const search = document.querySelector('.wd-search');
+  search.addEventListener('input', () => { tState.estate.q = search.value; drawEstateTable(); });
+  document.querySelector('#estate-table tbody').addEventListener('click', (ev) => { const tr = ev.target.closest('tr[data-estate]'); if (tr) openEstate(tr.dataset.estate); });
+
+  let qualityRows = [];
+  function drawQuality() {
+    const st = tState.quality;
+    document.querySelector('#quality-table tbody').replaceChildren(...qualityRows.slice().sort(cmp(st.key, st.dir)).map((r) => {
+      const tr = document.createElement('tr');
+      tr.dataset.key = r.id;
+      tr.dataset.estate = r.estate;
+      tr.append(td(short(r.estate), 'l name'), td(labLong(r.period), 'l'), td(r.field, 'l'), td(fInt(r.value)), td(fInt(r.median)),
+        td((r.ratio >= 10 ? fInt(r.ratio) : d3.format('.2~r')(r.ratio)) + '×', r.ratio > 1 ? 'bad' : 'warn'));
+      return tr;
+    }));
+    setSortMarks('quality-table', st);
+  }
+  wireSort('quality-table', tState.quality, drawQuality);
+  document.querySelector('#quality-table tbody').addEventListener('click', (ev) => { const tr = ev.target.closest('tr[data-estate]'); if (tr) openEstate(tr.dataset.estate); });
+
+  // ---------- helpers for marks ----------
+  function setMark(el, source, field, where, text) {
+    el.classList.remove('dash-skeleton');
+    el.dataset.source = source; el.dataset.field = field; el.dataset.where = where;
+    el.textContent = text;
+  }
+  function chip(el, vsEl, cur, prev, kind, prevLabel) {
+    el.replaceChildren(); el.className = 'chip'; if (vsEl) vsEl.textContent = '';
+    if (cur == null || prev == null || (!prev && kind !== 'pt')) { if (vsEl) vsEl.textContent = 'ไม่มีข้อมูลปีก่อนให้เทียบ'; return; }
+    let d, txt, good;
+    if (kind === 'count') { d = cur - prev; txt = (d > 0 ? '+' : '') + fInt(d); good = null; }
+    else if (kind === 'pt') { d = cur - prev; txt = (d > 0 ? '+' : '') + d3.format('.1f')(d * 100) + ' จุด'; good = d <= 0; }
+    else { d = cur / prev - 1; txt = fSigned(d); good = kind === 'use' ? d <= 0 : d >= 0; }
+    el.textContent = (d > 0 ? '▲ ' : d < 0 ? '▼ ' : '') + txt.replace(/^[+-]/, '');
+    el.className = 'chip ' + (good == null || d === 0 ? 'neu' : good ? 'down' : 'up');
+    if (vsEl) vsEl.textContent = 'เทียบ ' + prevLabel;
+  }
+  function spark(el, rows, field, color) {
+    el.classList.remove('dash-skeleton');
+    el.replaceChildren();
+    const pts = rows.filter((r) => r[field] != null);
+    if (pts.length < 2) return;
+    const w = Math.max(120, el.clientWidth), h = 36;
+    const svg = d3.select(el).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
+    const x = d3.scaleLinear([0, pts.length - 1], [2, w - 4]);
+    const ext = d3.extent(pts, (r) => r[field]); const pad = (ext[1] - ext[0]) * 0.15 || Math.abs(ext[0]) * 0.05 || 1;
+    const y = d3.scaleLinear([ext[0] - pad, ext[1] + pad], [h - 3, 3]);
+    const id = 's' + Math.random().toString(36).slice(2);
+    const grad = svg.append('defs').append('linearGradient').attr('id', id).attr('x1', 0).attr('x2', 0).attr('y1', 0).attr('y2', 1);
+    [[0, .26], [.5, .08], [1, 0]].forEach(([o, a]) => grad.append('stop').attr('offset', o).attr('style', `stop-color: ${color}; stop-opacity: ${a}`));
+    svg.append('path').datum(pts).attr('d', d3.area().x((r, i) => x(i)).y0(h).y1((r) => y(r[field]))).attr('fill', `url(#${id})`);
+    svg.append('path').datum(pts).attr('d', d3.line().x((r, i) => x(i)).y((r) => y(r[field]))).attr('fill', 'none').attr('stroke', color).attr('stroke-width', 2).attr('stroke-linecap', 'round').attr('stroke-linejoin', 'round');
+    const l = pts[pts.length - 1];
+    svg.append('circle').attr('cx', x(pts.length - 1)).attr('cy', y(l[field])).attr('r', 3).attr('fill', color);
+  }
+  const tint = () => document.querySelectorAll('.wd-kpi[data-k]').forEach((el) => el.style.setProperty('--k', dash.colors[Number(el.dataset.k)]));
+
+  // ---------- main draw ----------
+  function redraw() {
+    const P = dash.params();
+    const O = dash.data('overview');
+    const E = dash.data('estate_table');
+    let sel = null, region = P.region || 'ทั้งหมด';
+
+    if (O.status === 'ok' && O.data.length) {
+      const all = O.data;
+      periodsAll = [...new Set(all.map((r) => r.period))].sort();
+      sel = periodsAll.includes(P.month) ? P.month : periodsAll[periodsAll.length - 1];
+      const regions = [...new Set(all.map((r) => r.region))].sort((a, b) => REG_ORDER.indexOf(a) - REG_ORDER.indexOf(b));
+      if (!regions.includes(region)) region = 'ทั้งหมด';
+      // controls
+      const years = [...new Set(periodsAll.map((p) => p.slice(0, 4)))].reverse();
+      yearSel.replaceChildren(...years.map((y) => new Option(y, y)));
+      yearSel.value = sel.slice(0, 4);
+      monthSel.replaceChildren(...periodsAll.filter((p) => p.startsWith(sel.slice(0, 4) + '-')).map((p) => new Option(MONL[Number(p.slice(5)) - 1], p)));
+      monthSel.value = sel;
+      regionSel.replaceChildren(...regions.map((r) => new Option(r, r)));
+      regionSel.value = region;
+
+      const cur = all.find((r) => r.period === sel && r.region === region);
+      const where = 'period=' + sel + '&region=' + encW(region);
+      const prevLabel = MON[Number(sel.slice(5)) - 1] + ' ' + (Number(sel.slice(0, 4)) - 1);
+      // KPIs
+      tint();
+      document.querySelectorAll('#ov-kpis [data-source="overview"][data-field]').forEach((el) => {
+        const f = el.dataset.field, v = cur ? cur[f] : null;
+        const txt = v == null ? '—' : f === 'r3_share' || f === 'treat_util' ? fPct(v) : fInt(v);
+        setMark(el, 'overview', f, where, txt);
+      });
+      document.querySelectorAll('#ov-kpis [data-delta]').forEach((el) => {
+        const f = el.dataset.delta;
+        chip(el, el.parentNode.querySelector(`[data-vs="${f}"]`), cur ? cur[f] : null, cur ? cur[f + '_prev'] : null,
+          f === 'use' ? 'use' : f === 'r3' || f === 'reserve' ? 'good' : f === 'treat_util' ? 'pt' : 'count', prevLabel);
+      });
+      const hist = all.filter((r) => r.region === region && r.period <= sel).slice(-12);
+      document.querySelectorAll('#ov-kpis [data-spark]').forEach((el) => {
+        const tileK = Number(el.closest('.wd-kpi').dataset.k);
+        spark(el, hist, el.dataset.spark, dash.colors[tileK]);
+      });
+      // takeaway
+      const tk = document.getElementById('takeaway');
+      tk.replaceChildren();
+      if (cur) {
+        const b = (field, text) => { const e = document.createElement('b'); setMark(e, 'overview', field, where, text); return e; };
+        tk.append(document.createTextNode(labLong(sel) + (region === 'ทั้งหมด' ? ' นิคมฯ ' : ' พื้นที่ ' + region + ' ')), b('n_estates', fInt(cur.n_estates) + ' แห่ง'), document.createTextNode(' ใช้น้ำรวม '), b('use', fInt(cur.use) + ' ลบ.ม.'));
+        if (cur.use_prev) tk.append(document.createTextNode(' (' + (cur.use >= cur.use_prev ? 'มากกว่า' : 'น้อยกว่า') + ' ' + prevLabel + ' ' + d3.format('.1%')(Math.abs(cur.use / cur.use_prev - 1)) + ')'));
+        if (cur.r3_share != null) tk.append(document.createTextNode(' · นำกลับมาใช้ซ้ำ (3R) '), b('r3_share', fPct(cur.r3_share)));
+        if (cur.reserve_days != null) tk.append(document.createTextNode(' · น้ำสำรองพอใช้ราว '), b('reserve_days', fInt(cur.reserve_days) + ' วัน'));
+      }
+      if (page === 'overview') {
+        // trend
+        const rr = all.filter((r) => r.region === region);
+        document.getElementById('trend-note').textContent = (region === 'ทั้งหมด' ? 'ทุกพื้นที่' : region) + ' · คลิกแท่งเพื่อเลือกเดือน · แท่งเข้มคือ ' + labLong(sel);
+        legend(document.getElementById('trend-legend'), [[dash.colors[0], 'เดือนที่เลือก'], [muted, 'เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
+        vbars(document.getElementById('trend'), rr, { key: 'use', key2: 'r3', sel, click: (r) => dash.setParams({ month: r.period }),
+          tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fInt(r.r3)], [null, 'นิคมที่รายงาน', fInt(r.n_estates)]] });
+        // regions
+        const regs = regions.filter((g) => g !== 'ทั้งหมด');
+        lines(document.getElementById('region'), periodsAll, regs.map((g, i) => ({ name: g, color: dash.colors[i % dash.colors.length],
+          rows: periodsAll.map((p) => { const r = all.find((q) => q.period === p && q.region === g); return { period: p, v: r ? r.use : null }; }) })), { endLabels: true });
+      }
+    } else if (O.status === 'error') {
+      ['trend', 'region'].forEach((id) => failLine(document.getElementById(id)));
+    }
+
+    const S = dash.data('seasonal');
+    if (page === 'overview') {
+      if (S.status === 'ok' && S.data.length) drawSeason(S.data);
+      else if (S.status === 'error') failLine(document.getElementById('season'));
+    }
+
+    if (E.status === 'ok') {
+      const all = E.data;
+      const periodNow = sel || all.map((r) => r.period).sort().pop();
+      const monthRows = all.filter((r) => r.period === periodNow && (region === 'ทั้งหมด' || r.region === region));
+      if (page === 'overview') {
+        tableRows = monthRows;
+        document.getElementById('table-month').textContent = labLong(periodNow) + (region === 'ทั้งหมด' ? '' : ' · ' + region);
+        drawEstateTable();
+        const top = (k) => monthRows.filter((r) => r[k] > 0).sort((a, b) => b[k] - a[k]).slice(0, 10);
+        const sumUse = d3.sum(monthRows, (r) => r.use), sumR3 = d3.sum(monthRows, (r) => r.r3 || 0);
+        const tu = top('use');
+        document.getElementById('top-use-note').textContent = 'ลบ.ม./เดือน · ' + labLong(periodNow) + (tu.length ? ' · 10 อันดับรวมกันเป็น ' + d3.format('.0%')(d3.sum(tu, (r) => r.use) / sumUse) + ' ของทั้งหมด' : '');
+        hbar(document.getElementById('top-use'), tu, 'use', dash.colors[0], { tip: (r) => [[null, 'น้ำใช้', fInt(r.use) + ' ลบ.ม.'], [null, 'สัดส่วน', fPct(r.use / sumUse)], [null, 'เทียบปีก่อน', fSigned(r.yoy)]] });
+        const t3 = top('r3');
+        document.getElementById('top-r3-note').textContent = 'ลบ.ม./เดือน · ' + labLong(periodNow);
+        hbar(document.getElementById('top-r3'), t3, 'r3', dash.colors[2], { tip: (r) => [[null, '3R', fNum(r.r3) + ' ลบ.ม.'], [null, 'คิดเป็น', fPct(r.r3_share) + ' ของน้ำใช้นิคม'], [null, 'สัดส่วนของ 3R ทั้งหมด', fPct(r.r3 / sumR3)]] });
+        hbar(document.getElementById('top-inf'), top('influent_day'), 'influent_day', dash.colors[3], { ref: 'capacity_day',
+          tip: (r) => [[null, 'น้ำเสียเข้าระบบ', fNum(r.influent_day) + ' ลบ.ม./วัน'], [null, 'ความสามารถ', r.capacity_day == null ? '—' : fNum(r.capacity_day) + ' ลบ.ม./วัน'], [null, 'ภาระระบบ', fPct(r.treat_util)]] });
+      }
+
+      // ----- estate page -----
+      const names = [...new Map(all.map((r) => [r.estate, r.no ?? 999])).entries()].sort((a, b) => a[1] - b[1]).map((e) => e[0]);
+      const biggest = all.filter((r) => r.period === periodNow).sort((a, b) => b.use - a.use)[0];
+      const picked = names.includes(P.estate) ? P.estate : biggest ? biggest.estate : names[0];
+      estateSel.replaceChildren(...names.map((n) => new Option(short(n), n)));
+      estateSel.value = picked || '';
+      const er = all.filter((r) => r.estate === picked).sort((a, b) => (a.period < b.period ? -1 : 1));
+      const yrs = [...new Set(er.map((r) => Number(r.period.slice(0, 4))))];
+      let y0 = yrs.includes(P.y0) ? P.y0 : yrs[0], y1 = yrs.includes(P.y1) ? P.y1 : yrs[yrs.length - 1];
+      if (y0 > y1) [y0, y1] = [y1, y0];
+      y0Sel.replaceChildren(...yrs.map((y) => new Option(String(y), String(y)))); y0Sel.value = String(y0);
+      y1Sel.replaceChildren(...yrs.map((y) => new Option(String(y), String(y)))); y1Sel.value = String(y1);
+      const rng = er.filter((r) => { const y = Number(r.period.slice(0, 4)); return y >= y0 && y <= y1; });
+      if (page === 'estate') {
+        const last = rng[rng.length - 1];
+        const lastWith = (k) => rng.filter((r) => r[k] != null).pop();
+        document.querySelectorAll('#es-kpis [data-source="estate_table"][data-field]').forEach((el) => {
+          const f = el.dataset.field;
+          const r = lastWith(f);
+          if (!r) { el.classList.remove('dash-skeleton'); el.removeAttribute('data-where'); el.textContent = '—'; return; }
+          setMark(el, 'estate_table', f, 'period=' + r.period + '&estate=' + encW(r.estate), f === 'treat_util' || f === 'r3_share' ? fPct(r[f]) : fNum(r[f]));
+        });
+        tint();
+        const ec = document.querySelector('#es-kpis [data-delta="use"]');
+        if (last) {
+          const pl = MON[Number(last.period.slice(5)) - 1] + ' ' + (Number(last.period.slice(0, 4)) - 1);
+          chip(ec, ec.parentNode.querySelector('[data-vs="use"]'), last.use, last.use_prev, 'use', pl);
+          document.querySelector('#es-kpis .es-when').textContent = labLong(last.period);
+        }
+        const recent = rng.slice(-12);
+        document.querySelectorAll('#es-kpis [data-spark]').forEach((el) => spark(el, recent, el.dataset.spark, dash.colors[Number(el.closest('.wd-kpi').dataset.k)]));
+        const et = document.getElementById('es-take');
+        et.replaceChildren();
+        if (rng.length) {
+          const hi = rng.reduce((a, b) => (b.use > a.use ? b : a)), lo = rng.reduce((a, b) => (b.use < a.use ? b : a));
+          const avg = d3.mean(rng, (r) => r.use);
+          const util = rng.filter((r) => r.treat_util != null);
+          et.append(document.createTextNode(short(picked) + ' (' + (rng[0].province || '—') + ') ช่วง ' + y0 + '–' + y1 + ' ใช้น้ำเฉลี่ย ' + fInt(avg) + ' ลบ.ม./เดือน · สูงสุด ' + labLong(hi.period) + ' ' + fInt(hi.use) + ' · ต่ำสุด ' + labLong(lo.period) + ' ' + fInt(lo.use)
+            + (util.length ? ' · ภาระระบบบำบัดเฉลี่ย ' + fPct(d3.mean(util, (r) => r.treat_util)) : '')));
+        }
+        legend(document.getElementById('es-use-legend'), [[dash.colors[0], 'ปริมาณน้ำใช้'], [dash.colors[2], 'ปริมาณน้ำ 3R']]);
+        vbars(document.getElementById('es-use'), rng, { key: 'use', key2: 'r3',
+          tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fNum(r.r3)], [null, 'เทียบปีก่อน', fSigned(r.yoy)]] });
+        const per = rng.map((r) => r.period);
+        legend(document.getElementById('es-ww-legend'), [[dash.colors[3], 'น้ำเสียเข้าระบบ (Influent)', true], [dash.colors[1], 'น้ำเสียผ่านการบำบัด (Effluent)', true], ['var(--cds-chart-status-critical)', 'ความสามารถของระบบ', true]]);
+        const ww = [
+          { name: 'Influent', color: dash.colors[3], rows: rng.map((r) => ({ period: r.period, v: r.influent_day })) },
+          { name: 'Effluent', color: dash.colors[1], rows: rng.map((r) => ({ period: r.period, v: r.effluent_day })) },
+          { name: 'ความสามารถ', color: 'var(--cds-chart-status-critical)', dash: true, rows: rng.map((r) => ({ period: r.period, v: r.capacity_day })) },
+        ];
+        if (ww.every((s) => s.rows.every((r) => r.v == null))) emptyLine(document.getElementById('es-ww'), 'นิคมนี้ไม่มีข้อมูลน้ำเสียในช่วงที่เลือก');
+        else lines(document.getElementById('es-ww'), per, ww);
+        const rs = [{ name: 'น้ำสำรอง', color: dash.colors[0], area: true, rows: rng.map((r) => ({ period: r.period, v: r.reserve, d: r.reserve_days })),
+          fmt: (v, r) => fInt(v) + ' ลบ.ม.' + (r.d != null ? ' (~' + fInt(r.d) + ' วัน)' : '') }];
+        if (rs[0].rows.every((r) => r.v == null)) emptyLine(document.getElementById('es-res'), 'นิคมนี้ไม่มีน้ำสำรองหรือไม่ได้รายงาน');
+        else lines(document.getElementById('es-res'), per, rs);
+      }
+    } else if (E.status === 'error') {
+      ['top-use', 'top-r3', 'top-inf', 'es-use', 'es-ww', 'es-res'].forEach((id) => failLine(document.getElementById(id)));
+    }
+
+    if (page === 'quality') {
+      const Q = dash.data('outliers');
+      if (Q.status === 'ok') { qualityRows = Q.data; drawQuality(); }
+    }
+  }
+
+  let first = true;
+  dash.onData(() => {
+    redraw();
+    if (first && dash.data('overview').status === 'ok') {
+      first = false;
+      const h = location.hash.slice(1);
+      if (['estate', 'quality'].includes(h)) show(h, false);
+    }
+  });
+})();
+</script>
+
+<script>
+// Loads data.json on open; the "อัปเดตข้อมูล" button pulls the latest values straight from the Google Sheet.
+(function () {
+  const SHEET_ID = '1Sqr3gzvhHuTGQUqTeh3Bg3P4dwaeNFYhqQzlEsUfzgk';
+  const SHEET_GID = '0';
+  const SHEET_NAME = 'ชีต1';
+  const RANGE = 'A1:TX74'; // rows below 74 are not used
+
+  const dot = document.getElementById('src-dot');
+  const stamp = document.getElementById('src-stamp');
+  const btn = document.getElementById('btn-refresh');
+  const msg = document.getElementById('src-msg');
+  let regions = null;
+
+  const fmtTime = (d) => new Intl.DateTimeFormat('th-TH', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }).format(d);
+  const setSrc = (kind, text) => { dot.className = 'dot ' + kind; stamp.textContent = text; };
+
+  const looksRight = (values) => Array.isArray(values) && values.length >= 70 && String(values[0][0]).trim() === 'ปี'
+    && values[0].some((c) => /แก่งคอย/.test(String(c)));
+
+  async function loadSnapshot() {
+    try {
+      const [d, r] = await Promise.all([
+        fetch('data.json', { cache: 'no-cache' }).then((x) => { if (!x.ok) throw new Error('data.json ' + x.status); return x.json(); }),
+        fetch('regions.json', { cache: 'no-cache' }).then((x) => { if (!x.ok) throw new Error('regions.json ' + x.status); return x.json(); }),
+      ]);
+      regions = r;
+      window.__dashLoad(d.values, regions);
+      setSrc('snap', 'ข้อมูล ณ ' + fmtTime(new Date(d.updated)) + ' · จากไฟล์ในเว็บ');
+    } catch (e) {
+      console.error(e);
+      window.__dashFail(String(e));
+      setSrc('err', 'โหลดข้อมูลไม่ได้');
+      msg.textContent = 'เปิดไฟล์ data.json ไม่ได้ (ถ้าเปิดจากเครื่องโดยตรง ให้เปิดผ่านเว็บเซิร์ฟเวอร์หรือ GitHub Pages)';
+    }
+  }
+
+  // 1) the export link gives cells exactly as shown in the sheet
+  async function viaExport() {
+    const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}&range=${RANGE}`;
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('export ' + res.status);
+    const values = d3.csvParseRows(await res.text());
+    if (!looksRight(values)) throw new Error('export: unexpected content');
+    return values;
+  }
+  // 2) fallback: the visualisation endpoint, header row and data rows asked for separately
+  async function viaGviz() {
+    const base = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv&headers=0&sheet=${encodeURIComponent(SHEET_NAME)}&range=`;
+    const [h, b] = await Promise.all([fetch(base + 'A1:TX1', { cache: 'no-store' }), fetch(base + 'A3:TX74', { cache: 'no-store' })]);
+    if (!h.ok || !b.ok) throw new Error('gviz ' + h.status + '/' + b.status);
+    const head = d3.csvParseRows(await h.text())[0] || [];
+    const body = d3.csvParseRows(await b.text()).map((r) => { r[0] = String(r[0] ?? '').replace(/,/g, '').trim(); return r; });
+    const values = [head, [], ...body];
+    if (!looksRight(values)) throw new Error('gviz: unexpected content');
+    return values;
+  }
+
+  async function refreshFromSheet() {
+    btn.disabled = true; btn.classList.add('spin'); msg.textContent = ''; msg.className = 'wd-msg';
+    try {
+      let values;
+      try { values = await viaExport(); } catch (e1) { console.warn(e1); values = await viaGviz(); }
+      if (!regions) regions = await fetch('regions.json').then((x) => x.json());
+      window.__dashLoad(values, regions);
+      setSrc('live', 'ข้อมูลล่าสุดจาก Google Sheets · ดึงเมื่อ ' + fmtTime(new Date()));
+      msg.className = 'wd-msg ok'; msg.textContent = 'อัปเดตจากชีตแล้ว';
+      setTimeout(() => { if (msg.classList.contains('ok')) msg.textContent = ''; }, 4000);
+    } catch (e) {
+      console.error(e);
+      msg.className = 'wd-msg';
+      msg.textContent = 'ดึงข้อมูลจากชีตไม่ได้ — ชีตต้องตั้งแชร์เป็น “ทุกคนที่มีลิงก์ดูได้” · ตอนนี้ยังแสดงข้อมูลเดิมอยู่';
+    } finally {
+      btn.disabled = false; btn.classList.remove('spin');
+    }
+  }
+
+  btn.addEventListener('click', refreshFromSheet);
+  loadSnapshot();
+})();
+</script>
+</body>
+</html>
