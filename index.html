@@ -609,6 +609,39 @@ html.printing .wd-kpi .when { font-size: 11.5px; margin-top: 4px; }
   .tabbar .wd-tabs { width: 100%; }
   .tabbar .wd-tabs button, .tabbar .wd-tabs button:first-child { flex: 1; justify-content: center; padding: 10px 12px; font-size: 15.5px; }
 }
+
+/* ================= header summary chips ================= */
+.wd-head2 .wd-take.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; max-width: none; }
+.hchip { display: inline-flex; align-items: center; gap: 7px; padding: 6px 13px 6px 10px; border-radius: 999px; background: var(--side); border: 1px solid var(--color-border-line); font-size: 14.5px; line-height: 1.3; white-space: nowrap; }
+.hchip svg { width: 16px; height: 16px; color: var(--accent); fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.hchip .k { color: var(--color-fg-muted); }
+.hchip b { color: var(--color-fg); font-weight: 600; }
+@media (max-width: 760px) { .hchip { white-space: normal; } }
+html.printing .wd-head2 .wd-take.chips { margin-top: 8px; gap: 6px; }
+html.printing .hchip { font-size: 12px; padding: 3px 9px 3px 7px; }
+
+/* header as two rows: title + options, then the chips across the full width */
+.wd-head2 { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 24px; row-gap: 0; }
+.wd-head2 .h-title, .wd-head2 .h-title > div { display: contents; }
+.wd-head2 h1 { grid-column: 1; grid-row: 1; }
+.wd-head2 .h-tools { grid-column: 2; grid-row: 1; justify-content: flex-end; }
+.wd-head2 .wd-take, .wd-head2 .print-meta { grid-column: 1 / -1; }
+.wd-head2 .wd-take:not(.chips) { margin-top: 10px; }
+@media (max-width: 1320px) {
+  .wd-head2 .h-tools { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; margin-top: 14px; }
+}
+@media (max-width: 760px) {
+  .wd-head2 { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; }
+  .wd-head2 .hamb.mob { grid-column: 1; grid-row: 1; align-self: start; margin-top: 2px; }
+  .wd-head2 h1 { grid-column: 2; }
+  .wd-head2 .h-tools { grid-row: 3; }
+}
+html.printing .wd-head2 { grid-template-columns: minmax(0, 1fr) auto; }
+html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
+.h-tools .sel.wide select { max-width: 15rem; }
+@media (max-width: 1460px) {
+  .wd-head2:has(.wd-filters[data-for~="estate"]:not([hidden])) .h-tools { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; margin-top: 14px; }
+}
 </style>
 </head>
 <body>
@@ -1215,6 +1248,27 @@ dash.calc('outliers', {
     }
   }
 
+  // ---------- header chips ----------
+  const CHIP_IC = {
+    cal: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+    pin: '<path d="M12 21s7-6.2 7-11.5A7 7 0 0 0 5 9.5C5 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/>',
+    bldg: '<path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18"/>',
+    avg: '<path d="M4 18h16"/><path d="M4 12h16" stroke-dasharray="3 3"/><path d="M7 6v12M12 9v9M17 4v14"/>',
+    peak: '<path d="M4 17l5-6 4 3 7-8"/><path d="M15 6h5v5"/>',
+  };
+  function chipRow(el, items) {
+    el.replaceChildren();
+    el.classList.add('chips');
+    for (const [ic, k, v] of items) {
+      const c = document.createElement('span'); c.className = 'hchip';
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const s = document.createElementNS(svgNS, 'svg'); s.setAttribute('viewBox', '0 0 24 24'); s.innerHTML = CHIP_IC[ic] || '';
+      const kk = document.createElement('span'); kk.className = 'k'; kk.textContent = k;
+      const vv = document.createElement('b'); vv.textContent = v;
+      c.append(s, kk, vv); el.append(c);
+    }
+  }
+
   // ---------- monthly trend: paired bars (water used + 3R) ----------
   let trendRange = '12';
   try { trendRange = localStorage.getItem('wd-trend') || '12'; } catch (e) { /* storage off */ }
@@ -1626,14 +1680,11 @@ dash.calc('outliers', {
       });
       // takeaway
       const tk = document.getElementById('takeaway');
-      tk.replaceChildren();
       if (cur) {
-        const b = (field, text) => { const e = document.createElement('b'); setMark(e, 'overview', field, where, text); return e; };
-        tk.append(document.createTextNode(labLong(sel) + (region === 'ทั้งหมด' ? ' นิคมฯ ' : ' พื้นที่ ' + region + ' ')), b('n_estates', fInt(cur.n_estates) + ' แห่ง'), document.createTextNode(' ใช้น้ำรวม '), b('use', fInt(cur.use) + ' ลบ.ม.'));
-        if (cur.use_prev) tk.append(document.createTextNode(' (' + (cur.use >= cur.use_prev ? 'มากกว่า' : 'น้อยกว่า') + ' ' + prevLabel + ' ' + d3.format('.1%')(Math.abs(cur.use / cur.use_prev - 1)) + ')'));
-        if (cur.r3_share != null) tk.append(document.createTextNode(' · นำกลับมาใช้ซ้ำ (3R) '), b('r3_share', fPct(cur.r3_share)));
-        if (cur.reserve_days != null) tk.append(document.createTextNode(' · น้ำสำรองพอใช้ราว '), b('reserve_days', fInt(cur.reserve_days) + ' วัน'));
-      }
+        const R = dash.data('regions');
+        const total = R.status === 'ok' ? (region === 'ทั้งหมด' ? R.data.length : R.data.filter((x) => x.region === region).length) : null;
+        chipRow(tk, [['cal', 'ข้อมูลเดือน', labLong(sel)], ['pin', 'พื้นที่', region === 'ทั้งหมด' ? 'ทุกพื้นที่' : region], ['bldg', 'รายงาน', fInt(cur.n_estates) + (total ? ' จาก ' + total : '') + ' นิคม']]);
+      } else tk.replaceChildren();
       if (page === 'overview') {
         // trend
         const rr = all.filter((r) => r.region === region);
@@ -1726,14 +1777,11 @@ dash.calc('outliers', {
         const recent = rng.slice(-12);
         document.querySelectorAll('#es-kpis [data-spark]').forEach((el) => spark(el, recent, el.dataset.spark, dash.colors[Number(el.closest('.wd-kpi').dataset.k)]));
         const et = document.getElementById('es-take');
-        et.replaceChildren();
         if (rng.length) {
           const hi = rng.reduce((a, b) => (b.use > a.use ? b : a)), lo = rng.reduce((a, b) => (b.use < a.use ? b : a));
-          const avg = d3.mean(rng, (r) => r.use);
-          const util = rng.filter((r) => r.treat_util != null);
-          et.append(document.createTextNode(short(picked) + ' (' + (rng[0].province || '—') + ') ช่วง ' + y0 + '–' + y1 + ' ใช้น้ำเฉลี่ย ' + fInt(avg) + ' ลบ.ม./เดือน · สูงสุด ' + labLong(hi.period) + ' ' + fInt(hi.use) + ' · ต่ำสุด ' + labLong(lo.period) + ' ' + fInt(lo.use)
-            + (util.length ? ' · ภาระระบบบำบัดเฉลี่ย ' + fPct(d3.mean(util, (r) => r.treat_util)) : '')));
-        }
+          chipRow(et, [['bldg', 'นิคม', short(picked)], ['pin', 'จังหวัด', (rng[0].province || '—') + ' · ' + rng[0].region], ['cal', 'ช่วง', y0 + '–' + y1 + ' (' + rng.length + ' เดือน)'],
+            ['avg', 'เฉลี่ย', fInt(d3.mean(rng, (r) => r.use)) + ' ลบ.ม./เดือน'], ['peak', 'สูงสุด', lab(hi.period) + ' · ต่ำสุด ' + lab(lo.period)]]);
+        } else et.replaceChildren();
         legend(document.getElementById('es-use-legend'), [[dash.colors[0], 'เดือนล่าสุด'], [muted, 'น้ำใช้เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
         vbars(document.getElementById('es-use'), rng, { key: 'use', key2: 'r3', sel: rng.length ? rng[rng.length - 1].period : null,
           tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fNum(r.r3)], [null, 'เทียบปีก่อน', fSigned(r.yoy)]] });
