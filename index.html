@@ -549,6 +549,39 @@ html.printing .rk { width: 22px; height: 22px; font-size: 11.5px; }
 #trend .xl { fill: var(--color-fg-muted); }
 #trend .xl.sel { fill: var(--color-fg); font-weight: 600; }
 html.printing .seg { display: none; }
+
+/* ================= watch page (menu only) + overview indicators ================= */
+.tabbar .wd-tabs button[hidden] { display: none !important; }
+.badge.warn { background: color-mix(in srgb, var(--color-warn) 14%, transparent); color: var(--color-warn); }
+.wd-right .cta { border-bottom: 0; padding-bottom: 6px; }
+.wd-right .meters { margin-top: 0; padding-top: 10px; gap: 26px; flex: 1; align-content: start; }
+.wd-right .meter .m-top { font-size: 15px; font-weight: 500; align-items: baseline; }
+.wd-right .meter .m-val { font-family: "Poppins", var(--font-anthropic-sans); font-size: 26px; font-weight: 500; letter-spacing: -.01em; }
+.wd-right .meter .m-bar { height: 6px; margin-top: 10px; }
+.m-note { margin-top: 6px; font-size: 13.5px; color: var(--color-fg-muted); }
+.wd-right .srcbox { margin-top: auto; }
+#watch-list.watch { border: 1px solid var(--color-border-line); border-radius: 12px; overflow: hidden; }
+.watch-sum { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 22px 28px 0 var(--padl); border: 1px solid var(--color-border-line); border-radius: 14px; overflow: hidden; }
+.ws { all: unset; cursor: pointer; display: grid; gap: 6px; padding: 20px 22px; transition: background var(--cds-dur-slow); }
+.ws + .ws { border-left: 1px solid var(--color-border-line); }
+.ws:hover { background: var(--hover); }
+.ws[aria-pressed="true"] { background: var(--accent-soft); box-shadow: inset 0 -3px 0 var(--accent); }
+.ws-k { font-size: 15px; color: var(--color-fg-muted); }
+.ws-v { font-family: "Poppins", var(--font-anthropic-sans); font-size: 34px; font-weight: 500; line-height: 1.1; }
+.ws[data-kind="reserve"] .ws-v { color: var(--color-bad); }
+.ws[data-kind="treat"] .ws-v, .ws[data-kind="rise"] .ws-v { color: var(--color-warn); }
+#watch > .wd-card { margin: 16px 28px 0 var(--padl); }
+.watch-rule { margin: 12px 0 0 !important; }
+@media (max-width: 760px) {
+  .watch-sum { grid-template-columns: 1fr; margin: 16px 16px 0; }
+  .ws + .ws { border-left: 0; border-top: 1px solid var(--color-border-line); }
+  #watch > .wd-card { margin: 16px 16px 0; }
+}
+html.printing .watch-sum { margin: 14px 0 0; }
+html.printing #watch > .wd-card { margin: 12px 0 0; }
+html.printing .wd-right { display: block; }
+html.printing .wd-right .meters { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+html.printing .wd-right .srcbox { display: none; }
 </style>
 </head>
 <body>
@@ -571,6 +604,7 @@ html.printing .seg { display: none; }
 
       <div class="nav-h">ข้อมูล</div>
       <button type="button" class="nav-item" data-go="quality"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="lbl-t">ตรวจข้อมูล</span><em class="badge" id="nav-q"></em></button>
+      <button type="button" class="nav-item" data-go="watch"><svg viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></svg><span class="lbl-t">นิคมที่ควรจับตา</span></button>
       <a class="nav-item" href="https://docs.google.com/spreadsheets/d/1Sqr3gzvhHuTGQUqTeh3Bg3P4dwaeNFYhqQzlEsUfzgk/edit?gid=0" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span class="lbl-t">ชีตต้นทาง</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6h9v9M18 6L7 17"/></svg></a>
 
       <div class="nav-h">ช่วยเหลือ</div>
@@ -589,11 +623,12 @@ html.printing .seg { display: none; }
           <p class="wd-take" id="takeaway" data-for="overview"><span class="dash-skeleton">—</span></p>
           <p class="wd-take" id="es-take" data-for="estate"></p>
           <p class="wd-take" data-for="quality">ค่าที่ควรตรวจสอบในชีต<sup class="star">*</sup></p>
+          <p class="wd-take" data-for="watch" id="watch-take">นิคมที่เข้าเกณฑ์เฝ้าระวังในเดือนที่เลือก</p>
           <p class="print-meta" id="print-meta"></p>
         </div>
       </div>
       <div class="h-tools">
-        <div class="wd-filters" data-for="overview">
+        <div class="wd-filters" data-for="overview watch">
           <label class="sel"><span class="cap">พื้นที่</span><select class="wd-region" aria-label="พื้นที่" data-source="overview"></select></label>
           <div class="datebox">
             <span class="cal"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>
@@ -620,6 +655,7 @@ html.printing .seg { display: none; }
         <button role="tab" id="tab-overview" data-page="overview" aria-selected="true">ภาพรวม</button>
         <button role="tab" id="tab-estate" data-page="estate" aria-selected="false">รายนิคม</button>
         <button role="tab" id="tab-quality" data-page="quality" aria-selected="false">ตรวจข้อมูล</button>
+        <button role="tab" id="tab-watch" data-page="watch" aria-selected="false" hidden>นิคมที่ควรจับตา</button>
       </nav>
       <div class="tab-actions">
         <button type="button" class="btn" id="btn-refresh" title="ดึงข้อมูลล่าสุดจาก Google Sheets"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>อัปเดตข้อมูล</span></button>
@@ -667,14 +703,12 @@ html.printing .seg { display: none; }
 
         <div class="wd-right">
           <div class="cta">
-            <div><h3>นิคมที่ควรจับตา</h3><p id="watch-sub">นิคมที่เข้าเกณฑ์ในเดือนที่เลือก</p></div>
-            <button type="button" class="btn dark" id="btn-all"><svg viewBox="0 0 24 24"><path d="M12 3l1.8 4.7L18.5 9l-4.7 1.8L12 15.5l-1.8-4.7L5.5 9l4.7-1.3z"/><path d="M18 15l.8 2.2L21 18l-2.2.8L18 21l-.8-2.2L15 18l2.2-.8z"/></svg>ดูทั้งหมด</button>
+            <div><h3>ตัวชี้วัดภาพรวม</h3><p id="ind-sub">เดือนที่เลือก</p></div>
           </div>
-          <div class="watch bracket" id="watch"></div>
           <div class="meters" id="meters">
-            <div class="meter"><div class="m-top"><span>นิคมที่รายงานข้อมูล</span><span class="m-val" id="m-est">—</span></div><div class="m-bar"><i id="m-est-bar"></i></div></div>
-            <div class="meter"><div class="m-top"><span>น้ำ 3R ต่อน้ำใช้</span><span class="m-val" id="m-r3">—</span></div><div class="m-bar"><i id="m-r3-bar"></i></div></div>
-            <div class="meter"><div class="m-top"><span>ภาระระบบบำบัดน้ำเสียรวม</span><span class="m-val" id="m-tu">—</span></div><div class="m-bar"><i id="m-tu-bar"></i></div></div>
+            <div class="meter"><div class="m-top"><span>นิคมที่รายงานข้อมูล</span><span class="m-val" id="m-est">—</span></div><div class="m-bar"><i id="m-est-bar"></i></div><div class="m-note">จากนิคมทั้งหมดในชีต</div></div>
+            <div class="meter"><div class="m-top"><span>น้ำ 3R ต่อน้ำใช้</span><span class="m-val" id="m-r3">—</span></div><div class="m-bar"><i id="m-r3-bar"></i></div><div class="m-note">น้ำที่ลด ใช้ซ้ำ หรือนำกลับมาใช้ใหม่</div></div>
+            <div class="meter"><div class="m-top"><span>ภาระระบบบำบัดน้ำเสียรวม</span><span class="m-val" id="m-tu">—</span></div><div class="m-bar"><i id="m-tu-bar"></i></div><div class="m-note">น้ำเสียเข้าระบบ ÷ ความสามารถของระบบ</div></div>
             <div class="srcbox">
               <span class="dot" id="src-dot"></span><span id="src-stamp">กำลังโหลดข้อมูล…</span>
               <span class="wd-msg" id="src-msg" role="status"></span>
@@ -808,6 +842,23 @@ html.printing .seg { display: none; }
             <tbody></tbody>
           </table>
         </div>
+      </div>
+    </section>
+
+    <!-- ================= WATCH (menu only) ================= -->
+    <section class="wd-page" id="watch" hidden>
+      <div class="watch-sum" id="watch-sum">
+        <button type="button" class="ws" data-kind="reserve"><span class="ws-k">น้ำสำรองต่ำกว่า 7 วัน</span><span class="ws-v" id="ws-reserve">—</span></button>
+        <button type="button" class="ws" data-kind="treat"><span class="ws-k">ระบบบำบัดเกิน 90%</span><span class="ws-v" id="ws-treat">—</span></button>
+        <button type="button" class="ws" data-kind="rise"><span class="ws-k">ใช้น้ำเพิ่มเกิน 20% จากปีก่อน</span><span class="ws-v" id="ws-rise">—</span></button>
+      </div>
+      <div class="wd-card" id="watch-card">
+        <div class="blk-head">
+          <div><h2>นิคมที่ควรจับตา</h2><p class="note" id="watch-sub">เดือนที่เลือก</p></div>
+          <span class="wd-foot" id="watch-filter"></span>
+        </div>
+        <div class="watch" id="watch-list"></div>
+        <p class="note watch-rule">เกณฑ์: น้ำสำรองพอใช้น้อยกว่า 7 วัน · ระบบบำบัดใช้ไปเกิน 90% ของความสามารถ · ใช้น้ำเพิ่มเกิน 20% จากเดือนเดียวกันปีก่อน (เฉพาะนิคมที่ใช้น้ำตั้งแต่ 50,000 ลบ.ม./เดือน) · คลิกการ์ดด้านบนเพื่อกรองตามประเภท</p>
       </div>
     </section>
 
@@ -1055,7 +1106,7 @@ dash.calc('outliers', {
   let page = 'overview';
   const tabs = [...document.querySelectorAll('.wd-tabs button')];
   function show(p, link = true) {
-    if (!['overview', 'estate', 'quality'].includes(p)) return;
+    if (!['overview', 'estate', 'quality', 'watch'].includes(p)) return;
     page = p;
     tabs.forEach((b) => b.setAttribute('aria-selected', String(b.dataset.page === p)));
     document.querySelectorAll('.wd-page').forEach((s) => { s.hidden = s.id !== p; });
@@ -1682,7 +1733,7 @@ dash.calc('outliers', {
     if (first && dash.data('overview').status === 'ok') {
       first = false;
       const h = location.hash.slice(1);
-      if (['estate', 'quality'].includes(h)) show(h, false);
+      if (['estate', 'quality', 'watch'].includes(h)) show(h, false);
     }
   });
 })();
@@ -1711,7 +1762,7 @@ dash.calc('outliers', {
   const syncNav = () => {
     const cur = curPage();
     navGo.forEach((b) => (b.dataset.go === cur ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
-    document.querySelectorAll('[data-for]').forEach((el) => { el.hidden = el.dataset.for !== cur; });
+    document.querySelectorAll('[data-for]').forEach((el) => { el.hidden = !el.dataset.for.split(' ').includes(cur); });
     document.getElementById('btn-export').disabled = false;
   };
   new MutationObserver(syncNav).observe(document.querySelector('.wd-tabs'), { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
@@ -1724,7 +1775,6 @@ dash.calc('outliers', {
     requestAnimationFrame(() => document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
   document.querySelectorAll('.nav-item[data-jump]').forEach((b) => b.addEventListener('click', () => jump(b.dataset.jump)));
-  document.getElementById('btn-all').addEventListener('click', () => jump('table-card'));
   try { if (localStorage.getItem('wd-side') === 'collapsed') app.classList.add('collapsed'); } catch (e) { /* storage off */ }
   document.getElementById('btn-menu').addEventListener('click', () => {
     app.classList.toggle('collapsed');
@@ -1734,7 +1784,7 @@ dash.calc('outliers', {
   document.getElementById('btn-menu-m').addEventListener('click', () => app.classList.add('nav-open'));
   document.getElementById('scrim').addEventListener('click', closeDrawer);
   // printing: lay the page out at A4-landscape width and redraw the charts for it
-  const TAB_NAME = { overview: 'ภาพรวม', estate: 'รายนิคม', quality: 'ตรวจข้อมูล' };
+  const TAB_NAME = { overview: 'ภาพรวม', estate: 'รายนิคม', quality: 'ตรวจข้อมูล', watch: 'นิคมที่ควรจับตา' };
   const beforePrint = () => {
     if (root.classList.contains('printing')) return;
     const when = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date());
@@ -1764,6 +1814,12 @@ dash.calc('outliers', {
   document.getElementById('btn-export').addEventListener('click', () => {
     const E = dash.data('estate_table'), O = dash.data('overview'), Q = dash.data('outliers'), P = dash.params();
     const page = curPage();
+    if (page === 'watch') {
+      download('watch_' + (document.querySelector('.wd-month').value || 'month') + '.csv',
+        [[(it) => it.r.estate, 'นิคม'], [(it) => it.r.province, 'จังหวัด'], [(it) => KIND_NAME[it.kind], 'ประเภท'], [(it) => it.sub, 'รายละเอียด'], [(it) => it.r.use, 'น้ำใช้ (ลบ.ม./เดือน)'], [(it) => r2(it.r.reserve_days), 'วันสำรอง'], [(it) => r2(it.r.treat_util == null ? null : it.r.treat_util * 100), 'ภาระระบบบำบัด (%)'], [(it) => r2(it.r.yoy == null ? null : it.r.yoy * 100), 'เทียบปีก่อน (%)']],
+        watchKind ? lastWatch.filter((it) => it.kind === watchKind) : lastWatch);
+      return;
+    }
     if (page === 'quality' && Q.status === 'ok') {
       download('data-check.csv', [['estate', 'นิคม'], ['period', 'เดือน (ปี-เดือน พ.ศ.)'], ['field', 'รายการ'], ['value', 'ค่าที่กรอก'], [(r) => r2(r.median), 'ค่ากลางของนิคม'], [(r) => Number(r.ratio.toPrecision(3)), 'เท่าของค่ากลาง']], Q.data);
       return;
@@ -1794,8 +1850,14 @@ dash.calc('outliers', {
     try { localStorage.setItem('wd-theme', root.dataset.theme); } catch (e) { /* storage off */ }
   });
 
-  // ----- watch list + meters -----
-  const watch = document.getElementById('watch');
+  // ----- watch list (its own page, opened from the menu) + meters -----
+  let watchKind = null, lastWatch = [];
+  const KIND_NAME = { reserve: 'น้ำสำรองต่ำ', treat: 'ระบบบำบัดใกล้เต็ม', rise: 'ใช้น้ำเพิ่มมาก' };
+  document.querySelectorAll('.ws').forEach((b) => b.addEventListener('click', () => {
+    watchKind = watchKind === b.dataset.kind ? null : b.dataset.kind;
+    if (window.__dashRedraw) window.__dashRedraw();
+  }));
+  const watch = document.getElementById('watch-list');
   const openEstate = (name) => { dash.setParams({ estate: name }); document.getElementById('tab-estate').click(); window.scrollTo({ top: 0 }); };
   const setMeter = (id, text, frac) => {
     const v = document.getElementById(id); v.replaceChildren();
@@ -1823,11 +1885,22 @@ dash.calc('outliers', {
       if (r.yoy != null && r.yoy > 0.2 && r.use >= 50000) items.push({ r, kind: 'rise', sev: 1 + Math.min(r.yoy, 1), cls: 'warn', sub: 'ใช้น้ำเพิ่ม ' + d3.format('.0%')(r.yoy) + ' จากปีก่อน' });
     }
     items.sort((a, b) => b.sev - a.sev);
-    const shown = items.slice(0, 5);
-    document.getElementById('watch-sub').textContent = labLong(sel) + (region === 'ทั้งหมด' ? '' : ' · ' + region) + ' · ' + (items.length ? 'เข้าเกณฑ์ ' + items.length + ' รายการ' : 'ไม่มีรายการที่เข้าเกณฑ์');
+    lastWatch = items;
+    const counts = { reserve: 0, treat: 0, rise: 0 };
+    items.forEach((it) => { counts[it.kind] += 1; });
+    for (const k of Object.keys(counts)) {
+      document.getElementById('ws-' + k).textContent = counts[k];
+      document.querySelector('.ws[data-kind="' + k + '"]').setAttribute('aria-pressed', String(watchKind === k));
+    }
+    const shown = watchKind ? items.filter((it) => it.kind === watchKind) : items;
+    document.getElementById('watch-filter').textContent = watchKind ? 'กรอง: ' + KIND_NAME[watchKind] + ' · คลิกการ์ดอีกครั้งเพื่อดูทั้งหมด' : '';
+    const ctx = labLong(sel) + (region === 'ทั้งหมด' ? '' : ' · ' + region);
+    document.getElementById('watch-sub').textContent = ctx + ' · ' + (items.length ? 'เข้าเกณฑ์ ' + items.length + ' รายการ จาก ' + new Set(items.map((it) => it.r.estate)).size + ' นิคม' : 'ไม่มีรายการที่เข้าเกณฑ์');
+    document.getElementById('watch-take').textContent = 'นิคมที่เข้าเกณฑ์เฝ้าระวัง · ' + ctx;
+    document.getElementById('ind-sub').textContent = ctx;
     watch.replaceChildren();
     if (!shown.length) {
-      const d = document.createElement('div'); d.className = 'none'; d.textContent = 'ไม่มีนิคมที่น้ำสำรองต่ำกว่า 7 วัน ระบบบำบัดเกิน 90% หรือใช้น้ำเพิ่มเกิน 20% ในเดือนนี้'; watch.append(d);
+      const d = document.createElement('div'); d.className = 'none'; d.textContent = watchKind ? 'ไม่มีรายการประเภทนี้ในเดือนที่เลือก' : 'ไม่มีนิคมที่น้ำสำรองต่ำกว่า 7 วัน ระบบบำบัดเกิน 90% หรือใช้น้ำเพิ่มเกิน 20% ในเดือนนี้'; watch.append(d);
     }
     for (const it of shown) {
       const row = document.createElement('div'); row.className = 'item';
