@@ -512,6 +512,27 @@ html.printing .wd thead { display: table-header-group; }
   .wd-side, .side-scrim, .tabbar, .icon-btn, .hamb, .wd-tip { display: none !important; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
+
+/* ================= top-10 ranked lists ================= */
+.rank { list-style: none; margin: 4px -8px 0; padding: 0; display: grid; gap: 2px; }
+.rank li { display: grid; grid-template-columns: 30px minmax(0, 1fr); gap: 12px; align-items: start; padding: 9px 8px; border-radius: 10px; cursor: pointer; transition: background var(--cds-dur-slow); }
+.rank li:hover, .rank li:focus-visible { background: var(--hover); outline: none; }
+.rk { width: 28px; height: 28px; margin-top: 1px; border-radius: 8px; display: grid; place-items: center; font-family: "Poppins", var(--font-anthropic-sans); font-size: 13px; font-weight: 600; color: var(--color-fg-muted); background: var(--hover); border: 1px solid var(--color-border-line); }
+.rk.top { color: #fff; background: var(--rc); border-color: transparent; }
+.rl { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.rn { font-size: 15.5px; font-weight: 500; line-height: 1.35; min-width: 0; }
+.rv { font-size: 15.5px; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rbar { height: 6px; margin-top: 7px; border-radius: 6px; background: color-mix(in srgb, var(--color-border-line) 70%, transparent); overflow: hidden; }
+.rbar i { display: block; height: 100%; border-radius: 6px; transition: width .5s var(--cds-ease-out); }
+.rs { margin-top: 5px; font-size: 13.5px; color: var(--color-fg-muted); line-height: 1.4; }
+.rs .up { color: var(--color-warn); } .rs .down { color: var(--color-ok); } .rs .bad { color: var(--color-bad); font-weight: 600; }
+.rank-foot { margin-top: 10px; padding-top: 12px; border-top: 1px solid var(--color-border-line); font-size: 14px; color: var(--color-fg-muted); }
+#top-use, #top-r3, #top-inf { min-height: 0; }
+html.printing .rank li { padding: 4px 6px; }
+html.printing .rbar { margin-top: 4px; height: 5px; }
+html.printing .rs { margin-top: 2px; font-size: 12px; }
+html.printing .rn, html.printing .rv { font-size: 13.5px; }
+html.printing .rk { width: 22px; height: 22px; font-size: 11.5px; }
 </style>
 </head>
 <body>
@@ -1097,6 +1118,36 @@ dash.calc('outliers', {
     }
   }
 
+  // ---------- ranked list (top 10) ----------
+  function rankList(box, rows, o) {
+    box.classList.remove('dash-skeleton');
+    box.replaceChildren();
+    if (!rows.length) { emptyLine(box, 'ไม่มีข้อมูลในเดือนนี้'); return; }
+    const ol = document.createElement('ol'); ol.className = 'rank';
+    rows.forEach((r, i) => {
+      const li = document.createElement('li'); li.title = 'ดูรายละเอียด ' + short(r.estate);
+      li.tabIndex = 0;
+      const c = o.color(r);
+      const rk = document.createElement('span'); rk.className = 'rk' + (i < 3 ? ' top' : ''); rk.textContent = i + 1; rk.style.setProperty('--rc', c);
+      const body = document.createElement('div'); body.className = 'rb';
+      const line = document.createElement('div'); line.className = 'rl';
+      const nm = document.createElement('span'); nm.className = 'rn'; nm.textContent = short(r.estate);
+      const vl = document.createElement('span'); vl.className = 'rv'; vl.textContent = o.value(r);
+      line.append(nm, vl);
+      const bar = document.createElement('div'); bar.className = 'rbar';
+      const fill = document.createElement('i'); fill.style.width = Math.max(1.5, Math.min(1, o.frac(r)) * 100) + '%'; fill.style.background = c; bar.append(fill);
+      const sub = document.createElement('div'); sub.className = 'rs';
+      o.sub(r).filter(Boolean).forEach(([t, cls], k) => { if (k) sub.append(document.createTextNode(' · ')); const s = document.createElement('span'); s.textContent = t; if (cls) s.className = cls; sub.append(s); });
+      body.append(line, bar, sub);
+      li.append(rk, body);
+      li.addEventListener('click', () => openEstate(r.estate));
+      li.addEventListener('keydown', (e) => { if (e.key === 'Enter') openEstate(r.estate); });
+      ol.append(li);
+    });
+    box.append(ol);
+    if (o.foot) { const f = document.createElement('div'); f.className = 'rank-foot'; f.textContent = o.foot; box.append(f); }
+  }
+
   // ---------- horizontal top-10 ----------
   function hbar(box, rows, key, color, opts = {}) {
     fresh(box);
@@ -1433,14 +1484,27 @@ dash.calc('outliers', {
         drawEstateTable();
         const top = (k) => monthRows.filter((r) => r[k] > 0).sort((a, b) => b[k] - a[k]).slice(0, 10);
         const sumUse = d3.sum(monthRows, (r) => r.use), sumR3 = d3.sum(monthRows, (r) => r.r3 || 0);
-        const tu = top('use');
-        document.getElementById('top-use-note').textContent = 'ลบ.ม./เดือน · ' + labLong(periodNow) + (tu.length ? ' · 10 อันดับรวมกันเป็น ' + d3.format('.0%')(d3.sum(tu, (r) => r.use) / sumUse) + ' ของทั้งหมด' : '');
-        hbar(document.getElementById('top-use'), tu, 'use', dash.colors[0], { tip: (r) => [[null, 'น้ำใช้', fInt(r.use) + ' ลบ.ม.'], [null, 'สัดส่วน', fPct(r.use / sumUse)], [null, 'เทียบปีก่อน', fSigned(r.yoy)]] });
-        const t3 = top('r3');
+        const tu = top('use'), t3 = top('r3'), ti = top('influent_day');
+        document.getElementById('top-use-note').textContent = 'ลบ.ม./เดือน · ' + labLong(periodNow);
         document.getElementById('top-r3-note').textContent = 'ลบ.ม./เดือน · ' + labLong(periodNow);
-        hbar(document.getElementById('top-r3'), t3, 'r3', dash.colors[2], { tip: (r) => [[null, '3R', fNum(r.r3) + ' ลบ.ม.'], [null, 'คิดเป็น', fPct(r.r3_share) + ' ของน้ำใช้นิคม'], [null, 'สัดส่วนของ 3R ทั้งหมด', fPct(r.r3 / sumR3)]] });
-        hbar(document.getElementById('top-inf'), top('influent_day'), 'influent_day', dash.colors[3], { ref: 'capacity_day',
-          tip: (r) => [[null, 'น้ำเสียเข้าระบบ', fNum(r.influent_day) + ' ลบ.ม./วัน'], [null, 'ความสามารถ', r.capacity_day == null ? '—' : fNum(r.capacity_day) + ' ลบ.ม./วัน'], [null, 'ภาระระบบ', fPct(r.treat_util)]] });
+        document.getElementById('top-inf-note').textContent = 'ลบ.ม./วัน · ' + labLong(periodNow);
+        const maxU = tu.length ? tu[0].use : 1, maxR = t3.length ? t3[0].r3 : 1;
+        rankList(document.getElementById('top-use'), tu, {
+          value: (r) => fInt(r.use), color: () => dash.colors[0], frac: (r) => r.use / maxU,
+          sub: (r) => [[fPct(r.use / sumUse) + ' ของทั้งหมด'], r.yoy == null ? null : Math.abs(r.yoy) < 0.0005 ? ['เท่ากับปีก่อน'] : [(r.yoy > 0 ? '▲ ' : '▼ ') + d3.format('.1%')(Math.abs(r.yoy)) + ' จากปีก่อน', r.yoy > 0 ? 'up' : 'down']],
+          foot: tu.length ? '10 อันดับแรกรวมกัน ' + d3.format('.0%')(d3.sum(tu, (r) => r.use) / sumUse) + ' ของน้ำใช้ทั้งหมด (' + fInt(sumUse) + ' ลบ.ม.)' : '',
+        });
+        rankList(document.getElementById('top-r3'), t3, {
+          value: (r) => fNum(r.r3), color: () => dash.colors[2], frac: (r) => r.r3 / maxR,
+          sub: (r) => [[fPct(r.r3_share) + ' ของน้ำใช้นิคม'], [fPct(r.r3 / sumR3) + ' ของทั้งหมด']],
+          foot: t3.length ? '10 อันดับแรกรวมกัน ' + d3.format('.0%')(d3.sum(t3, (r) => r.r3) / sumR3) + ' ของน้ำ 3R ทั้งหมด (' + fInt(sumR3) + ' ลบ.ม.)' : '',
+        });
+        rankList(document.getElementById('top-inf'), ti, {
+          value: (r) => fNum(r.influent_day), frac: (r) => r.treat_util ?? 0,
+          color: (r) => (r.treat_util != null && r.treat_util > 0.9 ? 'var(--color-bad)' : dash.colors[3]),
+          sub: (r) => (r.capacity_day > 0 ? [['ใช้ไป ' + fPct(r.treat_util) + ' ของ ' + fNum(r.capacity_day), r.treat_util > 0.9 ? 'bad' : '']] : [['ไม่มีข้อมูลความสามารถระบบ']]),
+          foot: 'แถบ = ใช้ไปกี่ % ของความสามารถระบบบำบัด · สีแดงเมื่อเกิน 90%',
+        });
       }
 
       // ----- estate page -----
