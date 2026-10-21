@@ -592,6 +592,23 @@ html.printing .wd-right .srcbox { display: none; }
 .wd-kpi .when.old { color: var(--color-warn); background: color-mix(in srgb, var(--color-warn) 12%, transparent); }
 .wd-kpi .row { margin-top: 10px; }
 html.printing .wd-kpi .when { font-size: 11.5px; margin-top: 4px; }
+
+/* ================= tabs as a prominent segmented control ================= */
+.tabbar { border-bottom: 0; align-items: center; padding-bottom: 6px; }
+.tabbar .wd-tabs { gap: 4px; padding: 5px; border-radius: 14px; background: var(--side); border: 1px solid var(--color-border-line); box-shadow: inset 0 1px 2px rgba(17, 19, 24, .04); }
+.tabbar .wd-tabs button, .tabbar .wd-tabs button:first-child { display: inline-flex; align-items: center; gap: 9px; padding: 10px 22px; border-radius: 10px; border-left: 0 !important; font-size: 16.5px; font-weight: 500; color: var(--color-fg-muted); }
+.tabbar .wd-tabs button svg { width: 19px; height: 19px; }
+.tabbar .wd-tabs button:hover { color: var(--color-fg); background: var(--color-panel); }
+.tabbar .wd-tabs button[aria-selected=true] { color: #fff; background: var(--accent); font-weight: 600; box-shadow: 0 6px 16px color-mix(in srgb, var(--accent) 32%, transparent), inset 0 1px 0 rgba(255, 255, 255, .18); }
+.tabbar .wd-tabs button[aria-selected=true]::after, .tabbar .wd-tabs button:first-child[aria-selected=true]::after { content: none; }
+:root[data-theme="dark"] .tabbar .wd-tabs button[aria-selected=true] { color: #0b1020; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .tabbar .wd-tabs button[aria-selected=true] { color: #0b1020; } }
+.tab-actions { padding-bottom: 0; }
+#overview > .wd-split, #estate > .wd-kpis, #watch > .watch-sum, #quality > .wd-card:first-child { margin-top: 18px; }
+@media (max-width: 760px) {
+  .tabbar .wd-tabs { width: 100%; }
+  .tabbar .wd-tabs button, .tabbar .wd-tabs button:first-child { flex: 1; justify-content: center; padding: 10px 12px; font-size: 15.5px; }
+}
 </style>
 </head>
 <body>
@@ -662,8 +679,8 @@ html.printing .wd-kpi .when { font-size: 11.5px; margin-top: 4px; }
     <!-- ===== tabs + actions ===== -->
     <div class="tabbar">
       <nav class="wd-tabs" role="tablist">
-        <button role="tab" id="tab-overview" data-page="overview" aria-selected="true">ภาพรวม</button>
-        <button role="tab" id="tab-estate" data-page="estate" aria-selected="false">รายนิคม</button>
+        <button role="tab" id="tab-overview" data-page="overview" aria-selected="true"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg>ภาพรวม</button>
+        <button role="tab" id="tab-estate" data-page="estate" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18M14 11h2M14 15h2"/></svg>รายนิคม</button>
         <button role="tab" id="tab-quality" data-page="quality" aria-selected="false" hidden>ตรวจข้อมูล</button>
         <button role="tab" id="tab-watch" data-page="watch" aria-selected="false" hidden>นิคมที่ควรจับตา</button>
       </nav>
