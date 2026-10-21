@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>การใช้น้ำในนิคมอุตสาหกรรม</title>
+<title>ข้อมูลการใช้น้ำ นิคมอุตสาหกรรม / ท่าเรือฯ</title>
 <meta name="description" content="Dashboard การใช้น้ำ น้ำ 3R น้ำสำรอง และระบบบำบัดน้ำเสีย ในพื้นที่นิคมอุตสาหกรรมและท่าเรือ">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%237dd3fc'/%3E%3Cstop offset='1' stop-color='%230ea5e9'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M16 2.5C20.6 9 26 14.3 26 20a10 10 0 0 1-20 0C6 14.3 11.4 9 16 2.5z' fill='url(%23g)'/%3E%3Cpath d='M11.2 20.5a5 5 0 0 0 4.3 4.9' fill='none' stroke='%23fff' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -627,7 +627,7 @@ html.printing .hchip { font-size: 12px; padding: 3px 9px 3px 7px; }
 .wd-head2 .h-tools { grid-column: 2; grid-row: 1; justify-content: flex-end; }
 .wd-head2 .wd-take, .wd-head2 .print-meta { grid-column: 1 / -1; }
 .wd-head2 .wd-take:not(.chips) { margin-top: 10px; }
-@media (max-width: 1320px) {
+@media (max-width: 1500px) {
   .wd-head2 .h-tools { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; margin-top: 14px; }
 }
 @media (max-width: 760px) {
@@ -642,6 +642,8 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
 @media (max-width: 1460px) {
   .wd-head2:has(.wd-filters[data-for~="estate"]:not([hidden])) .h-tools { grid-column: 1 / -1; grid-row: 3; justify-content: flex-start; margin-top: 14px; }
 }
+.wd-head2 h1 .nw { white-space: nowrap; }
+@media (max-width: 420px) { .wd-head2 h1 { font-size: 23px; } }
 </style>
 </head>
 <body>
@@ -679,7 +681,7 @@ html.printing .wd-head2 .h-tools { grid-column: 2; grid-row: 1; margin-top: 0; }
       <div class="h-title">
         <button type="button" class="hamb mob" id="btn-menu-m" aria-label="เปิดเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
         <div>
-          <h1><span class="lite">การใช้น้ำ,</span> นิคมอุตสาหกรรม / ท่าเรือฯ</h1>
+          <h1><span class="nw">ข้อมูลการใช้น้ำ</span> <span class="nw">นิคมอุตสาหกรรม</span> <span class="nw">/ ท่าเรือฯ</span></h1>
           <p class="wd-take" id="takeaway" data-for="overview"><span class="dash-skeleton">—</span></p>
           <p class="wd-take" id="es-take" data-for="estate"></p>
           <p class="wd-take" data-for="quality">ค่าที่ควรตรวจสอบในชีต<sup class="star">*</sup></p>
