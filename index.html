@@ -395,13 +395,6 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 }
 
 /* print */
-@media print {
-  body { background: #fff; }
-  #dash-root { padding: 0; }
-  .app { display: block; box-shadow: none; border-radius: 0; }
-  .wd-side, .side-scrim, .tab-actions, .icon-btn, .hamb, .watch .act, .search, .srcbox .wd-msg { display: none !important; }
-  .wd-card, .wd-split, .wd-kpis { break-inside: avoid; }
-  .wd-tbox { max-height: none; overflow: visible; }
 }
 
 /* ================= readability: Sarabun, larger sizes, stronger contrast ================= */
@@ -447,6 +440,78 @@ body { font-size: 16px; line-height: 1.6; }
 
 /* Poppins digits run wider */
 .wd-kpi .val { font-size: clamp(26px, 2.15vw, 36px); letter-spacing: -.02em; }
+
+/* ================= print: A4 landscape, laid out for paper ================= */
+@page { size: A4 landscape; margin: 10mm; }
+.print-meta { display: none; }
+:root.printing:not(.x) {
+  color-scheme: light;
+  --color-fg: #0f1115; --color-fg-muted: #4b5563; --color-bg: #f6f7f9; --color-panel: #ffffff; --color-border-line: #e3e6ea;
+  --color-ok: #15803d; --color-warn: #c2410c; --color-bad: #dc2626; --frame: #ffffff; --hover: #f4f5f7; --tick: #c9cdd4; --side: #f5f6f8;
+  --cds-chart-grid: #eceff3; --cds-chart-axis: #d5dae0; --cds-chart-reference: #9aa3af; --cds-chart-muted: #bcd6f2; --cds-chart-status-critical: #e5484d;
+  --c1: #1677ff; --c2: #38bdf8; --c3: #22b07d; --c4: #f59e0b; --c5: #8b5cf6; --c6: #ec4899; --c7: #14b8a6; --c8: #84cc16;
+  --padl: 0px;
+}
+html.printing body { background: #fff; }
+html.printing #dash-root { width: 1047px; padding: 0; margin: 0; }
+html.printing .app { display: block; max-width: none; min-height: 0; box-shadow: none; border-radius: 0; background: #fff; overflow: visible; }
+html.printing .wd-side, html.printing .side-scrim, html.printing .tabbar, html.printing .icon-btn, html.printing .hamb,
+html.printing .watch .act, html.printing .cta .btn, html.printing .search, html.printing .srcbox .wd-msg, html.printing .wd-tip { display: none !important; }
+html.printing .print-meta { display: block; margin: 6px 0 0; font-size: 12.5px; color: var(--color-fg-muted); }
+html.printing * { animation: none !important; transition: none !important; }
+html.printing .wd-head2 { padding: 0 0 12px; border-bottom: 2px solid var(--color-fg); gap: 12px 20px; }
+html.printing .wd-head2 h1 { font-size: 24px; }
+html.printing .wd-head2 .wd-take { font-size: 14px; margin-top: 4px; }
+html.printing .h-tools .sel, html.printing .datebox { height: 34px; box-shadow: none; }
+html.printing .h-tools select { font-size: 13.5px; appearance: none; -webkit-appearance: none; padding-right: 8px; }
+html.printing .datebox .cal { width: 34px; }
+/* one column for the top block, watch list and meters side by side under it */
+html.printing .wd-split { display: block; margin-top: 14px; border-top: 0; border-bottom: 0; }
+html.printing .wd-left { border: 0 !important; }
+html.printing .wd-kpis, html.printing .wd-kpis.four { margin: 0 !important; border: 1px solid var(--color-border-line); grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+html.printing .wd-kpis.four { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; margin-top: 14px !important; }
+html.printing .wd-kpis .wd-kpi { border-top: 0 !important; padding: 16px 18px; }
+html.printing .wd-kpis .wd-kpi + .wd-kpi { border-left: 1px solid var(--color-border-line) !important; }
+html.printing .wd-kpi .val { font-size: 30px; }
+html.printing .wd-block { padding: 16px 0 6px; }
+html.printing .wd-right { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); column-gap: 24px; border-top: 1px solid var(--color-border-line); }
+html.printing .cta { grid-column: 1 / -1; padding: 14px 0 8px; border: 0; }
+html.printing .cta h3 { font-size: 18px; }
+html.printing .watch { border: 1px solid var(--color-border-line); }
+html.printing .watch .item { grid-template-columns: 56px minmax(0, 1fr); min-height: 54px; }
+html.printing .watch .ibox span { width: 34px; height: 34px; }
+html.printing .watch .t1 { font-size: 14.5px; } html.printing .watch .t2 { font-size: 13px; }
+html.printing .meters { padding: 4px 0 0; margin: 0; gap: 14px; align-content: start; }
+html.printing .wd-sec { display: none; }
+html.printing .wd-chart, html.printing .wd-chart.tall, html.printing #trend { min-height: 0; }
+html.printing #overview > .wd-grid3, html.printing #overview > .wd-grid { padding-top: 14px; }
+html.printing .wd-grid, html.printing .wd-grid3 { padding: 10px 0 0; gap: 12px; }
+html.printing .wd-grid3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+html.printing .wd-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+html.printing .wd-card { padding: 14px 14px 10px; border-radius: 10px; }
+html.printing #overview > .wd-card, html.printing #estate > .wd-card, html.printing #quality > .wd-card { margin: 12px 0 0; }
+html.printing .blk-head { margin-bottom: 4px; }
+html.printing .wd .note { margin-bottom: 8px; font-size: 12.5px; }
+html.printing .wd-tbox { max-height: none; overflow: visible; }
+html.printing .wd table { font-size: 12.5px; }
+html.printing .wd th { position: static; }
+html.printing .wd th button { padding: 6px 8px; font-size: 12px; }
+html.printing .wd td { padding: 5px 8px; }
+html.printing .defs { margin: 16px 0 0; padding: 14px 16px; }
+html.printing .defs dd { font-size: 12.5px; } html.printing .defs dt { font-size: 13.5px; }
+html.printing .page-foot { padding: 12px 0 0; margin-top: 14px; }
+html.printing .wd-card, html.printing .wd-kpis, html.printing .wd-block, html.printing .watch, html.printing .meters,
+html.printing .defs, html.printing tr, html.printing .wd-kpi { break-inside: avoid; }
+html.printing .wd-sec, html.printing .wd h2, html.printing .blk-head, html.printing .cta { break-after: avoid; }
+html.printing #table-card { break-inside: auto; }
+html.printing #quality-card { break-inside: auto; }
+html.printing.pg-estate .defs, html.printing.pg-quality .defs { display: none; }
+html.printing .wd thead { display: table-header-group; }
+@media print {
+  html, body { background: #fff !important; }
+  .wd-side, .side-scrim, .tabbar, .icon-btn, .hamb, .wd-tip { display: none !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
 </style>
 </head>
 <body>
@@ -487,6 +552,7 @@ body { font-size: 16px; line-height: 1.6; }
           <p class="wd-take" id="takeaway" data-for="overview"><span class="dash-skeleton">—</span></p>
           <p class="wd-take" id="es-take" data-for="estate"></p>
           <p class="wd-take" data-for="quality">ค่าที่ควรตรวจสอบในชีต<sup class="star">*</sup></p>
+          <p class="print-meta" id="print-meta"></p>
         </div>
       </div>
       <div class="h-tools">
@@ -770,6 +836,7 @@ body { font-size: 16px; line-height: 1.6; }
     fire();
   };
 
+  window.__dashRedraw = fire;
   let rt;
   addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(fire, 150); });
 })();
@@ -1035,7 +1102,7 @@ dash.calc('outliers', {
     fresh(box);
     if (!rows.length) { emptyLine(box, 'ไม่มีข้อมูลในเดือนนี้'); return; }
     const w = Math.max(260, box.clientWidth);
-    const rowH = 30, m = { t: 4, b: 22 };
+    const rowH = document.documentElement.classList.contains('printing') ? 23 : 30, m = { t: 4, b: 22 };
     const h = m.t + m.b + rows.length * rowH;
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
     let lw = 0, vw = 0;
@@ -1099,7 +1166,7 @@ dash.calc('outliers', {
   function lines(box, periods, series, opts = {}) {
     fresh(box);
     if (!periods.length) { emptyLine(box, 'ไม่มีข้อมูล'); return; }
-    const w = Math.max(280, box.clientWidth), h = 260;
+    const w = Math.max(280, box.clientWidth), h = document.documentElement.classList.contains('printing') ? 210 : 260;
     const svg = d3.select(box).append('svg').attr('width', '100%').attr('height', h).attr('viewBox', `0 0 ${w} ${h}`);
     let endW = 0;
     if (opts.endLabels) {
@@ -1339,7 +1406,7 @@ dash.calc('outliers', {
         const rr = all.filter((r) => r.region === region);
         document.getElementById('trend-note').textContent = (region === 'ทั้งหมด' ? 'ทุกพื้นที่' : region) + ' · คลิกแท่งเพื่อเลือกเดือน · แท่งเข้มคือ ' + labLong(sel);
         legend(document.getElementById('trend-legend'), [[dash.colors[0], 'เดือนที่เลือก'], [muted, 'เดือนอื่น'], [dash.colors[2], 'น้ำ 3R']]);
-        vbars(document.getElementById('trend'), rr, { key: 'use', key2: 'r3', sel, h: 340, click: (r) => dash.setParams({ month: r.period }),
+        vbars(document.getElementById('trend'), rr, { key: 'use', key2: 'r3', sel, h: document.documentElement.classList.contains('printing') ? 230 : 340, click: (r) => dash.setParams({ month: r.period }),
           tip: (r) => [[dash.colors[0], 'น้ำใช้', fInt(r.use)], [dash.colors[2], '3R', r.r3 == null ? '—' : fInt(r.r3)], [null, 'นิคมที่รายงาน', fInt(r.n_estates)]] });
         // regions
         const regs = regions.filter((g) => g !== 'ทั้งหมด');
@@ -1470,6 +1537,7 @@ dash.calc('outliers', {
   };
 
   // ----- sidebar menu, header options and tab actions -----
+  const root = document.documentElement;
   const app = document.getElementById('app');
   const tabs = [...document.querySelectorAll('.wd-tabs button')];
   const navGo = [...document.querySelectorAll('.nav-item[data-go]')];
@@ -1499,7 +1567,24 @@ dash.calc('outliers', {
   });
   document.getElementById('btn-menu-m').addEventListener('click', () => app.classList.add('nav-open'));
   document.getElementById('scrim').addEventListener('click', closeDrawer);
-  document.getElementById('btn-print').addEventListener('click', () => window.print());
+  // printing: lay the page out at A4-landscape width and redraw the charts for it
+  const TAB_NAME = { overview: 'ภาพรวม', estate: 'รายนิคม', quality: 'ตรวจข้อมูล' };
+  const beforePrint = () => {
+    if (root.classList.contains('printing')) return;
+    const when = new Intl.DateTimeFormat('th-TH', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date());
+    document.getElementById('print-meta').textContent = 'หน้า ' + TAB_NAME[curPage()] + ' · ' + document.getElementById('src-stamp').textContent + ' · พิมพ์เมื่อ ' + when;
+    root.classList.add('printing', 'pg-' + curPage());
+    void document.body.offsetWidth;
+    if (window.__dashRedraw) window.__dashRedraw();
+  };
+  const afterPrint = () => {
+    if (!root.classList.contains('printing')) return;
+    root.classList.remove('printing', 'pg-overview', 'pg-estate', 'pg-quality');
+    if (window.__dashRedraw) window.__dashRedraw();
+  };
+  window.addEventListener('beforeprint', beforePrint);
+  window.addEventListener('afterprint', afterPrint);
+  document.getElementById('btn-print').addEventListener('click', () => { beforePrint(); setTimeout(() => window.print(), 60); });
 
   // CSV of what the current page shows
   const csvCell = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
@@ -1535,7 +1620,6 @@ dash.calc('outliers', {
   });
 
   // ----- light / dark -----
-  const root = document.documentElement;
   const sysDark = () => matchMedia('(prefers-color-scheme: dark)').matches;
   try { const saved = localStorage.getItem('wd-theme'); if (saved) root.dataset.theme = saved; } catch (e) { /* storage off */ }
   document.getElementById('btn-theme').addEventListener('click', () => {
