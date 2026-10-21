@@ -34,7 +34,7 @@
   --color-ok: #16a34a;
   --color-warn: #ea580c;
   --color-bad: #dc2626;
-  --frame: #eef0f3;
+  --frame: #eef0f3; --padl: 36px; --side: #f5f6f8; --accent: #1f4fd8; --accent-soft: #e8efff;
   --hover: #f4f5f7;
   --tick: #c9cdd4;
   --cds-chart-grid: #f0f2f5;
@@ -53,7 +53,7 @@
     color-scheme: dark;
     --color-fg: #eceef2; --color-fg-muted: #9aa1ad; --color-bg: #0c0e12; --color-panel: #14171c; --color-border-line: #23272f;
     --color-ok: #4ade80; --color-warn: #fb923c; --color-bad: #f87171;
-    --frame: #090a0d; --hover: #1b1f26; --tick: #3a404b;
+    --frame: #090a0d; --side: #101318; --accent: #6ea0ff; --accent-soft: #1a2540; --hover: #1b1f26; --tick: #3a404b;
     --cds-chart-grid: #1c2028; --cds-chart-axis: #2a303a; --cds-chart-reference: #5b6472; --cds-chart-muted: #213a5c; --cds-chart-status-critical: #f87171;
     --cds-surface-popover: #1a1e25; --cds-border: #2a2f38; --cds-shadow-popover: 0 10px 30px rgba(0, 0, 0, .5); --cds-text-secondary: #9aa1ad;
     --c1: #4c9aff; --c2: #7dd3fc; --c3: #34d399; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #2dd4bf; --c8: #a3e635;
@@ -63,7 +63,7 @@
   color-scheme: dark;
   --color-fg: #eceef2; --color-fg-muted: #9aa1ad; --color-bg: #0c0e12; --color-panel: #14171c; --color-border-line: #23272f;
   --color-ok: #4ade80; --color-warn: #fb923c; --color-bad: #f87171;
-  --frame: #090a0d; --hover: #1b1f26; --tick: #3a404b;
+  --frame: #090a0d; --side: #101318; --accent: #6ea0ff; --accent-soft: #1a2540; --hover: #1b1f26; --tick: #3a404b;
   --cds-chart-grid: #1c2028; --cds-chart-axis: #2a303a; --cds-chart-reference: #5b6472; --cds-chart-muted: #213a5c; --cds-chart-status-critical: #f87171;
   --cds-surface-popover: #1a1e25; --cds-border: #2a2f38; --cds-shadow-popover: 0 10px 30px rgba(0, 0, 0, .5); --cds-text-secondary: #9aa1ad;
   --c1: #4c9aff; --c2: #7dd3fc; --c3: #34d399; --c4: #fbbf24; --c5: #a78bfa; --c6: #f472b6; --c7: #2dd4bf; --c8: #a3e635;
@@ -75,7 +75,7 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 #dash-root { padding: clamp(0px, 1.6vw, 22px); box-sizing: border-box; }
 #dash-root *, #dash-root *::before, #dash-root *::after { box-sizing: border-box; }
 #dash-root b, #dash-root strong { font-weight: 600; }
-.app { display: grid; grid-template-columns: 76px minmax(0, 1fr); min-height: calc(100vh - 44px); max-width: 1500px; margin: 0 auto; background: var(--color-panel); border-radius: 22px; box-shadow: 0 1px 2px rgba(17, 19, 24, .04), 0 12px 40px rgba(17, 19, 24, .06); overflow: clip; }
+.app { display: grid; grid-template-columns: 252px minmax(0, 1fr); min-height: calc(100vh - 44px); max-width: 1500px; margin: 0 auto; background: var(--color-panel); border-radius: 22px; box-shadow: 0 1px 2px rgba(17, 19, 24, .04), 0 12px 40px rgba(17, 19, 24, .06); overflow: clip; }
 .wd-rail svg, .wd-top svg, .wd-filters svg, .cta svg, .watch .ibox svg, .search svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 
 /* side rail */
@@ -112,7 +112,7 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 .wd { font-family: var(--font-anthropic-sans); color: var(--color-fg); }
 .wd-page { display: grid; gap: 0; }
 .wd-page[hidden] { display: none; }
-.wd-pagehead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; padding: 30px 28px 26px 58px; border-bottom: 1px solid var(--color-border-line); }
+.wd-pagehead { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; padding: 30px 28px 26px var(--padl); border-bottom: 1px solid var(--color-border-line); }
 .wd-pagehead h1 { font-weight: 400; font-size: 40px; letter-spacing: -.02em; line-height: 1.1; margin: 0; }
 .wd-take { margin: 10px 0 0; color: var(--color-fg-muted); font-size: var(--cds-font-size-body); max-width: 60rem; line-height: 1.6; }
 .wd-take b { color: var(--color-fg); font-weight: 500; }
@@ -142,8 +142,8 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
     linear-gradient(var(--tick), var(--tick)) bottom right / 1px 9px no-repeat; }
 
 /* KPIs */
-.wd-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 0 58px; border-left: 1px solid var(--color-border-line); border-right: 1px solid var(--color-border-line); border-bottom: 1px solid var(--color-border-line); }
-.wd-kpis.four { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 28px 0 58px; }
+.wd-kpis { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0 0 0 var(--padl); border-left: 1px solid var(--color-border-line); border-right: 1px solid var(--color-border-line); border-bottom: 1px solid var(--color-border-line); }
+.wd-kpis.four { grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 0 28px 0 var(--padl); }
 .wd-kpi { padding: 28px 24px 26px; min-width: 0; }
 .wd-kpi + .wd-kpi { border-left: 1px solid var(--color-border-line); }
 .wd-kpi .lbl { font-size: 14px; font-weight: 500; color: var(--color-fg); }
@@ -157,18 +157,18 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 .up { color: var(--color-warn); } .down { color: var(--color-ok); } .bad { color: var(--color-bad); } .warn { color: var(--color-warn); } .neu { color: var(--color-fg-muted); }
 
 /* blocks & cards */
-.wd-block { padding: 28px 28px 26px 58px; }
+.wd-block { padding: 28px 28px 26px var(--padl); }
 .blk-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: flex-start; gap: 10px 20px; margin-bottom: 8px; }
 .wd h2 { font-size: var(--cds-font-size-heading); font-weight: 500; margin: 0; letter-spacing: -.005em; }
 .wd .note { font-size: var(--cds-font-size-caption); color: var(--color-fg-muted); margin: 4px 0 14px; }
 .wd .note b { color: var(--color-fg); font-weight: 500; }
-.wd-sec { display: flex; align-items: center; gap: 12px; padding: 30px 28px 0 58px; font-size: 12px; font-weight: 500; color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: .06em; }
+.wd-sec { display: flex; align-items: center; gap: 12px; padding: 30px 28px 0 var(--padl); font-size: 12px; font-weight: 500; color: var(--color-fg-muted); text-transform: uppercase; letter-spacing: .06em; }
 .wd-sec::after { content: ""; flex: 1; height: 1px; background: var(--color-border-line); }
-.wd-grid, .wd-grid3 { display: grid; gap: 16px; padding: 16px 28px 0 58px; }
+.wd-grid, .wd-grid3 { display: grid; gap: 16px; padding: 16px 28px 0 var(--padl); }
 .wd-grid { grid-template-columns: repeat(auto-fit, minmax(min(100%, 26rem), 1fr)); }
 .wd-grid3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 20rem), 1fr)); }
 .wd-card { background: var(--color-panel); border: 1px solid var(--color-border-line); border-radius: 16px; padding: 22px 22px 18px; min-width: 0; }
-#overview > .wd-card, #estate > .wd-card, #quality > .wd-card { margin: 16px 28px 0 58px; }
+#overview > .wd-card, #estate > .wd-card, #quality > .wd-card { margin: 16px 28px 0 var(--padl); }
 #estate > .wd-kpis + .wd-card { margin-top: 24px; }
 
 /* right column */
@@ -240,7 +240,7 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 .wd-fail { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; color: var(--color-fg-muted); font-size: var(--cds-font-size-caption); }
 .wd-fail::before { content: ""; width: .375rem; height: .375rem; border-radius: 50%; background: var(--color-bad); }
 .wd-foot { font-size: 12px; color: var(--color-fg-muted); }
-.page-foot { padding: 28px 28px 30px 58px; margin-top: 28px; border-top: 1px solid var(--color-border-line); }
+.page-foot { padding: 28px 28px 30px var(--padl); margin-top: 28px; border-top: 1px solid var(--color-border-line); }
 
 /* skeleton */
 .dash-skeleton { color: transparent !important; border-radius: 8px; background: linear-gradient(90deg, var(--hover) 25%, var(--color-border-line) 50%, var(--hover) 75%); background-size: 200% 100%; animation: dashSk 1.3s linear infinite; }
@@ -280,52 +280,206 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
   .watch .act .btn { min-width: 0; }
   .wd .hide-narrow { display: none; }
 }
+
+/* ================= menu & options (StarAdmin-style) ================= */
+.wd-side svg, .wd-head2 svg, .tabbar svg, .icon-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.app { transition: grid-template-columns .25s var(--cds-ease-out); }
+.app.collapsed { grid-template-columns: 76px minmax(0, 1fr); }
+.wd-side { background: var(--side); border-right: 1px solid var(--color-border-line); padding: 22px 0 24px; display: flex; flex-direction: column; min-width: 0; }
+.side-brand { display: flex; align-items: center; gap: 14px; padding: 0 22px 22px; }
+.hamb { all: unset; cursor: pointer; width: 34px; height: 34px; display: grid; place-items: center; border-radius: 8px; color: var(--color-fg); }
+.hamb:hover { background: var(--hover); }
+.hamb.mob { display: none; }
+.logo { display: inline-flex; align-items: center; gap: 10px; font-size: 21px; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; }
+.logo b { color: var(--accent); font-weight: 600; }
+.logo .orb { width: 26px; height: 26px; flex: none; }
+.side-nav { display: flex; flex-direction: column; gap: 2px; padding-right: 14px; }
+.nav-h { margin: 22px 0 6px 26px; font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--color-fg); opacity: .8; white-space: nowrap; }
+.nav-item { all: unset; cursor: pointer; display: flex; align-items: center; gap: 14px; padding: 11px 14px 11px 26px; border-radius: 0 999px 999px 0; color: var(--color-fg-muted); font-size: 14.5px; position: relative; white-space: nowrap; transition: background var(--cds-dur-slow), color var(--cds-dur-slow); }
+.nav-item .lbl-t { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.nav-item .chev { width: 14px; height: 14px; opacity: .5; }
+.nav-item:hover { color: var(--color-fg); background: color-mix(in srgb, var(--color-panel) 60%, transparent); }
+.nav-item:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.nav-item[aria-current="page"] { background: var(--color-panel); color: var(--accent); font-weight: 600; box-shadow: 0 1px 3px rgba(17, 19, 24, .06); }
+.nav-item[aria-current="page"] svg { color: var(--accent); }
+.badge { font-style: normal; font-size: 11px; font-weight: 600; min-width: 22px; padding: 1px 7px; border-radius: 999px; background: color-mix(in srgb, var(--color-bad) 14%, transparent); color: var(--color-bad); text-align: center; }
+.badge:empty { display: none; }
+.app.collapsed .logo-t, .app.collapsed .nav-h, .app.collapsed .lbl-t, .app.collapsed .chev, .app.collapsed .badge { display: none; }
+.app.collapsed .side-brand { flex-direction: column; padding: 0 0 18px; }
+.app.collapsed .side-nav { padding: 0 12px; gap: 6px; }
+.app.collapsed .nav-item { justify-content: center; padding: 11px; border-radius: 12px; }
+.side-scrim { display: none; }
+
+/* header */
+.wd-head2 { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 18px 24px; padding: 30px 28px 18px var(--padl); }
+.h-title { display: flex; gap: 12px; align-items: flex-start; min-width: 0; flex: 1 1 26rem; }
+.wd-head2 h1 { margin: 0; text-wrap: balance; font-size: clamp(22px, 1.95vw, 30px); font-weight: 600; letter-spacing: -.02em; line-height: 1.2; }
+.wd-head2 h1 .lite { font-weight: 300; color: var(--color-fg-muted); }
+.wd-head2 .wd-take { margin-top: 8px; font-size: 15px; }
+.h-tools { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+.h-tools .wd-filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.h-tools .sel { display: inline-flex; align-items: center; gap: 10px; height: 46px; padding: 0 10px 0 16px; border: 1px solid var(--color-border-line); border-radius: 10px; background: var(--color-panel); box-shadow: 0 1px 2px rgba(17, 19, 24, .04); }
+.h-tools .sel .cap { font-size: 12px; color: var(--color-fg-muted); }
+.h-tools select { font: inherit; font-size: 14.5px; font-weight: 500; color: var(--color-fg); background: transparent; border: 0; outline: none; height: 100%; cursor: pointer; max-width: 15rem; padding-right: 4px; }
+.h-tools .sel.wide select { max-width: 20rem; }
+.h-tools .sel:focus-within, .datebox:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.datebox { display: inline-flex; align-items: stretch; height: 46px; border: 1px solid var(--color-border-line); border-radius: 10px; background: var(--color-panel); overflow: hidden; box-shadow: 0 1px 2px rgba(17, 19, 24, .04); }
+.datebox .cal { display: grid; place-items: center; width: 46px; border-right: 1px solid var(--color-border-line); color: var(--color-fg-muted); }
+.datebox select { padding: 0 6px 0 14px; }
+.datebox select + select { padding-left: 4px; }
+.datebox .to { align-self: center; color: var(--color-fg-muted); padding: 0 2px; }
+[data-for][hidden] { display: none !important; }
+.icon-btn { all: unset; cursor: pointer; width: 46px; height: 46px; display: grid; place-items: center; border-radius: 10px; color: var(--color-fg); }
+.icon-btn:hover { background: var(--hover); }
+
+/* tab bar */
+.tabbar { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 0 28px 0 var(--padl); border-bottom: 1px solid var(--color-border-line); }
+.tabbar .wd-tabs { display: flex; gap: 0; align-items: stretch; }
+.tabbar .wd-tabs button { all: unset; cursor: pointer; padding: 12px 22px 14px; font-size: 15px; color: var(--color-fg); position: relative; transition: color var(--cds-dur-slow); }
+.tabbar .wd-tabs button:first-child { padding-left: 0; }
+.tabbar .wd-tabs button + button { border-left: 1px solid var(--color-border-line); }
+.tabbar .wd-tabs button:hover { color: var(--accent); }
+.tabbar .wd-tabs button[aria-selected=true] { color: var(--accent); font-weight: 500; }
+.tabbar .wd-tabs button[aria-selected=true]::after { content: ""; position: absolute; left: 22px; right: 22px; bottom: -1px; height: 2px; background: var(--accent); border-radius: 2px; }
+.tabbar .wd-tabs button:first-child[aria-selected=true]::after { left: 0; }
+.tab-actions { display: flex; flex-wrap: wrap; gap: 10px; padding-bottom: 10px; }
+.tab-actions .btn { height: 40px; padding: 0 16px; border-radius: 8px; font-size: 14px; border-color: color-mix(in srgb, var(--accent) 22%, var(--color-border-line)); }
+.tab-actions .btn svg { width: 17px; height: 17px; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; box-shadow: 0 4px 12px color-mix(in srgb, var(--accent) 30%, transparent); }
+.btn.primary:hover { background: color-mix(in srgb, var(--accent) 88%, #000); }
+:root[data-theme="dark"] .btn.primary { color: #0b1020; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .btn.primary { color: #0b1020; } }
+#overview > .wd-split { margin-top: 22px; border-top: 1px solid var(--color-border-line); }
+#estate > .wd-kpis { margin-top: 22px; border-top: 1px solid var(--color-border-line); }
+#quality > .wd-card:first-child { margin-top: 22px; }
+
+/* definitions */
+.defs { margin: 30px 28px 0 var(--padl); padding: 22px 24px; border: 1px solid var(--color-border-line); border-radius: 16px; background: var(--side); }
+.defs h2 { margin-bottom: 12px; }
+.defs dl { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 22rem), 1fr)); gap: 12px 28px; }
+.defs dt { font-size: 13.5px; font-weight: 600; }
+.defs dd { margin: 2px 0 0; font-size: 13px; color: var(--color-fg-muted); }
+
+/* responsive menu */
+@media (max-width: 1100px) {
+  .app, .app.collapsed { grid-template-columns: 76px minmax(0, 1fr); }
+  .app .logo-t, .app .nav-h, .app .lbl-t, .app .chev, .app .badge { display: none; }
+  .app .side-brand { flex-direction: column; padding: 0 0 18px; }
+  .app .side-nav { padding: 0 12px; gap: 6px; }
+  .app .nav-item { justify-content: center; padding: 11px; border-radius: 12px; }
+  .hamb#btn-menu { display: none; }
+}
+@media (max-width: 760px) {
+  .app, .app.collapsed { grid-template-columns: 1fr; }
+  .wd-side { position: fixed; inset: 0 auto 0 0; width: 268px; z-index: 50; transform: translateX(-100%); transition: transform .25s var(--cds-ease-out); overflow-y: auto; box-shadow: 0 0 40px rgba(0, 0, 0, .2); }
+  .app.nav-open .wd-side { transform: none; }
+  .app .logo-t, .app .nav-h, .app .lbl-t, .app .chev, .app .badge:not(:empty) { display: revert; }
+  .app .side-brand { flex-direction: row; padding: 0 22px 22px; }
+  .app .side-nav { padding: 0 14px 0 0; gap: 2px; }
+  .app .nav-item { justify-content: flex-start; padding: 11px 14px 11px 26px; border-radius: 0 999px 999px 0; }
+  .app.nav-open .side-scrim { display: block; position: fixed; inset: 0; background: rgba(0, 0, 0, .3); z-index: 40; }
+  .hamb.mob { display: grid; margin-left: -6px; }
+  .wd-head2 { padding: 18px 16px 14px; }
+  .h-tools, .h-tools .wd-filters { width: 100%; }
+  .h-tools .sel, .datebox { flex: 1 1 auto; }
+  .h-tools select { max-width: none; width: 100%; }
+  .tabbar { margin: 0 16px; }
+  .h-tools .icon-btn { display: none; }
+  .tabbar .wd-tabs button { padding: 10px 14px 12px; font-size: 14px; }
+  .tab-actions { width: 100%; }
+  .tab-actions .btn span { display: none; }
+  .defs { margin: 24px 16px 0; }
+}
+
+/* print */
+@media print {
+  body { background: #fff; }
+  #dash-root { padding: 0; }
+  .app { display: block; box-shadow: none; border-radius: 0; }
+  .wd-side, .side-scrim, .tab-actions, .icon-btn, .hamb, .watch .act, .search, .srcbox .wd-msg { display: none !important; }
+  .wd-card, .wd-split, .wd-kpis { break-inside: avoid; }
+  .wd-tbox { max-height: none; overflow: visible; }
+}
 </style>
 </head>
 <body>
 <main id="dash-root">
-<div class="wd app">
-  <!-- ===== side rail ===== -->
-  <aside class="wd-rail" aria-label="เมนู">
-    <div class="orb" aria-hidden="true"></div>
-    <nav class="rail-nav">
-      <button type="button" class="rail-btn" data-go="overview" title="ภาพรวม" aria-label="ภาพรวม"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="3"/><path d="M9 4v16M9 10h11"/></svg></button>
-      <button type="button" class="rail-btn" data-go="estate" title="รายนิคม" aria-label="รายนิคม"><svg viewBox="0 0 24 24"><path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18M14 11h2M14 15h2"/></svg></button>
-      <button type="button" class="rail-btn" data-go="quality" title="ตรวจข้อมูล" aria-label="ตรวจข้อมูล"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></button>
-      <button type="button" class="rail-btn" data-jump="table-card" title="ตารางรายนิคม" aria-label="ตารางรายนิคม"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M10 10v9"/></svg></button>
+<div class="wd app" id="app">
+  <!-- ===== sidebar ===== -->
+  <aside class="wd-side" id="side" aria-label="เมนูหลัก">
+    <div class="side-brand">
+      <button type="button" class="hamb" id="btn-menu" aria-label="ย่อหรือขยายเมนู" title="ย่อ/ขยายเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+      <span class="logo"><span class="orb" aria-hidden="true"></span><span class="logo-t">Water<b>Dash</b></span></span>
+    </div>
+    <nav class="side-nav">
+      <button type="button" class="nav-item" data-go="overview"><svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="1.5"/><rect x="13" y="4" width="7" height="7" rx="1.5"/><rect x="4" y="13" width="7" height="7" rx="1.5"/><rect x="13" y="13" width="7" height="7" rx="1.5"/></svg><span class="lbl-t">ภาพรวม</span></button>
+
+      <div class="nav-h">วิเคราะห์</div>
+      <button type="button" class="nav-item" data-go="estate"><svg viewBox="0 0 24 24"><path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18M14 11h2M14 15h2"/></svg><span class="lbl-t">รายนิคม</span><svg class="chev" viewBox="0 0 24 24"><path d="M10 7l5 5-5 5"/></svg></button>
+      <button type="button" class="nav-item" data-jump="top-use-card"><svg viewBox="0 0 24 24"><path d="M4 6h10M4 12h16M4 18h7"/></svg><span class="lbl-t">ผู้ใช้น้ำรายใหญ่</span><svg class="chev" viewBox="0 0 24 24"><path d="M10 7l5 5-5 5"/></svg></button>
+      <button type="button" class="nav-item" data-jump="season-card"><svg viewBox="0 0 24 24"><path d="M4 4v16h16"/><path d="M7 15l4-5 3 3 5-6"/></svg><span class="lbl-t">แนวโน้ม</span><svg class="chev" viewBox="0 0 24 24"><path d="M10 7l5 5-5 5"/></svg></button>
+      <button type="button" class="nav-item" data-jump="table-card"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="M4 10h16M10 10v9"/></svg><span class="lbl-t">ตารางรายนิคม</span><svg class="chev" viewBox="0 0 24 24"><path d="M10 7l5 5-5 5"/></svg></button>
+
+      <div class="nav-h">ข้อมูล</div>
+      <button type="button" class="nav-item" data-go="quality"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><span class="lbl-t">ตรวจข้อมูล</span><em class="badge" id="nav-q"></em></button>
+      <a class="nav-item" href="https://docs.google.com/spreadsheets/d/1Sqr3gzvhHuTGQUqTeh3Bg3P4dwaeNFYhqQzlEsUfzgk/edit?gid=0" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span class="lbl-t">ชีตต้นทาง</span><svg class="chev" viewBox="0 0 24 24"><path d="M9 6h9v9M18 6L7 17"/></svg></a>
+
+      <div class="nav-h">ช่วยเหลือ</div>
+      <button type="button" class="nav-item" data-jump="defs"><svg viewBox="0 0 24 24"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5M10 13h6M10 17h6"/></svg><span class="lbl-t">คำอธิบายตัวชี้วัด</span></button>
     </nav>
-    <a class="rail-btn rail-foot" href="https://docs.google.com/spreadsheets/d/1Sqr3gzvhHuTGQUqTeh3Bg3P4dwaeNFYhqQzlEsUfzgk/edit?gid=0" target="_blank" rel="noopener" title="เปิด Google Sheets ต้นทาง" aria-label="เปิด Google Sheets ต้นทาง"><svg viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></svg></a>
   </aside>
+  <div class="side-scrim" id="scrim"></div>
 
   <div class="wd-main">
-    <!-- ===== top bar ===== -->
-    <header class="wd-top">
+    <!-- ===== header ===== -->
+    <header class="wd-head2">
+      <div class="h-title">
+        <button type="button" class="hamb mob" id="btn-menu-m" aria-label="เปิดเมนู"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+        <div>
+          <h1><span class="lite">การใช้น้ำ,</span> นิคมอุตสาหกรรม / ท่าเรือฯ</h1>
+          <p class="wd-take" id="takeaway" data-for="overview"><span class="dash-skeleton">—</span></p>
+          <p class="wd-take" id="es-take" data-for="estate"></p>
+          <p class="wd-take" data-for="quality">ค่าในชีตที่ห่างจากค่าปกติของนิคมนั้นมาก อาจเป็นการพิมพ์ผิดหรือหน่วยผิด · หน้านี้แค่แสดงให้เห็น ไม่ได้แก้ชีต</p>
+        </div>
+      </div>
+      <div class="h-tools">
+        <div class="wd-filters" data-for="overview">
+          <label class="sel"><span class="cap">พื้นที่</span><select class="wd-region" aria-label="พื้นที่" data-source="overview"></select></label>
+          <div class="datebox">
+            <span class="cal"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>
+            <select class="wd-month" aria-label="เดือน" data-source="overview"></select>
+            <select class="wd-year" aria-label="ปี พ.ศ." data-source="overview"></select>
+          </div>
+        </div>
+        <div class="wd-filters" data-for="estate">
+          <label class="sel wide"><span class="cap">นิคม</span><select class="wd-estate" aria-label="นิคม" data-source="estate_table"></select></label>
+          <div class="datebox">
+            <span class="cal"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg></span>
+            <select class="wd-y0" aria-label="ตั้งแต่ปี" data-source="estate_table"></select>
+            <span class="to">–</span>
+            <select class="wd-y1" aria-label="ถึงปี" data-source="estate_table"></select>
+          </div>
+        </div>
+        <button type="button" class="icon-btn" id="btn-theme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่าง/มืด"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+      </div>
+    </header>
+
+    <!-- ===== tabs + actions ===== -->
+    <div class="tabbar">
       <nav class="wd-tabs" role="tablist">
         <button role="tab" id="tab-overview" data-page="overview" aria-selected="true">ภาพรวม</button>
         <button role="tab" id="tab-estate" data-page="estate" aria-selected="false">รายนิคม</button>
         <button role="tab" id="tab-quality" data-page="quality" aria-selected="false">ตรวจข้อมูล</button>
       </nav>
-      <div class="top-actions">
-        <span class="brand">การใช้น้ำ · นิคมอุตสาหกรรม / ท่าเรือฯ</span>
-        <button type="button" class="btn" id="btn-refresh" title="ดึงข้อมูลล่าสุดจาก Google Sheets"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg>อัปเดตข้อมูล</button>
-        <button type="button" class="btn icon" id="btn-theme" title="สลับโหมดสว่าง/มืด" aria-label="สลับโหมดสว่าง/มืด"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5z"/></svg></button>
+      <div class="tab-actions">
+        <button type="button" class="btn" id="btn-refresh" title="ดึงข้อมูลล่าสุดจาก Google Sheets"><svg viewBox="0 0 24 24"><path d="M20 11a8 8 0 1 0-2.3 5.7"/><path d="M20 4v7h-7"/></svg><span>อัปเดตข้อมูล</span></button>
+        <button type="button" class="btn" id="btn-print" title="พิมพ์หน้านี้"><svg viewBox="0 0 24 24"><path d="M7 9V4h10v5"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v6H7z"/></svg><span>พิมพ์</span></button>
+        <button type="button" class="btn primary" id="btn-export" title="ดาวน์โหลดตารางของหน้านี้เป็น CSV"><svg viewBox="0 0 24 24"><path d="M12 4v11M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>ดาวน์โหลด CSV</span></button>
       </div>
-    </header>
+    </div>
 
     <!-- ================= OVERVIEW ================= -->
     <section class="wd-page" id="overview">
-      <div class="wd-pagehead">
-        <div class="ph-text">
-          <h1>ภาพรวม</h1>
-          <p class="wd-take" id="takeaway"><span class="dash-skeleton">—</span></p>
-        </div>
-        <div class="wd-filters">
-          <label class="sel"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><select class="wd-year" aria-label="ปี" data-source="overview"></select></label>
-          <label class="sel"><select class="wd-month" aria-label="เดือน" data-source="overview"></select></label>
-          <label class="sel"><svg viewBox="0 0 24 24"><path d="M4 6h16M7 12h10M10 18h4"/></svg><select class="wd-region" aria-label="พื้นที่" data-source="overview"></select></label>
-        </div>
-      </div>
-
       <div class="wd-split">
         <div class="wd-left">
           <div class="wd-kpis bracket" id="ov-kpis">
@@ -438,19 +592,6 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 
     <!-- ================= ESTATE ================= -->
     <section class="wd-page" id="estate" hidden>
-      <div class="wd-pagehead">
-        <div class="ph-text">
-          <h1>รายนิคม</h1>
-          <p class="wd-take" id="es-take"></p>
-        </div>
-        <div class="wd-filters">
-          <label class="sel wide"><svg viewBox="0 0 24 24"><path d="M4 20V10l6-3v13"/><path d="M10 20V4l10 4v12"/><path d="M3 20h18"/></svg><select class="wd-estate" aria-label="นิคม" data-source="estate_table"></select></label>
-          <label class="sel"><svg viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/></svg><select class="wd-y0" aria-label="ตั้งแต่ปี" data-source="estate_table"></select></label>
-          <span class="dash-to">ถึง</span>
-          <label class="sel"><select class="wd-y1" aria-label="ถึงปี" data-source="estate_table"></select></label>
-        </div>
-      </div>
-
       <div class="wd-kpis bracket four" id="es-kpis">
         <div class="wd-kpi" data-k="0">
           <div class="lbl">ปริมาณน้ำใช้</div>
@@ -499,12 +640,6 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
 
     <!-- ================= QUALITY ================= -->
     <section class="wd-page" id="quality" hidden>
-      <div class="wd-pagehead">
-        <div class="ph-text">
-          <h1>ตรวจข้อมูล</h1>
-          <p class="wd-take">ค่าในชีตที่ห่างจากค่าปกติของนิคมนั้นมาก อาจเป็นการพิมพ์ผิดหรือหน่วยผิด · หน้านี้แค่แสดงให้เห็น ไม่ได้แก้ชีต</p>
-        </div>
-      </div>
       <div class="wd-card" id="quality-card">
         <p class="note">น้ำใช้ที่ต่ำกว่า 25% หรือสูงกว่า 4 เท่า และน้ำสำรองที่ต่ำกว่า 10% หรือสูงกว่า 10 เท่า ของค่ากลางของนิคมนั้นเอง · คลิกแถวเพื่อดูกราฟของนิคม</p>
         <div class="wd-tbox">
@@ -523,6 +658,17 @@ body { margin: 0; background: var(--frame); color: var(--color-fg); font-family:
       </div>
     </section>
 
+    <section class="defs" id="defs">
+      <h2>คำอธิบายตัวชี้วัด</h2>
+      <dl>
+        <div><dt>ปริมาณน้ำใช้</dt><dd>ผลรวมน้ำใช้รายเดือนของนิคมที่รายงานในเดือนนั้น (ลบ.ม./เดือน) · ค่าต่อวัน = น้ำใช้ ÷ จำนวนวันในเดือน</dd></div>
+        <div><dt>น้ำ 3R</dt><dd>น้ำที่ลดการใช้ ใช้ซ้ำ หรือนำกลับมาใช้ใหม่ (Reduce · Reuse · Recycle) ต่อเดือน · สัดส่วน = น้ำ 3R ÷ น้ำใช้</dd></div>
+        <div><dt>วันสำรอง</dt><dd>น้ำสำรอง ÷ น้ำใช้ต่อวัน บอกว่าน้ำสำรองพอใช้ได้ประมาณกี่วันหากไม่มีน้ำเข้า (แดงเมื่อน้อยกว่า 7 วัน)</dd></div>
+        <div><dt>ภาระระบบบำบัด</dt><dd>น้ำเสียเข้าระบบ (Influent) ÷ ความสามารถของระบบบำบัด ต่อวัน · ภาพรวมคิดเฉพาะนิคมที่มีทั้งสองค่า (ส้มเมื่อเกิน 90%)</dd></div>
+        <div><dt>เทียบปีก่อน</dt><dd>เทียบกับเดือนเดียวกันของปีก่อนหน้า ▲ สีส้ม = ใช้น้ำเพิ่ม · ▼ สีเขียว = ใช้น้ำลด (สำหรับ 3R และน้ำสำรอง เพิ่มขึ้นเป็นสีเขียว)</dd></div>
+        <div><dt>พื้นที่</dt><dd>EEC = ชลบุรี ระยอง ฉะเชิงเทรา · กลุ่มพื้นที่จัดจากชื่อนิคม ไม่ได้มาจากชีต</dd></div>
+      </dl>
+    </section>
     <footer class="wd-foot page-foot">ที่มา: Google Sheets “0 ไฟล์รวมน้ำ 64-ปจบ” ชีต1 แถว 1–74 (อ่านอย่างเดียว) · ตัวเลขรวมคำนวณจากข้อมูลรายนิคม อาจต่างจากคอลัมน์ยอดรวมในชีตเล็กน้อยในเดือนที่มีนิคมใหม่</footer>
   </div>
 </div>
@@ -1260,7 +1406,7 @@ dash.calc('outliers', {
 </script>
 
 <script>
-// Theme extras: side rail, light/dark switch, "นิคมที่ควรจับตา" list and the meters beside it.
+// Theme extras: sidebar menu, tab actions, light/dark switch, "นิคมที่ควรจับตา" list and the meters beside it.
 (function () {
   const MONL = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
   const labLong = (p) => { const [y, m] = String(p).split('-'); return MONL[Number(m) - 1] + ' ' + y; };
@@ -1273,22 +1419,70 @@ dash.calc('outliers', {
     rise: '<svg viewBox="0 0 24 24"><path d="M4 17l6-6 4 4 6-7"/><path d="M15 8h5v5"/></svg>',
   };
 
-  // ----- rail: mirrors the tabs -----
+  // ----- sidebar menu, header options and tab actions -----
+  const app = document.getElementById('app');
   const tabs = [...document.querySelectorAll('.wd-tabs button')];
-  const rail = [...document.querySelectorAll('.rail-btn[data-go]')];
-  const syncRail = () => {
-    const cur = (tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]).dataset.page;
-    rail.forEach((b) => (b.dataset.go === cur ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
+  const navGo = [...document.querySelectorAll('.nav-item[data-go]')];
+  const curPage = () => (tabs.find((t) => t.getAttribute('aria-selected') === 'true') || tabs[0]).dataset.page;
+  const syncNav = () => {
+    const cur = curPage();
+    navGo.forEach((b) => (b.dataset.go === cur ? b.setAttribute('aria-current', 'page') : b.removeAttribute('aria-current')));
+    document.querySelectorAll('[data-for]').forEach((el) => { el.hidden = el.dataset.for !== cur; });
+    document.getElementById('btn-export').disabled = false;
   };
-  rail.forEach((b) => b.addEventListener('click', () => { document.getElementById('tab-' + b.dataset.go).click(); window.scrollTo({ top: 0 }); }));
-  new MutationObserver(syncRail).observe(document.querySelector('.wd-tabs'), { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
-  syncRail();
-  const jumpTable = () => {
-    document.getElementById('tab-overview').click();
-    requestAnimationFrame(() => document.getElementById('table-card').scrollIntoView({ behavior: 'smooth', block: 'start' }));
+  new MutationObserver(syncNav).observe(document.querySelector('.wd-tabs'), { attributes: true, subtree: true, attributeFilter: ['aria-selected'] });
+  syncNav();
+  const closeDrawer = () => app.classList.remove('nav-open');
+  navGo.forEach((b) => b.addEventListener('click', () => { document.getElementById('tab-' + b.dataset.go).click(); closeDrawer(); window.scrollTo({ top: 0 }); }));
+  const jump = (id) => {
+    if (id !== 'defs' && curPage() !== 'overview') document.getElementById('tab-overview').click();
+    closeDrawer();
+    requestAnimationFrame(() => document.getElementById(id).scrollIntoView({ behavior: 'smooth', block: 'start' }));
   };
-  document.querySelector('.rail-btn[data-jump]').addEventListener('click', jumpTable);
-  document.getElementById('btn-all').addEventListener('click', jumpTable);
+  document.querySelectorAll('.nav-item[data-jump]').forEach((b) => b.addEventListener('click', () => jump(b.dataset.jump)));
+  document.getElementById('btn-all').addEventListener('click', () => jump('table-card'));
+  try { if (localStorage.getItem('wd-side') === 'collapsed') app.classList.add('collapsed'); } catch (e) { /* storage off */ }
+  document.getElementById('btn-menu').addEventListener('click', () => {
+    app.classList.toggle('collapsed');
+    try { localStorage.setItem('wd-side', app.classList.contains('collapsed') ? 'collapsed' : 'open'); } catch (e) { /* storage off */ }
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 280);
+  });
+  document.getElementById('btn-menu-m').addEventListener('click', () => app.classList.add('nav-open'));
+  document.getElementById('scrim').addEventListener('click', closeDrawer);
+  document.getElementById('btn-print').addEventListener('click', () => window.print());
+
+  // CSV of what the current page shows
+  const csvCell = (v) => { const t = v == null ? '' : String(v); return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t; };
+  const download = (name, cols, rows) => {
+    const text = '﻿' + [cols.map((c) => csvCell(c[1])).join(','), ...rows.map((r) => cols.map((c) => csvCell(typeof c[0] === 'function' ? c[0](r) : r[c[0]])).join(','))].join('\r\n');
+    const url = URL.createObjectURL(new Blob([text], { type: 'text/csv;charset=utf-8' }));
+    const a = document.createElement('a'); a.href = url; a.download = name; document.body.append(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+  const r2 = (v) => (v == null ? null : Math.round(v * 100) / 100);
+  document.getElementById('btn-export').addEventListener('click', () => {
+    const E = dash.data('estate_table'), O = dash.data('overview'), Q = dash.data('outliers'), P = dash.params();
+    const page = curPage();
+    if (page === 'quality' && Q.status === 'ok') {
+      download('data-check.csv', [['estate', 'นิคม'], ['period', 'เดือน (ปี-เดือน พ.ศ.)'], ['field', 'รายการ'], ['value', 'ค่าที่กรอก'], [(r) => r2(r.median), 'ค่ากลางของนิคม'], [(r) => Number(r.ratio.toPrecision(3)), 'เท่าของค่ากลาง']], Q.data);
+      return;
+    }
+    if (E.status !== 'ok') return;
+    const cols = [['estate', 'นิคม'], ['province', 'จังหวัด'], ['region', 'พื้นที่'], ['period', 'เดือน (ปี-เดือน พ.ศ.)'], ['use', 'น้ำใช้ (ลบ.ม./เดือน)'], [(r) => r2(r.yoy == null ? null : r.yoy * 100), 'เทียบปีก่อน (%)'],
+      ['r3', 'น้ำ 3R (ลบ.ม./เดือน)'], ['reserve', 'น้ำสำรอง (ลบ.ม.)'], [(r) => r2(r.reserve_days), 'วันสำรอง'], ['capacity_day', 'ความสามารถระบบบำบัด (ลบ.ม./วัน)'], ['influent_day', 'น้ำเสียเข้าระบบ (ลบ.ม./วัน)'], ['effluent_day', 'น้ำเสียผ่านการบำบัด (ลบ.ม./วัน)'], [(r) => r2(r.treat_util == null ? null : r.treat_util * 100), 'ภาระระบบบำบัด (%)']];
+    if (page === 'estate') {
+      const name = document.querySelector('.wd-estate').value;
+      const y0 = Number(document.querySelector('.wd-y0').value), y1 = Number(document.querySelector('.wd-y1').value);
+      const rows = E.data.filter((r) => r.estate === name && +r.period.slice(0, 4) >= Math.min(y0, y1) && +r.period.slice(0, 4) <= Math.max(y0, y1)).sort((a, b) => (a.period < b.period ? -1 : 1));
+      download('estate-' + (name.match(/^\s*(\d+)/) || ['', 'x'])[1] + '_' + Math.min(y0, y1) + '-' + Math.max(y0, y1) + '.csv', cols, rows);
+      return;
+    }
+    const periods = O.status === 'ok' ? [...new Set(O.data.map((r) => r.period))].sort() : [];
+    const sel = periods.includes(P.month) ? P.month : periods[periods.length - 1];
+    const region = P.region || 'ทั้งหมด';
+    const rows = E.data.filter((r) => r.period === sel && (region === 'ทั้งหมด' || r.region === region)).sort((a, b) => b.use - a.use);
+    download('estates_' + sel + (region === 'ทั้งหมด' ? '' : '_' + ({ 'EEC': 'eec', 'กรุงเทพฯ–ปริมณฑล': 'bkk', 'ภาคกลาง': 'central', 'ภูมิภาคอื่น': 'other' }[region] || 'area')) + '.csv', cols, rows);
+  });
 
   // ----- light / dark -----
   const root = document.documentElement;
@@ -1310,6 +1504,8 @@ dash.calc('outliers', {
   };
 
   dash.onData(() => {
+    const Qd = dash.data('outliers');
+    document.getElementById('nav-q').textContent = Qd.status === 'ok' && Qd.data.length ? String(Qd.data.length) : '';
     const O = dash.data('overview'), E = dash.data('estate_table'), R = dash.data('regions');
     if (O.status !== 'ok' || E.status !== 'ok' || !O.data.length) return;
     const P = dash.params();
